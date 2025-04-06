@@ -1,0 +1,23 @@
+{
+    "name": "@packages/db",
+    "version": "0.1.0",
+    "main": "./dist/index.js",
+    "types": "./src/index.ts",
+    "dependencies": {
+        "@nestjs/common": "^11.0.13",
+        "@prisma/client": "^6.5.0"
+    },
+    "scripts": {
+        "build": "tsc",
+        "db:generate": "prisma generate",
+        "db:migrate": "prisma migrate dev",
+        "db:deploy": "prisma migrate deploy",
+        "db:pull": "prisma db pull",
+        "db:push": "prisma db push",
+        "db:reset": "prisma migrate reset --force"
+    },
+    "devDependencies": {
+        "prisma": "^6.5.0",
+        "typescript": "^5.7.3"
+    }
+}
