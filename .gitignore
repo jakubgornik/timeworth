@@ -1,0 +1,17 @@
+# Node
+node_modules
+
+# Build directories
+dist
+build
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+
+#turbo
+.turbo
+
