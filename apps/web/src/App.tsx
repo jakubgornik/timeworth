@@ -1,10 +1,18 @@
 import { Button } from "./components/ui/button";
+import { Container } from "./components/ui/container";
+import { Stack } from "./components/ui/stack";
+import { Text } from "./components/ui/text";
 
 function App() {
   return (
-    <div className="bg-pink-100 rounded-lg p-4 flex justify-center h-screen items-center">
-      <Button>Timeworth</Button>
-    </div>
+    <Container>
+      <Stack direction="row" spacing="lg">
+        <Text variant="primary" size="4xl" weight="bold">
+          Timeworth
+        </Text>
+        <Button variant="primary">yeah</Button>
+      </Stack>
+    </Container>
   );
 }
 
