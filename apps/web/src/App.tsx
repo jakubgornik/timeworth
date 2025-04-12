@@ -6,7 +6,7 @@ import { Text } from "./components/ui/text";
 function App() {
   return (
     <Container>
-      <Stack direction="row" spacing="lg">
+      <Stack direction="row" gap="lg">
         <Text variant="primary" size="4xl" weight="bold">
           Timeworth
         </Text>

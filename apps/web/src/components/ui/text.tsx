@@ -56,16 +56,12 @@ const textVariants = cva("text-foreground", {
 });
 
 export interface TextProps
-  extends React.HTMLAttributes<HTMLElement>,
+  extends React.ComponentProps<"p">,
     VariantProps<typeof textVariants> {
-  as?: React.ElementType;
-  truncate?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-  ref?: React.Ref<HTMLElement>;
+  children: React.ReactNode;
 }
 
-export function Text({
+function Text({
   className,
   variant,
   size,
@@ -73,14 +69,13 @@ export function Text({
   align,
   decoration,
   transform,
-  as: Component = "p",
   children,
-  ref,
   ...props
 }: TextProps) {
+  const Component = "p";
+
   return (
     <Component
-      ref={ref}
       className={cn(
         textVariants({ variant, size, weight, align, decoration, transform }),
         className
@@ -91,3 +86,5 @@ export function Text({
     </Component>
   );
 }
+
+export { Text, textVariants };
