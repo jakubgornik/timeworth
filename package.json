@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "supabase": "^2.20.12",
     "turbo": "^2.5.0"
   },
   "workspaces": [
