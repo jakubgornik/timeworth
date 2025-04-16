@@ -4,7 +4,6 @@
     "baseUrl": "./",
     "module": "CommonJS",
     "target": "ES2021"
-    // "target": "es6"
   },
   "exclude": ["node_modules", "dist", "prisma"]
 }
