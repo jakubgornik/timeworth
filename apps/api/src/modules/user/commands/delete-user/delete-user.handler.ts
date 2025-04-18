@@ -1,6 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { PrismaService } from '@packages/db';
 import { DeleteUserCommand } from './delete-user.command';
+import { UserNotFoundException } from '../../exceptions/user.exception';
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserHandler {
@@ -11,9 +12,8 @@ export class DeleteUserHandler {
       where: { id },
     });
 
-    // recplace with custom exception using Http exception
     if (!user) {
-      throw new Error(`User with id ${id} not found`);
+      throw new UserNotFoundException();
     }
 
     await this.prisma.user.delete({
