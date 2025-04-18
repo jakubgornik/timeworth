@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-// import { PrismaService } from '@packages/db';
-// import { UserDto } from './dto/user.dto';
 import { UserDto } from './dto/user.dto';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { GetUsersQuery } from './queries/get-users/get-users.query';
