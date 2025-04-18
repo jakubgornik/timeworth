@@ -3,7 +3,7 @@ import { IUserDto } from '@packages/types';
 
 export class UserDto implements IUserDto {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   createdAt: Date;
