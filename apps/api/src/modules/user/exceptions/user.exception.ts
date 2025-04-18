@@ -1,6 +1,4 @@
-// import { CustomException } from 'src/shared/exceptions/custom-exceptions';
-
-import { CustomException } from '../../../shared/exceptions/custom-exceptions';
+import { CustomException } from '../../../shared/exceptions/custom-exception';
 
 export class UserNotFoundException extends CustomException {
   static readonly BODY = 'User not found';
