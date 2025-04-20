@@ -3,7 +3,7 @@ import { sparklesVariants } from "@/lib/animation-variants";
 import { Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 
-export default function SingUpFormCardHeader() {
+export default function SignUpFormCardHeader() {
   return (
     <CardHeader className="space-y-1">
       <CardTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">

@@ -20,7 +20,7 @@ import SubmitFormButton from "@/components/submit-form-button";
 import {
   AuthenticationFormSchema,
   authenticationSchema,
-} from "./singup-form.validation";
+} from "./signup-form.validation";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -115,7 +115,7 @@ export default function SignUpForm() {
           />
         </CardContent>
         <CardFooter className="mt-4">
-          <SubmitFormButton buttonText="Sing Up" isSubmitting={isSubmitting} />
+          <SubmitFormButton buttonText="Sign Up" isSubmitting={isSubmitting} />
         </CardFooter>
       </form>
     </Form>

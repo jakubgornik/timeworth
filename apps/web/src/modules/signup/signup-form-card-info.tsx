@@ -1,7 +1,7 @@
 import { signInTextVariants } from "@/lib/animation-variants";
 import { motion } from "motion/react";
 
-export default function SingUpFormCardInfo() {
+export default function SignUpFormCardInfo() {
   return (
     <motion.div
       variants={signInTextVariants}
