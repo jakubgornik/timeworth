@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import {
   buttonContentVariants,
   spinnerVariants,
