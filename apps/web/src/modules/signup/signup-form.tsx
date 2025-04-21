@@ -15,7 +15,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 
-import FormInputError from "./form-input-error";
+import FormInputError from "../../components/form-input-error";
 import SubmitFormButton from "@/components/submit-form-button";
 import {
   AuthenticationFormSchema,

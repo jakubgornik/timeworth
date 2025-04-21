@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { formContainerVariants } from "@/lib/animation-variants";
 import { motion } from "motion/react";
 import SignUpForm from "./signup-form";
-import SignUpFormCardHeader from "./signup-form-car-header";
+import SignUpFormCardHeader from "./signup-form-card-header";
 import SignUpFormCardInfo from "./signup-form-card-info";
 
 export function SignUpFormCard() {
