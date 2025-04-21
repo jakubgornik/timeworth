@@ -25,6 +25,7 @@
     "@nestjs/cqrs": "^11.0.3",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.1.4",
     "@packages/db": "*",
     "@packages/types": "*",
     "@prisma/client": "^6.5.0",
@@ -67,7 +68,7 @@
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.ts$": "ts-jest"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"

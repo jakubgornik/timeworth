@@ -4,12 +4,13 @@ import { UserController } from './user.controller';
 import { CqrsModule } from '@nestjs/cqrs';
 import { GetUsersQueryHandler } from './queries/get-users/get-users.handler';
 import { PrismaModule } from '@packages/db';
+import { DeleteUserHandler } from './commands/delete-user/delete-user.handler';
 
 const services = [UserService];
 
 const queryHandlers = [GetUsersQueryHandler];
 
-const commandHandlers = [];
+const commandHandlers = [DeleteUserHandler];
 
 @Module({
   controllers: [UserController],

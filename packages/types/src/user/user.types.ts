@@ -1,5 +1,5 @@
 export interface IUserDto {
-  id: number;
+  id: string;
   email: string;
   name?: string | null;
   createdAt: Date;
