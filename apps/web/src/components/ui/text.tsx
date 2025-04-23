@@ -7,6 +7,7 @@ const textVariants = cva("text-foreground", {
     variant: {
       primary: "text-primary",
       secondary: "text-secondary",
+      gray: "text-zinc-700",
     },
     size: {
       xs: "text-xs",
