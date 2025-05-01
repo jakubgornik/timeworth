@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PrismaService } from '@packages/db';
+import { Prisma, PrismaService } from '@packages/db';
 import { DeleteUserCommand } from './delete-user.command';
 import { UserNotFoundException } from '../../exceptions/user.exception';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { CustomException } from 'src/shared/exceptions/custom-exception';
 
 // TODO: map other errors, move to utils
-const PRISMA_ERROR_MAP: Record<string, typeof UserNotFoundException> = {
+const PRISMA_ERROR_MAP: Record<string, new () => CustomException> = {
   P2025: UserNotFoundException,
 };
 
@@ -22,16 +22,17 @@ export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
         where: { id },
       });
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
         const PrismaErrorClass = PRISMA_ERROR_MAP[error.code];
 
         if (PrismaErrorClass) {
           throw new PrismaErrorClass();
         }
+      } else {
+        throw new InternalServerErrorException(
+          error instanceof Error ? error.message : 'Unknown error',
+        );
       }
-      throw new InternalServerErrorException(
-        error instanceof Error ? error.message : 'Unknown error',
-      );
     }
   }
 }
