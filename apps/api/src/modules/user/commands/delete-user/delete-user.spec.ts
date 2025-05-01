@@ -3,7 +3,7 @@ import { PrismaService } from '@packages/db';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeleteUserCommand } from './delete-user.command';
 import { UserNotFoundException } from '../../exceptions/user.exception';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '@packages/db';
 
 describe('DeleteUserHandler', () => {
   let handler: DeleteUserHandler;
@@ -44,10 +44,13 @@ describe('DeleteUserHandler', () => {
   });
 
   it('should throw UserNotFoundException if user not found (P2025)', async () => {
-    const prismaError = new PrismaClientKnownRequestError('No record found', {
-      code: 'P2025',
-      clientVersion: '3.9.0',
-    });
+    const prismaError = new Prisma.PrismaClientKnownRequestError(
+      'No record found',
+      {
+        code: 'P2025',
+        clientVersion: '3.9.0',
+      },
+    );
 
     prisma.user.delete.mockRejectedValue(prismaError);
 
