@@ -35,7 +35,7 @@ export class SupabaseService {
     const { data, error } = await this.supabase.auth.admin.createUser({
       email,
       password,
-      email_confirm: true,
+      email_confirm: false,
     });
 
     if (error) {
