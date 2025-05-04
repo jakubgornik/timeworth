@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Prisma, PrismaService } from '@packages/db';
 import { DeleteUserCommand } from './delete-user.command';
 import { UserNotFoundException } from '../../exceptions/user.exception';
-import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 import { CustomException } from 'src/shared/exceptions/custom-exception';
 
 // TODO: map other errors, move to utils
@@ -12,8 +12,6 @@ const PRISMA_ERROR_MAP: Record<string, new () => CustomException> = {
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
-  private readonly logger = new Logger(DeleteUserHandler.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({ id }: DeleteUserCommand): Promise<void> {

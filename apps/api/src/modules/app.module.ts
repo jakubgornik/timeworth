@@ -6,6 +6,7 @@ import { PrismaModule, PrismaService } from '@packages/db';
 import { UserModule } from './user/user.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { SupabaseService } from './supabase/supabase.service';
+import { AuthModule } from './auth/auth.module';
 import * as path from 'path';
 @Module({
   imports: [
@@ -13,9 +14,10 @@ import * as path from 'path';
     UserModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: path.resolve(__dirname, '../../.env'), // Use absolute path
+      envFilePath: path.resolve(__dirname, '../../.env'),
     }),
     SupabaseModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, SupabaseService],
