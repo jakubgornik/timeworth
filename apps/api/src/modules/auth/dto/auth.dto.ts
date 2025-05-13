@@ -12,3 +12,5 @@ export class RegisterUserDto implements IRegisterDto {
   @MinLength(6)
   password: string;
 }
+
+export class LoginUserDto extends RegisterUserDto {}
