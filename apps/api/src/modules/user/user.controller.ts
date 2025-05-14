@@ -6,6 +6,17 @@ import { RegisterUserDto } from '../auth/dto/auth.dto';
 export class UserController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post()
+  async register(@Body() registerUserDto: RegisterUserDto) {
+    const user = await this.authService.registerUser(registerUserDto);
+    return user;
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string) {
+    return this.authService.deleteUser(id);
+  }
+
   // These are examples how to work with queries and commands
   // @Get()
   // async getUsers() {
@@ -17,15 +28,4 @@ export class UserController {
   //   return await this.service.deleteUser(id);
   // }
   //
-
-  @Post()
-  async register(@Body() registerUserDto: RegisterUserDto) {
-    const user = await this.authService.registerUser(registerUserDto);
-    return user;
-  }
-
-  @Delete(':id')
-  async deleteUser(@Param('id') id: string) {
-    return this.authService.deleteUser(id);
-  }
 }
