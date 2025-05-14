@@ -81,6 +81,7 @@ export class AuthService {
   async login(dto: LoginUserDto) {
     const { email, password } = dto;
 
+    // validate credentials
     const { data, error } =
       await this.supabaseService.client.auth.signInWithPassword({
         email,
