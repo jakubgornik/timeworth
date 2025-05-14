@@ -9,6 +9,7 @@ export class UserService {
   ) {}
 
   // These are examples how to work with queries and commands
+
   // async getUsers() {
   //   return await this.queryBus.execute<GetUsersQuery, UserDto[]>(
   //     new GetUsersQuery(),
