@@ -8,6 +8,7 @@ import { SupabaseService } from '../supabase/supabase.service';
 import { PrismaService } from '@packages/db';
 import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 @Injectable()
 export class AuthService {
   constructor(
@@ -78,10 +79,9 @@ export class AuthService {
     return { message: 'User deleted successfully' };
   }
 
-  async login(dto: LoginUserDto) {
+  async login(dto: LoginUserDto, res: Response) {
     const { email, password } = dto;
 
-    // validate credentials
     const { data, error } =
       await this.supabaseService.client.auth.signInWithPassword({
         email,
@@ -103,8 +103,15 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     const token = this.jwtService.sign(payload);
 
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      // only for development in prod set to env
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 15 * 1000 * 60, // 1 minute
+    });
+
     return {
-      access_token: token,
       user,
     };
   }
