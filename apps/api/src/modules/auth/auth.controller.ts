@@ -7,17 +7,6 @@ import { Response } from 'express';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // @Post('login')
-  // async login(@Body() dto: LoginUserDto) {
-  //   const loginResponse = await this.authService.login(dto);
-
-  //   if (!loginResponse) {
-  //     throw new UnauthorizedException('Invalid user credentials');
-  //   }
-
-  //   return loginResponse;
-  // }
-
   @Post('login')
   async login(
     @Body() dto: LoginUserDto,
@@ -28,7 +17,6 @@ export class AuthController {
 
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('access_token');
-    return { message: 'Logged out successfully' };
+    return this.authService.logout(res);
   }
 }

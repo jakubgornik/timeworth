@@ -9,6 +9,7 @@ import { PrismaService } from '@packages/db';
 import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -59,26 +60,6 @@ export class AuthService {
     }
   }
 
-  async deleteUser(userId: string) {
-    await this.supabaseService.deleteUser(userId);
-
-    if (!userId) {
-      throw new InternalServerErrorException('Supabase user deletion failed');
-    }
-
-    try {
-      await this.prisma.user.delete({
-        where: { id: userId },
-      });
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Failed to delete Supabase user: ${error.message}`,
-      );
-    }
-
-    return { message: 'User deleted successfully' };
-  }
-
   async login(dto: LoginUserDto, res: Response) {
     const { email, password } = dto;
 
@@ -105,14 +86,38 @@ export class AuthService {
 
     res.cookie('access_token', token, {
       httpOnly: true,
-      // only for development in prod set to env
-      secure: false,
+      secure: false, // only for development in prod set to env
       sameSite: 'lax',
-      maxAge: 15 * 1000 * 60, // 1 minute
+      maxAge: 15 * 1000 * 60, // 15 minute
     });
 
     return {
       user,
     };
+  }
+
+  async logout(res: Response) {
+    res.clearCookie('access_token');
+    return { message: 'Logged out successfully' };
+  }
+
+  async deleteUser(userId: string) {
+    await this.supabaseService.deleteUser(userId);
+
+    if (!userId) {
+      throw new InternalServerErrorException('Supabase user deletion failed');
+    }
+
+    try {
+      await this.prisma.user.delete({
+        where: { id: userId },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to delete Supabase user: ${error.message}`,
+      );
+    }
+
+    return { message: 'User deleted successfully' };
   }
 }
