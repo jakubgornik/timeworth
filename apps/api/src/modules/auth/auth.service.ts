@@ -128,25 +128,25 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token missing');
     }
 
-    const hashedToken = hashToken(refreshToken);
+    const hashedRefreshToken = hashToken(refreshToken);
 
-    const storedToken = await this.prisma.refreshToken.findUnique({
-      where: { token: hashedToken },
+    const storedRefreshToken = await this.prisma.refreshToken.findUnique({
+      where: { token: hashedRefreshToken },
       include: { user: true },
     });
 
     if (
-      !storedToken ||
-      storedToken.revoked ||
-      new Date() > new Date(storedToken.expiresAt)
+      !storedRefreshToken ||
+      storedRefreshToken.revoked ||
+      new Date() > new Date(storedRefreshToken.expiresAt)
     ) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const user = storedToken.user;
+    const user = storedRefreshToken.user;
 
     await this.prisma.refreshToken.update({
-      where: { token: hashedToken },
+      where: { token: hashedRefreshToken },
       data: { revoked: true },
     });
 
