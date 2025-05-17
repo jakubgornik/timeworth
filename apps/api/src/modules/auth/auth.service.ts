@@ -9,6 +9,10 @@ import { PrismaService } from '@packages/db';
 import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+import { randomBytes } from 'crypto';
+import { hashToken } from 'src/shared/utilities/hashToken';
+import { Request } from 'express';
+import { COOKIE_OPTIONS } from 'src/shared/utilities/tokensOptions';
 
 @Injectable()
 export class AuthService {
@@ -73,32 +77,100 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: data.user.id },
-    });
+    const payload = { sub: data.user.id, email: data.user.email };
+    const accessToken = this.jwtService.sign(payload);
 
-    if (!user) {
-      throw new UnauthorizedException('User not found in DB');
-    }
+    const refreshToken = randomBytes(64).toString('hex');
+    const hashedRefreshToken = hashToken(refreshToken);
 
-    const payload = { sub: user.id, email: user.email };
-    const token = this.jwtService.sign(payload);
+    const [user] = await this.prisma.$transaction([
+      this.prisma.user.findUniqueOrThrow({
+        where: { id: data.user.id },
+      }),
+      this.prisma.refreshToken.create({
+        data: {
+          token: hashedRefreshToken,
+          userId: data.user.id,
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        },
+      }),
+    ]);
 
-    res.cookie('access_token', token, {
-      httpOnly: true,
-      secure: false, // only for development in prod set to env
-      sameSite: 'lax',
-      maxAge: 15 * 1000 * 60, // 15 minute
-    });
+    res.cookie('access_token', accessToken, COOKIE_OPTIONS.accessToken);
 
-    return {
-      user,
-    };
+    res.cookie('refresh_token', refreshToken, COOKIE_OPTIONS.refreshToken);
+
+    return { user };
   }
 
-  async logout(res: Response) {
+  async logout(req: Request, res: Response) {
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (refreshToken) {
+      const hashed = hashToken(refreshToken);
+
+      await this.prisma.refreshToken.update({
+        where: { token: hashed },
+        data: { revoked: true },
+      });
+    }
+
     res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+
     return { message: 'Logged out successfully' };
+  }
+
+  async refreshTokens(req: Request, res: Response) {
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token missing');
+    }
+
+    const hashedToken = hashToken(refreshToken);
+
+    const storedToken = await this.prisma.refreshToken.findUnique({
+      where: { token: hashedToken },
+      include: { user: true },
+    });
+
+    if (
+      !storedToken ||
+      storedToken.revoked ||
+      new Date() > new Date(storedToken.expiresAt)
+    ) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = storedToken.user;
+
+    await this.prisma.refreshToken.update({
+      where: { token: hashedToken },
+      data: { revoked: true },
+    });
+
+    const newRefreshToken = randomBytes(64).toString('hex');
+    const newHashedRefreshToken = hashToken(newRefreshToken);
+
+    await this.prisma.refreshToken.create({
+      data: {
+        token: newHashedRefreshToken,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    const newAccessToken = this.jwtService.sign({
+      sub: user.id,
+      email: user.email,
+    });
+
+    res.cookie('access_token', newAccessToken, COOKIE_OPTIONS.accessToken);
+
+    res.cookie('refresh_token', newRefreshToken, COOKIE_OPTIONS.refreshToken);
+
+    return { message: 'Tokens refreshed' };
   }
 
   async deleteUser(userId: string) {
