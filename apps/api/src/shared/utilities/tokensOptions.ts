@@ -3,7 +3,7 @@ export const COOKIE_OPTIONS = {
     httpOnly: true,
     secure: false,
     sameSite: 'lax' as const,
-    maxAge: 1000 * 60 * 15, // 15 minutes
+    maxAge: 1000 * 60 * 1, // 1 minutes
   },
   refreshToken: {
     httpOnly: true,
