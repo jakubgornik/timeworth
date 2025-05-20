@@ -27,7 +27,7 @@ export class UserController {
     private readonly prisma: PrismaService,
   ) {}
 
-  @Post()
+  @Post('register')
   async register(@Body() registerUserDto: RegisterUserDto) {
     const user = await this.authService.registerUser(registerUserDto);
     return user;
