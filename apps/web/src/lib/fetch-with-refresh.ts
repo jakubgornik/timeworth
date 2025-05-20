@@ -1,3 +1,4 @@
+// deprecated  //
 let isRefreshing = false;
 let ongoingRefresh: Promise<Response> | null = null;
 
