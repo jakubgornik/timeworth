@@ -1,5 +1,5 @@
+import api, { resetLogoutState } from "@/lib/axios/axios";
 import { useMutation } from "@tanstack/react-query";
-import api from "@/lib/axios/axios";
 
 export function useLogout() {
   return useMutation({
@@ -8,7 +8,7 @@ export function useLogout() {
       return res.data;
     },
     onSuccess: () => {
-      window.location.href = "/login";
+      resetLogoutState();
     },
   });
 }

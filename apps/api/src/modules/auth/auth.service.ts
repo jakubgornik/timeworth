@@ -87,6 +87,13 @@ export class AuthService {
       this.prisma.user.findUniqueOrThrow({
         where: { id: data.user.id },
       }),
+      this.prisma.refreshToken.updateMany({
+        where: {
+          userId: data.user.id,
+          revoked: false,
+        },
+        data: { revoked: true },
+      }),
       this.prisma.refreshToken.create({
         data: {
           token: hashedRefreshToken,
@@ -135,61 +142,72 @@ export class AuthService {
       include: { user: true },
     });
 
-    if (
-      !storedRefreshToken ||
-      storedRefreshToken.revoked ||
-      new Date() > new Date(storedRefreshToken.expiresAt)
-    ) {
+    if (!storedRefreshToken || storedRefreshToken.revoked) {
       throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    if (new Date() > new Date(storedRefreshToken.expiresAt)) {
+      await this.prisma.refreshToken.update({
+        where: { token: hashedRefreshToken },
+        data: { revoked: true },
+      });
+      throw new UnauthorizedException('Refresh token expired');
     }
 
     const user = storedRefreshToken.user;
 
-    await this.prisma.refreshToken.update({
-      where: { token: hashedRefreshToken },
-      data: { revoked: true },
-    });
-
     const newRefreshToken = randomBytes(64).toString('hex');
     const newHashedRefreshToken = hashToken(newRefreshToken);
-
-    await this.prisma.refreshToken.create({
-      data: {
-        token: newHashedRefreshToken,
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
-    });
-
     const newAccessToken = this.jwtService.sign({
       sub: user.id,
       email: user.email,
     });
 
-    res.cookie('access_token', newAccessToken, COOKIE_OPTIONS.accessToken);
+    try {
+      await this.prisma.$transaction([
+        this.prisma.refreshToken.update({
+          where: { token: hashedRefreshToken },
+          data: { revoked: true },
+        }),
+        this.prisma.refreshToken.create({
+          data: {
+            token: newHashedRefreshToken,
+            userId: user.id,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+          },
+        }),
+      ]);
 
-    res.cookie('refresh_token', newRefreshToken, COOKIE_OPTIONS.refreshToken);
+      res.cookie('access_token', newAccessToken, COOKIE_OPTIONS.accessToken);
+      res.cookie('refresh_token', newRefreshToken, COOKIE_OPTIONS.refreshToken);
 
-    return { message: 'Tokens refreshed' };
+      return { message: 'Tokens refreshed successfully' };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Token refresh failed, error: ${error}`,
+      );
+    }
   }
 
   async deleteUser(userId: string) {
-    await this.supabaseService.deleteUser(userId);
-
     if (!userId) {
       throw new InternalServerErrorException('Supabase user deletion failed');
     }
 
     try {
-      await this.prisma.user.delete({
-        where: { id: userId },
+      await this.prisma.$transaction(async (tx) => {
+        await tx.user.delete({
+          where: { id: userId },
+        });
+
+        await this.supabaseService.deleteUser(userId);
       });
+
+      return { message: 'User deleted successfully' };
     } catch (error) {
       throw new InternalServerErrorException(
-        `Failed to delete Supabase user: ${error.message}`,
+        `Failed to delete user: ${error.message}`,
       );
     }
-
-    return { message: 'User deleted successfully' };
   }
 }
