@@ -1,14 +1,40 @@
 import axios from "axios";
-import type { AxiosResponse } from "axios";
+import type {
+  AxiosResponse,
+  AxiosError,
+  InternalAxiosRequestConfig,
+} from "axios";
 
-let isRefreshing = false;
-let refreshPromise: Promise<AxiosResponse> | null = null;
+interface QueuedRequestCallbacks {
+  resolve: (value: AxiosResponse) => void;
+  reject: (error: AxiosError) => void;
+}
+
+let queuedRequestCallbacks: QueuedRequestCallbacks[] = [];
+let ongoingRefreshRequest: Promise<AxiosResponse> | null = null;
+let isTokenRefreshing = false;
 let hasLoggedOut = false;
 
 const api = axios.create({
   baseURL: "/",
   withCredentials: true,
+  timeout: 10000, // 10 second timeout
 });
+
+const processQueuedRequests = (
+  error: AxiosError | null,
+  response: AxiosResponse | null = null
+) => {
+  queuedRequestCallbacks.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error);
+    } else if (response) {
+      resolve(response);
+    }
+  });
+
+  queuedRequestCallbacks = [];
+};
 
 const logoutAndRedirect = async () => {
   if (hasLoggedOut) return;
@@ -21,47 +47,72 @@ const logoutAndRedirect = async () => {
   }
 };
 
-const refreshToken = async () => {
-  if (isRefreshing) return refreshPromise;
+const refreshToken = async (): Promise<AxiosResponse> => {
+  if (isTokenRefreshing && ongoingRefreshRequest) {
+    return new Promise<AxiosResponse>((resolve, reject) => {
+      queuedRequestCallbacks.push({ resolve, reject });
+    });
+  }
 
-  isRefreshing = true;
+  isTokenRefreshing = true;
 
-  refreshPromise = api
+  ongoingRefreshRequest = api
     .post("/auth/refresh")
-    .catch(async () => {
+    .then((response) => {
+      processQueuedRequests(null, response);
+      return response;
+    })
+    .catch(async (error: AxiosError) => {
+      processQueuedRequests(error, null);
       await logoutAndRedirect();
       throw new Error("Token refresh failed");
     })
     .finally(() => {
-      isRefreshing = false;
-      refreshPromise = null;
+      isTokenRefreshing = false;
+      ongoingRefreshRequest = null;
     });
 
-  return refreshPromise;
-};
-
-export const resetLogoutState = () => {
-  hasLoggedOut = false;
+  return ongoingRefreshRequest;
 };
 
 api.interceptors.response.use(
-  (res) => res,
-  async (err) => {
-    const req = err.config;
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
-    if (err.response?.status === 401 && !req._retry) {
-      req._retry = true;
+    if (originalRequest?.url?.includes("/auth/")) {
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isTokenRefreshing) {
+        return new Promise<AxiosResponse>((resolve, reject) => {
+          queuedRequestCallbacks.push({
+            resolve: (response) => resolve(response),
+            reject: (err) => reject(err),
+          });
+        });
+      }
+
+      originalRequest._retry = true;
 
       try {
         await refreshToken();
-        return api(req);
-      } catch (refreshErr) {
-        return Promise.reject(refreshErr);
+        return api(originalRequest);
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
       }
     }
 
-    return Promise.reject(err);
+    return Promise.reject(error);
   }
 );
+
+export const resetLogoutState = () => {
+  hasLoggedOut = false;
+  queuedRequestCallbacks = [];
+};
 
 export default api;

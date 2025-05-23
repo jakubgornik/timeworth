@@ -6,8 +6,10 @@ export function useLogin() {
   return useMutation({
     mutationFn: async (data: ILoginDto) => {
       const res = await api.post("/auth/login", data);
-      resetLogoutState();
       return res.data;
+    },
+    onSuccess: () => {
+      resetLogoutState();
     },
   });
 }
