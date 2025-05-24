@@ -1,14 +1,23 @@
-import api, { resetLogoutState } from "@/lib/axios/axios";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import api, { resetLogoutState } from "@/lib/axios/axios";
+import {
+  IUserCredentialsDto,
+  IUserDto as IRegisterResponseDto,
+} from "@packages/types";
+import { useNavigate } from "react-router";
 
-export function useLogout() {
-  return useMutation({
-    mutationFn: async () => {
-      const res = await api.post("/auth/logout");
+export function useRegister() {
+  const navigate = useNavigate();
+
+  return useMutation<IRegisterResponseDto, AxiosError, IUserCredentialsDto>({
+    mutationFn: async (data: IUserCredentialsDto) => {
+      const res = await api.post("/auth/register", data);
       return res.data;
     },
     onSuccess: () => {
       resetLogoutState();
+      navigate("/login", { replace: true });
     },
   });
 }

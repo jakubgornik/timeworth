@@ -27,15 +27,15 @@ export class UserController {
     private readonly prisma: PrismaService,
   ) {}
 
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string) {
+    return this.authService.deleteUser(id);
+  }
+
   @Post('register')
   async register(@Body() registerUserDto: RegisterUserDto) {
     const user = await this.authService.registerUser(registerUserDto);
     return user;
-  }
-
-  @Delete(':id')
-  async deleteUser(@Param('id') id: string) {
-    return this.authService.deleteUser(id);
   }
 
   @UseGuards(AuthGuard('jwt'))
