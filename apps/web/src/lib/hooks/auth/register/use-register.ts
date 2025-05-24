@@ -1,12 +1,22 @@
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import api from "@/lib/axios/axios";
-import { IRegisterDto } from "@packages/types";
+import {
+  IUserCredentialsDto,
+  IUserDto as IRegisterResponseDto,
+} from "@packages/types";
+import { useNavigate } from "react-router";
 
 export function useRegister() {
-  return useMutation({
-    mutationFn: async (data: IRegisterDto) => {
-      const res = await api.post("/user/register", data);
+  const navigate = useNavigate();
+
+  return useMutation<IRegisterResponseDto, AxiosError, IUserCredentialsDto>({
+    mutationFn: async (data: IUserCredentialsDto) => {
+      const res = await api.post("/auth/register", data);
       return res.data;
+    },
+    onSuccess: () => {
+      navigate("/login", { replace: true });
     },
   });
 }

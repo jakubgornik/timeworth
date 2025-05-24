@@ -107,7 +107,7 @@ export class AuthService {
 
     res.cookie('refresh_token', refreshToken, COOKIE_OPTIONS.refreshToken);
 
-    return { user };
+    return user;
   }
 
   async logout(req: Request, res: Response) {

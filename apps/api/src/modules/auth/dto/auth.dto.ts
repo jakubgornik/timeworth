@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IRegisterDto } from '@packages/types';
+import { IUserCredentialsDto } from '@packages/types';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
-export class RegisterUserDto implements IRegisterDto {
+export class RegisterUserDto implements IUserCredentialsDto {
   @ApiProperty()
   @IsEmail()
   email: string;
