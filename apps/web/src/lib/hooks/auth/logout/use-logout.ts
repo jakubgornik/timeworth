@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import api, { resetLogoutState } from "@/lib/axios/axios";
 import { useNavigate } from "react-router";
@@ -9,6 +9,7 @@ interface ILogoutResponseDto {
 
 export function useLogout() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   return useMutation<ILogoutResponseDto, AxiosError, void>({
     mutationFn: async () => {
@@ -17,6 +18,7 @@ export function useLogout() {
     },
     onSuccess: () => {
       resetLogoutState();
+      queryClient.clear();
       navigate("/login", { replace: true });
     },
   });

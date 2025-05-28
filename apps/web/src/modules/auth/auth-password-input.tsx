@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import FormInputError from "@/components/form-input-error";
 
-interface SignupPasswordFieldProps<
+interface AuthPasswordFieldProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {
@@ -23,7 +23,7 @@ interface SignupPasswordFieldProps<
   error?: string;
 }
 
-export default function SignupPasswordFieldInput<
+export default function AuthPasswordFieldInput<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
@@ -31,7 +31,7 @@ export default function SignupPasswordFieldInput<
   name,
   label,
   error,
-}: SignupPasswordFieldProps<TFieldValues, TName>) {
+}: AuthPasswordFieldProps<TFieldValues, TName>) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
