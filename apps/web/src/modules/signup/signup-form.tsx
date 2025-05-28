@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-
 import SubmitFormButton from "@/components/submit-form-button";
 import {
   AuthenticationFormSchema,
@@ -12,9 +10,11 @@ import {
 } from "./signup-form.validation";
 import SignupPasswordFieldInput from "./inputs/signup-password-input";
 import SignupEmailFieldInput from "./inputs/signup-email-input";
+import { useRegister } from "@/lib/hooks/auth/register/use-register";
 
 export default function SignUpForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutate: register } = useRegister();
 
   const form = useForm<AuthenticationFormSchema>({
     resolver: zodResolver(authenticationSchema),
@@ -22,15 +22,21 @@ export default function SignUpForm() {
       email: "",
       password: "",
     },
-    mode: "onChange",
   });
 
   const onSubmit = (data: AuthenticationFormSchema) => {
     setIsSubmitting(true);
-    setTimeout(() => {
-      console.log(data);
-      setIsSubmitting(false);
-    }, 1500);
+
+    register(data, {
+      onSuccess: () => {
+        form.reset();
+        setIsSubmitting(false);
+      },
+      onError: () => {
+        // todo add notification
+        setIsSubmitting(false);
+      },
+    });
   };
 
   const emailError = form.formState.errors.email?.message;

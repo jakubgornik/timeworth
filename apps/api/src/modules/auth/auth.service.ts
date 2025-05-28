@@ -54,7 +54,12 @@ export class AuthService {
         },
       });
 
-      return user;
+      return {
+        id: user.id,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
     } catch (error) {
       await this.supabaseService.deleteUser(userId);
 
@@ -107,7 +112,12 @@ export class AuthService {
 
     res.cookie('refresh_token', refreshToken, COOKIE_OPTIONS.refreshToken);
 
-    return user;
+    return {
+      id: user.id,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 
   async logout(req: Request, res: Response) {

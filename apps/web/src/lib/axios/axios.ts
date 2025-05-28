@@ -16,7 +16,7 @@ let isTokenRefreshing = false;
 let hasLoggedOut = false;
 
 const api = axios.create({
-  baseURL: "/",
+  baseURL: "http://localhost:3000/",
   withCredentials: true,
   timeout: 10000, // 10 second timeout
 });
