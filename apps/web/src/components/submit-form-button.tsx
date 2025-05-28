@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { AnimatePresence, motion } from "motion/react";
 import {
   buttonContentVariants,
   spinnerVariants,
-} from "@/lib/animation-variants";
+} from "@/lib/animations/animation-variants";
+import { AnimatePresence, motion } from "motion/react";
 
 type SubmitFormButtonProps = {
   isSubmitting: boolean;

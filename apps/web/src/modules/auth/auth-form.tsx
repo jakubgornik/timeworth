@@ -8,10 +8,10 @@ import {
   AuthenticationFormSchema,
   authenticationSchema,
 } from "./auth-form.validation";
-import { useRegister } from "@/lib/hooks/auth/register/use-register";
 import AuthPasswordFieldInput from "./auth-password-input";
 import AuthEmailFieldInput from "./auth-email-input";
-import { useLogin } from "@/lib/hooks/auth/login/use-login";
+import { useRegister } from "@/hooks/auth/register/use-register";
+import { useLogin } from "@/hooks/auth/login/use-login";
 
 interface AuthFormProps {
   variant: "login" | "register";

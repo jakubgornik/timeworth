@@ -1,10 +1,10 @@
 import { Card } from "@/components/ui/card";
-import { formContainerVariants } from "@/lib/animation-variants";
 import { motion } from "motion/react";
 
 import AuthForm from "../auth-form";
 import LoginFormCardHeader from "./login-form-card-header";
 import LoginFormCardInfo from "./login-form-card-info";
+import { formContainerVariants } from "@/lib/animations/animation-variants";
 
 export function LoginFormCard() {
   return (

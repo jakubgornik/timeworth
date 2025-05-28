@@ -1,10 +1,10 @@
 import { Card } from "@/components/ui/card";
-import { formContainerVariants } from "@/lib/animation-variants";
 import { motion } from "motion/react";
 
 import AuthForm from "../auth-form";
 import SignUpFormCardHeader from "./singup-form-card-header";
 import SignUpFormCardInfo from "./signup-form-card-info";
+import { formContainerVariants } from "@/lib/animations/animation-variants";
 
 export function SignUpFormCard() {
   return (
