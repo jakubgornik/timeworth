@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useLogout } from "@/lib/hooks/auth/logout/use-logout";
+import { useLogout } from "@/hooks/auth/logout/use-logout";
 
 export default function DashboardPage() {
   const { mutate: logout } = useLogout();

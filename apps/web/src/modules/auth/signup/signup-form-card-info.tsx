@@ -1,4 +1,4 @@
-import { signInTextVariants } from "@/lib/animation-variants";
+import { signInTextVariants } from "@/lib/animations/animation-variants";
 import { motion } from "motion/react";
 import { Link } from "react-router";
 

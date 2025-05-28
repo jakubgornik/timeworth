@@ -1,4 +1,4 @@
-import { useCurrentUser } from "@/lib/hooks/user/use-current-user";
+import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { JSX } from "react";
 import { Navigate } from "react-router";
 

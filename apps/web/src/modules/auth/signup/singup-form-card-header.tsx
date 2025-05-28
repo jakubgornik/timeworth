@@ -1,5 +1,5 @@
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { sparklesVariants } from "@/lib/animation-variants";
+import { sparklesVariants } from "@/lib/animations/animation-variants";
 import { Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 

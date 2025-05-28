@@ -1,4 +1,4 @@
-import { errorMessageVariants } from "@/lib/animation-variants";
+import { errorMessageVariants } from "@/lib/animations/animation-variants";
 import { motion } from "motion/react";
 
 export default function FormInputError({
