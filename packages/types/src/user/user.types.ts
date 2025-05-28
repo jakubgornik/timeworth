@@ -10,3 +10,14 @@ export interface IUserCredentialsDto {
   email: string;
   password: string;
 }
+
+export interface ICurrentUser {
+  id: string;
+  email: string;
+  memberships: {
+    organization: {
+      id: string;
+      name: string;
+    };
+  }[];
+}

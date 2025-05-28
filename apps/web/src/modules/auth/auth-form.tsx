@@ -7,14 +7,20 @@ import SubmitFormButton from "@/components/submit-form-button";
 import {
   AuthenticationFormSchema,
   authenticationSchema,
-} from "./signup-form.validation";
-import SignupPasswordFieldInput from "./inputs/signup-password-input";
-import SignupEmailFieldInput from "./inputs/signup-email-input";
+} from "./auth-form.validation";
 import { useRegister } from "@/lib/hooks/auth/register/use-register";
+import AuthPasswordFieldInput from "./auth-password-input";
+import AuthEmailFieldInput from "./auth-email-input";
+import { useLogin } from "@/lib/hooks/auth/login/use-login";
 
-export default function SignUpForm() {
+interface AuthFormProps {
+  variant: "login" | "register";
+}
+
+export default function AuthForm({ variant }: AuthFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { mutate: register } = useRegister();
+  const { mutate: login } = useLogin();
 
   const form = useForm<AuthenticationFormSchema>({
     resolver: zodResolver(authenticationSchema),
@@ -22,21 +28,37 @@ export default function SignUpForm() {
       email: "",
       password: "",
     },
+    mode: "onChange",
   });
 
   const onSubmit = (data: AuthenticationFormSchema) => {
     setIsSubmitting(true);
 
-    register(data, {
-      onSuccess: () => {
-        form.reset();
-        setIsSubmitting(false);
-      },
-      onError: () => {
-        // todo add notification
-        setIsSubmitting(false);
-      },
-    });
+    if (variant === "login") {
+      console.log("Logging in with data:", data);
+      login(data, {
+        onSuccess: () => {
+          form.reset();
+          setIsSubmitting(false);
+        },
+        onError: () => {
+          // todo add notification
+          setIsSubmitting(false);
+        },
+      });
+    } else {
+      console.log("Registering with data:", data);
+      register(data, {
+        onSuccess: () => {
+          form.reset();
+          setIsSubmitting(false);
+        },
+        onError: () => {
+          // todo add notification
+          setIsSubmitting(false);
+        },
+      });
+    }
   };
 
   const emailError = form.formState.errors.email?.message;
@@ -46,12 +68,12 @@ export default function SignUpForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
-          <SignupEmailFieldInput
+          <AuthEmailFieldInput
             control={form.control}
             name="email"
             error={emailError}
           />
-          <SignupPasswordFieldInput
+          <AuthPasswordFieldInput
             control={form.control}
             name="password"
             label="Password"
@@ -59,7 +81,10 @@ export default function SignUpForm() {
           />
         </CardContent>
         <CardFooter className="mt-4">
-          <SubmitFormButton buttonText="Sign Up" isSubmitting={isSubmitting} />
+          <SubmitFormButton
+            buttonText={variant === "login" ? "Sign in" : "Sign up"}
+            isSubmitting={isSubmitting}
+          />
         </CardFooter>
       </form>
     </Form>

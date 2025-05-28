@@ -1,5 +1,6 @@
 import { signInTextVariants } from "@/lib/animation-variants";
 import { motion } from "motion/react";
+import { Link } from "react-router";
 
 export default function SignUpFormCardInfo() {
   return (
@@ -7,13 +8,12 @@ export default function SignUpFormCardInfo() {
       variants={signInTextVariants}
       initial="hidden"
       animate="visible"
-      className="p-4 text-center text-sm text-gray-500"
+      className="p-4 text-center text-sm flex gap-1 justify-center"
     >
-      Already have an account?
-      {/* TODO: change to Link comp */}
-      <a href="#" className="font-medium ml-1">
+      <p className="text-gray-500">Already have an account?</p>
+      <Link to="/login" className="font-medium ml-1 ">
         Sign in
-      </a>
+      </Link>
     </motion.div>
   );
 }

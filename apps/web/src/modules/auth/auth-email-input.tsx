@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import FormInputError from "@/components/form-input-error";
 
-interface SignupEmailInputProps<
+interface AuthEmailInputProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {
@@ -19,10 +19,10 @@ interface SignupEmailInputProps<
   error?: string;
 }
 
-export default function SignupEmailFieldInput<
+export default function AuthEmailFieldInput<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({ control, name, error }: SignupEmailInputProps<TFieldValues, TName>) {
+>({ control, name, error }: AuthEmailInputProps<TFieldValues, TName>) {
   return (
     <FormField
       name={name}
