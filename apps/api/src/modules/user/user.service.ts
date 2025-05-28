@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
-import { GetUsersQuery } from './queries/get-users/get-users.query';
-import { DeleteUserCommand } from './commands/delete-user/delete-user.command';
 
 @Injectable()
 export class UserService {
@@ -11,15 +8,17 @@ export class UserService {
     private readonly commandBus: CommandBus,
   ) {}
 
-  async getUsers() {
-    return await this.queryBus.execute<GetUsersQuery, UserDto[]>(
-      new GetUsersQuery(),
-    );
-  }
+  // These are examples how to work with queries and commands
 
-  async deleteUser(id: string) {
-    return await this.commandBus.execute<DeleteUserCommand, void>(
-      new DeleteUserCommand(id),
-    );
-  }
+  // async getUsers() {
+  //   return await this.queryBus.execute<GetUsersQuery, UserDto[]>(
+  //     new GetUsersQuery(),
+  //   );
+  // }
+
+  // async deleteUser(id: string) {
+  //   return await this.commandBus.execute<DeleteUserCommand, void>(
+  //     new DeleteUserCommand(id),
+  //   );
+  // }
 }

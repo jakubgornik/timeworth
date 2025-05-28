@@ -5,6 +5,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { GetUsersQueryHandler } from './queries/get-users/get-users.handler';
 import { PrismaModule } from '@packages/db';
 import { DeleteUserHandler } from './commands/delete-user/delete-user.handler';
+import { AuthModule } from '../auth/auth.module';
 
 const services = [UserService];
 
@@ -16,6 +17,6 @@ const commandHandlers = [DeleteUserHandler];
   controllers: [UserController],
   providers: [...services, ...queryHandlers, ...commandHandlers],
   exports: [UserService],
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, AuthModule],
 })
 export class UserModule {}

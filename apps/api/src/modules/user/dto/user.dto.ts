@@ -6,11 +6,14 @@ export class UserDto implements IUserDto {
   id: string;
 
   @ApiProperty()
-  createdAt: Date;
-
-  @ApiProperty()
   email: string;
 
   @ApiPropertyOptional()
   name?: string | null;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
 }
