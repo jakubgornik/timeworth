@@ -12,7 +12,7 @@ export function useRegister() {
 
   return useMutation<IRegisterResponseDto, AxiosError, IUserCredentialsDto>({
     mutationFn: async (data: IUserCredentialsDto) => {
-      const res = await api.post("/auth/register", data);
+      const res = await api.post("/user/register", data);
       return res.data;
     },
     onSuccess: () => {
