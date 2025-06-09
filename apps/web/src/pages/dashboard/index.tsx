@@ -1,13 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { useLogout } from "@/hooks/auth/logout/use-logout";
+import Layout from "@/components/layout";
 
 export default function DashboardPage() {
-  const { mutate: logout } = useLogout();
-
   return (
-    <div>
-      <h1>Dashboard Page</h1>
-      <Button onClick={() => logout()}>Logout</Button>
-    </div>
+    <Layout>
+      <div className="h-full flex flex-col items-center space-y-3 justify-center bg-primary">
+        <h1>Dashboard Page</h1>
+      </div>
+    </Layout>
   );
 }

@@ -73,6 +73,23 @@ const signInTextVariants: Variants = {
   },
 };
 
+const demoCardVariants = {
+  hidden: {
+    opacity: 0,
+    y: -10,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 1200,
+      damping: 30,
+      delay: 0.3,
+    },
+  },
+};
+
 export {
   formContainerVariants,
   sparklesVariants,
@@ -80,4 +97,5 @@ export {
   buttonContentVariants,
   spinnerVariants,
   signInTextVariants,
+  demoCardVariants,
 };
