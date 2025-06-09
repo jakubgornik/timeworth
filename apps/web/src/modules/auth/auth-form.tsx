@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardContent, CardFooter } from "@/components/ui/card";
@@ -15,9 +15,10 @@ import { useLogin } from "@/hooks/auth/login/use-login";
 
 interface AuthFormProps {
   variant: "login" | "register";
+  populateDemo?: boolean;
 }
 
-export default function AuthForm({ variant }: AuthFormProps) {
+export default function AuthForm({ variant, populateDemo }: AuthFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { mutate: register } = useRegister();
   const { mutate: login } = useLogin();
@@ -63,6 +64,13 @@ export default function AuthForm({ variant }: AuthFormProps) {
 
   const emailError = form.formState.errors.email?.message;
   const passwordError = form.formState.errors.password?.message;
+
+  useEffect(() => {
+    if (populateDemo) {
+      form.setValue("email", "");
+      form.setValue("password", "");
+    }
+  }, [populateDemo, form]);
 
   return (
     <Form {...form}>
