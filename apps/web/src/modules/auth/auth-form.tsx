@@ -67,8 +67,8 @@ export default function AuthForm({ variant, populateDemo }: AuthFormProps) {
 
   useEffect(() => {
     if (populateDemo) {
-      form.setValue("email", "");
-      form.setValue("password", "");
+      form.setValue("email", "test@gmail.com");
+      form.setValue("password", "Aaaaaaaa1");
     }
   }, [populateDemo, form]);
 

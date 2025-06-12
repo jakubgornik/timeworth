@@ -6,6 +6,7 @@ import {
   IUserDto as ILoginResponseDto,
 } from "@packages/types";
 import { useNavigate } from "react-router";
+import { ROUTES } from "@/routes/routes";
 
 export function useLogin() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export function useLogin() {
       return res.data;
     },
     onSuccess: () => {
-      navigate("/dashboard", { replace: true });
+      navigate(ROUTES.DASHBOARD, { replace: true });
     },
   });
 }
