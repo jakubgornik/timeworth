@@ -1,3 +1,4 @@
+import { ROUTES } from "@/routes/routes";
 import axios from "axios";
 import type {
   AxiosResponse,
@@ -43,7 +44,7 @@ const logoutAndRedirect = async () => {
   try {
     await api.post("/auth/logout");
   } finally {
-    window.location.href = "/login";
+    window.location.replace(ROUTES.LOGIN);
   }
 };
 

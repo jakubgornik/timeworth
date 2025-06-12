@@ -6,6 +6,7 @@ import {
   IUserDto as IRegisterResponseDto,
 } from "@packages/types";
 import { useNavigate } from "react-router";
+import { ROUTES } from "@/routes/routes";
 
 export function useRegister() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export function useRegister() {
       return res.data;
     },
     onSuccess: () => {
-      navigate("/login", { replace: true });
+      navigate(ROUTES.LOGIN, { replace: true });
     },
   });
 }

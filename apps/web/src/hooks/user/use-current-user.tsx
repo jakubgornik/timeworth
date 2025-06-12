@@ -6,7 +6,9 @@ export function useCurrentUser() {
   return useQuery<ICurrentUser, Error>({
     queryKey: ["currentUser"],
     queryFn: async () => {
-      const res = await api.get<ICurrentUser>("/user/me");
+      const res = await api.get<ICurrentUser>("/user/me", {
+        withCredentials: true,
+      });
       return res.data;
     },
   });

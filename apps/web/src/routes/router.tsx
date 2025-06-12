@@ -3,13 +3,13 @@ import SignupPage from "@/pages/signup";
 import DashboardPage from "@/pages/dashboard";
 import { createBrowserRouter } from "react-router";
 import { ProtectedRoute } from "./protected-route";
+import { ROUTES } from "./routes";
 
 export const router = createBrowserRouter([
-  { path: "/", element: <SignupPage /> }, // temporary, should be welocme page
-  // { path: "/signup", element: <SignupPage /> },
-  { path: "/login", element: <LoginPage /> },
+  { path: ROUTES.HOME, element: <SignupPage /> }, // temporary
+  { path: ROUTES.LOGIN, element: <LoginPage /> },
   {
-    path: "/dashboard",
+    path: ROUTES.DASHBOARD,
     element: (
       <ProtectedRoute>
         <DashboardPage />
