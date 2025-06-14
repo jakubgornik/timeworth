@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios/axios";
-import { ICurrentUser } from "@packages/types";
+import { ICurrentUserDto } from "@packages/types";
 
 export function useCurrentUser() {
-  return useQuery<ICurrentUser, Error>({
+  return useQuery<ICurrentUserDto, Error>({
     queryKey: ["currentUser"],
     queryFn: async () => {
-      const res = await api.get<ICurrentUser>("/user/me", {
+      const res = await api.get<ICurrentUserDto>("/user/me", {
         withCredentials: true,
       });
       return res.data;

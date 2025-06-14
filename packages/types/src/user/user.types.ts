@@ -1,3 +1,5 @@
+import { IMembershipDto } from "../membership";
+
 export interface IUserDto {
   id: string;
   email: string;
@@ -11,13 +13,6 @@ export interface IUserCredentialsDto {
   password: string;
 }
 
-export interface ICurrentUser {
-  id: string;
-  email: string;
-  memberships: {
-    organization: {
-      id: string;
-      name: string;
-    };
-  }[];
+export interface ICurrentUserDto extends IUserDto {
+  memberships: IMembershipDto[];
 }
