@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CardContent, CardFooter } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import SubmitFormButton from "@/components/submit-form-button";
 import {
@@ -75,7 +74,7 @@ export default function AuthForm({ variant, populateDemo }: AuthFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <CardContent className="space-y-4">
+        <div className="px-6 space-y-4">
           <AuthEmailFieldInput
             control={form.control}
             name="email"
@@ -87,13 +86,13 @@ export default function AuthForm({ variant, populateDemo }: AuthFormProps) {
             label="Password"
             error={passwordError}
           />
-        </CardContent>
-        <CardFooter className="mt-4">
+        </div>
+        <div className="flex items-center px-6 [.border-t]:pt-6 mt-4">
           <SubmitFormButton
             buttonText={variant === "login" ? "Sign in" : "Sign up"}
             isSubmitting={isSubmitting}
           />
-        </CardFooter>
+        </div>
       </form>
     </Form>
   );
