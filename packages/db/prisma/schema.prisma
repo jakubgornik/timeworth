@@ -22,10 +22,14 @@ model User {
 }
 
 model Organization {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  id         String   @id @default(cuid())
+  name       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt()
+  inviteCode String   @unique
+  industry   String?
+  size       String?
+  address    String?
 
   memberships Membership[]
   activities  Activity[]

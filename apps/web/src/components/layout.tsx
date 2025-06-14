@@ -24,7 +24,7 @@ function MobileLayoutNavigation({ children }: { children: React.ReactNode }) {
         <h1 className="text-2xl font-bold">Timeworth</h1>
         <div className="w-8" />
       </nav>
-      <main className="flex flex-1 flex-col gap-4">{children}</main>
+      <main className="flex flex-1 flex-col">{children}</main>
     </SidebarInset>
   );
 }
