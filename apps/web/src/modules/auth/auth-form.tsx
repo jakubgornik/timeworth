@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
@@ -14,10 +14,9 @@ import { useLogin } from "@/hooks/auth/login/use-login";
 
 interface AuthFormProps {
   variant: "login" | "register";
-  populateDemo?: boolean;
 }
 
-export default function AuthForm({ variant, populateDemo }: AuthFormProps) {
+export default function AuthForm({ variant }: AuthFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { mutate: register } = useRegister();
   const { mutate: login } = useLogin();
@@ -35,7 +34,6 @@ export default function AuthForm({ variant, populateDemo }: AuthFormProps) {
     setIsSubmitting(true);
 
     if (variant === "login") {
-      console.log("Logging in with data:", data);
       login(data, {
         onSuccess: () => {
           form.reset();
@@ -47,7 +45,6 @@ export default function AuthForm({ variant, populateDemo }: AuthFormProps) {
         },
       });
     } else {
-      console.log("Registering with data:", data);
       register(data, {
         onSuccess: () => {
           form.reset();
@@ -63,13 +60,6 @@ export default function AuthForm({ variant, populateDemo }: AuthFormProps) {
 
   const emailError = form.formState.errors.email?.message;
   const passwordError = form.formState.errors.password?.message;
-
-  useEffect(() => {
-    if (populateDemo) {
-      form.setValue("email", "test@gmail.com");
-      form.setValue("password", "Aaaaaaaa1");
-    }
-  }, [populateDemo, form]);
 
   return (
     <Form {...form}>
