@@ -9,13 +9,15 @@ import {
   demoCardVariants,
 } from "@/lib/animations/animation-variants";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useLogin } from "@/hooks/auth/login/use-login";
+import { AuthenticationFormSchema } from "../auth-form.validation";
 
 export function LoginFormCard() {
-  const [shouldPopulate, setShouldPopulate] = useState(false);
+  const { mutate: login } = useLogin();
 
-  const handlePopulate = () => {
-    setShouldPopulate(true);
+  const demoAccountdata: AuthenticationFormSchema = {
+    email: "",
+    password: "",
   };
 
   return (
@@ -28,7 +30,7 @@ export function LoginFormCard() {
       >
         <Card className="border-none shadow-xl backdrop-blur-sm">
           <LoginFormCardHeader />
-          <AuthForm variant="login" populateDemo={shouldPopulate} />
+          <AuthForm variant="login" />
           <LoginFormCardInfo />
         </Card>
         {/* TODO: create demo account, fetch from db */}
@@ -41,8 +43,21 @@ export function LoginFormCard() {
             <span className="text-sm text-center font-medium">
               Use demo account
             </span>
-            <Button variant="outline" size="sm" onClick={handlePopulate}>
-              Populate
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                login(demoAccountdata, {
+                  onSuccess: () => {
+                    // todo add notification
+                  },
+                  onError: () => {
+                    // todo add notification
+                  },
+                })
+              }
+            >
+              Sign in
             </Button>
           </Card>
         </motion.div>
