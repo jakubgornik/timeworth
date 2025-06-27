@@ -16,8 +16,8 @@ export function LoginFormCard() {
   const { mutate: login } = useLogin();
 
   const demoAccountdata: AuthenticationFormSchema = {
-    email: "",
-    password: "",
+    email: "test@test.com",
+    password: "testpassword123",
   };
 
   return (
