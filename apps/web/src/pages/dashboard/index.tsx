@@ -12,10 +12,10 @@ export default function DashboardPage() {
   const currentUser = useCurrentUser();
 
   const isOnboarded = useMemo(
-    () => (currentUser.data?.memberships ?? []).length > 0,
-    [currentUser.data?.memberships]
+    () => currentUser.data?.organization,
+    [currentUser.data?.organization]
   );
-
+  console.log(currentUser.data);
   return (
     <Layout>
       <SectionHeader title="Dashboard Page" />

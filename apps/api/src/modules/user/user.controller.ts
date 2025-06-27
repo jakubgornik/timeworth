@@ -45,10 +45,17 @@ export class UserController {
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: {
-        memberships: {
-          include: { organization: true },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        organization: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
+        role: true,
       },
     });
 
