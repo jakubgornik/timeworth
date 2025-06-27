@@ -9,16 +9,23 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id        String   @id // it will match Supabase Auth UUID
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+enum UserRole {
+  MANAGER
+  EMPLOYEE
+}
 
+model User {
+  id             String   @id // it will match Supabase Auth UUID
+  email          String   @unique
+  name           String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt()
+  organizationId String?
+
+  organization  Organization?  @relation(fields: [organizationId], references: [id])
+  role          UserRole       @default(EMPLOYEE)
+  workEntries   WorkEntry[]
   refreshTokens RefreshToken[]
-  memberships   Membership[]
-  activities    Activity[]
 }
 
 model Organization {
@@ -31,56 +38,31 @@ model Organization {
   size       String?
   address    String?
 
-  memberships Membership[]
-  activities  Activity[]
+  members     User[]
+  workEntries WorkEntry[]
 }
 
-model Membership {
-  id             String   @id @default(cuid())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt()
-  organizationId String
+model WorkEntry {
+  id          String    @id @default(cuid())
+  description String?
+  startedAt   DateTime
+  endedAt     DateTime?
+  hoursWorked Float?
+  hourlyRate  Float?
+  billable    Boolean   @default(true)
+  approved    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt()
+
   userId         String
+  organizationId String
+  projectId      String? // TODO: link to projects
 
   user         User         @relation(fields: [userId], references: [id])
   organization Organization @relation(fields: [organizationId], references: [id])
-  role         UserRole
 
-  @@unique([userId, organizationId])
-}
-
-model Activity {
-  id             String    @id @default(cuid())
-  description    String?
-  startedAt      DateTime
-  endedAt        DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt()
-  userId         String
-  organizationId String
-
-  user         User         @relation(fields: [userId], references: [id])
-  organization Organization @relation(fields: [organizationId], references: [id])
-  itemType     ActivityType
-}
-
-enum UserRole {
-  OWNER
-  WORKER
-}
-
-enum ActivityType {
-  WORK
-  TIMEOFF
-  DELEGATION
-  SICK_LEAVE
-  HOLIDAY
-  UNPAID_LEAVE
-  MATERNITY_LEAVE
-  PATERNITY_LEAVE
-  MILITARY_LEAVE
-  ONBOARDING
-  TRAINING
+  @@index([userId, organizationId])
+  @@index([startedAt, endedAt])
 }
 
 model RefreshToken {
