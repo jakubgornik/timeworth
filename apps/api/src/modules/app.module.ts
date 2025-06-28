@@ -7,7 +7,9 @@ import { UserModule } from './user/user.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { SupabaseService } from './supabase/supabase.service';
 import { AuthModule } from './auth/auth.module';
+import { OrganizationModule } from './organization/organization.module';
 import * as path from 'path';
+
 @Module({
   imports: [
     PrismaModule,
@@ -18,6 +20,7 @@ import * as path from 'path';
     }),
     SupabaseModule,
     AuthModule,
+    OrganizationModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, SupabaseService],

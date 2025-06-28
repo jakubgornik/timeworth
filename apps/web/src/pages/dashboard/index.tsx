@@ -11,11 +11,11 @@ import { useMemo } from "react";
 export default function DashboardPage() {
   const currentUser = useCurrentUser();
 
-  const isOnboarded = useMemo(
+  const userIsOnboarded = useMemo(
     () => currentUser.data?.organization,
     [currentUser.data?.organization]
   );
-  console.log(currentUser.data);
+
   return (
     <Layout>
       <SectionHeader title="Dashboard Page" />
@@ -24,7 +24,7 @@ export default function DashboardPage() {
           <CardHeader className="text-2xl font-bold flex-col text-center flex gap-2 items-center justify-center mb-4">
             Welcome to the Dashboard
           </CardHeader>
-          {!isOnboarded ? (
+          {!userIsOnboarded ? (
             <CardContent className="flex flex-col lg:flex-row justify-around gap-5 px-4 sm:px-8 lg:px-12">
               <DialogCard
                 title="Are you part of an Organization?"
@@ -38,9 +38,7 @@ export default function DashboardPage() {
                 dialog={<CreateOrganizationDialog />}
               />
             </CardContent>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </Card>
       </SectionWrapper>
     </Layout>
