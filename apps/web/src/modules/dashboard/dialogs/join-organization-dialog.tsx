@@ -29,20 +29,35 @@ import {
   JoinOrganizationForm,
   joinOrganizationSchema,
 } from "./validators/join-organization.validation";
+import { useJoinOrganization } from "@/hooks/organization/use-join-organization";
+import { useCurrentUser } from "@/hooks/user/use-current-user";
 
 export function JoinOrganizationDialog() {
   const [open, setOpen] = useState(false);
+  const { mutate: joinOrganization } = useJoinOrganization();
+  const currentUser = useCurrentUser();
 
   const form = useForm<JoinOrganizationForm>({
     resolver: zodResolver(joinOrganizationSchema),
     mode: "onChange",
     defaultValues: {
-      code: "",
+      inviteCode: "",
     },
   });
 
   const handleJoin = (data: JoinOrganizationForm) => {
-    console.log("Joining organization with code:", data.code);
+    const payload = {
+      inviteCode: data.inviteCode,
+      userId: currentUser.data!.id,
+    };
+    joinOrganization(payload, {
+      onSuccess: () => {
+        // TODO: add notification
+      },
+      onError: () => {
+        // TODO: add notification
+      },
+    });
     setOpen(false);
     form.reset();
   };
@@ -60,7 +75,7 @@ export function JoinOrganizationDialog() {
     setOpen(isOpen);
   };
 
-  const errorCode = form.formState.errors.code?.message;
+  const errorCode = form.formState.errors.inviteCode?.message;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -78,7 +93,7 @@ export function JoinOrganizationDialog() {
           <form onSubmit={form.handleSubmit(handleJoin)} className="space-y-4">
             <FormField
               control={form.control}
-              name="code"
+              name="inviteCode"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Organization Code</FormLabel>

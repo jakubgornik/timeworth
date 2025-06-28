@@ -10,6 +10,10 @@ export class CreateOrganizationDto implements ICreateOrganizationDto {
 
   @ApiProperty()
   @IsString()
+  managerId: string;
+
+  @ApiProperty()
+  @IsString()
   @IsOptional()
   industry?: string;
 
@@ -22,8 +26,4 @@ export class CreateOrganizationDto implements ICreateOrganizationDto {
   @IsString()
   @IsOptional()
   address?: string;
-
-  @ApiProperty()
-  @IsString()
-  managerId: string;
 }

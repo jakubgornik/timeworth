@@ -16,6 +16,7 @@ export interface IJoinOrganizationDto {
 
 export interface ICreateOrganizationDto {
   name: string;
+  managerId: string;
   industry?: string;
   size?: string;
   address?: string;
