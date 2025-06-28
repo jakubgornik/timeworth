@@ -15,28 +15,29 @@ enum UserRole {
 }
 
 model User {
-  id             String   @id // it will match Supabase Auth UUID
+  id             String   @id // matches Supabase Auth UUID
   email          String   @unique
   name           String?
+  organizationId String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt()
-  organizationId String?
 
-  organization  Organization?  @relation(fields: [organizationId], references: [id])
   role          UserRole       @default(EMPLOYEE)
   workEntries   WorkEntry[]
   refreshTokens RefreshToken[]
+  organization  Organization?  @relation(fields: [organizationId], references: [id])
 }
 
 model Organization {
   id         String   @id @default(cuid())
   name       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt()
   inviteCode String   @unique
+  managerId  String   @unique
   industry   String?
   size       String?
   address    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt()
 
   members     User[]
   workEntries WorkEntry[]
@@ -68,10 +69,10 @@ model WorkEntry {
 model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
-  createdAt DateTime @default(now())
   revoked   Boolean  @default(false)
   expiresAt DateTime
   userId    String
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }

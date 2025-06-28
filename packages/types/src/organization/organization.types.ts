@@ -8,3 +8,15 @@ export interface IOrganizationDto {
   size?: string;
   address?: string;
 }
+
+export interface IJoinOrganizationDto {
+  userId: string;
+  inviteCode: string;
+}
+
+export interface ICreateOrganizationDto {
+  name: string;
+  industry?: string;
+  size?: string;
+  address?: string;
+}
