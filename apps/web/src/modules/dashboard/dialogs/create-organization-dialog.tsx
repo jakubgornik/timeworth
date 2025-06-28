@@ -25,9 +25,13 @@ import {
   CreateOrganizationForm,
   createOrganizationSchema,
 } from "./validators/create-organization.validation";
+import { useCreateOrganization } from "@/hooks/organization/use-create-organization";
+import { useCurrentUser } from "@/hooks/user/use-current-user";
 
 export function CreateOrganizationDialog() {
   const [open, setOpen] = useState(false);
+  const currentUser = useCurrentUser();
+  const { mutate: createOrganization } = useCreateOrganization();
 
   const form = useForm<CreateOrganizationForm>({
     resolver: zodResolver(createOrganizationSchema),
@@ -41,7 +45,19 @@ export function CreateOrganizationDialog() {
   });
 
   const handleCreate = (data: CreateOrganizationForm) => {
-    console.log("Creating organization with data:", data);
+    const payload = {
+      ...data,
+      managerId: currentUser.data!.id,
+    };
+    createOrganization(payload, {
+      onSuccess: () => {
+        // TODO: add notification
+      },
+      onError: () => {
+        // TODO: add notification
+      },
+    });
+
     setOpen(false);
     form.reset();
   };

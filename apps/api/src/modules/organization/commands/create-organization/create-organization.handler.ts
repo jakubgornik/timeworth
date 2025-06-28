@@ -14,12 +14,7 @@ export class CreateOrganizationHandler
     const inviteCode = this.generateInviteCode();
 
     try {
-      await this.prisma.organization.create({
-        data: {
-          ...dto,
-          inviteCode,
-        },
-      });
+      await this.createOrganizationWithManager(dto, inviteCode);
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -28,16 +23,30 @@ export class CreateOrganizationHandler
         error.meta.target.includes('inviteCode')
       ) {
         const retryCode = this.generateInviteCode();
-        await this.prisma.organization.create({
-          data: {
-            ...dto,
-            inviteCode: retryCode,
-          },
-        });
+        await this.createOrganizationWithManager(dto, retryCode);
       } else {
         throw error;
       }
     }
+  }
+
+  private async createOrganizationWithManager(
+    dto: any,
+    inviteCode: string,
+  ): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const organization = await tx.organization.create({
+        data: {
+          ...dto,
+          inviteCode,
+        },
+      });
+
+      await tx.user.update({
+        where: { id: dto.managerId },
+        data: { organizationId: organization.id },
+      });
+    });
   }
 
   private generateInviteCode(): string {
