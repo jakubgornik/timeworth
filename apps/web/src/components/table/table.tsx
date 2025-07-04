@@ -102,6 +102,7 @@ export default function DataTable<TData>({
       getSortedRowModel: getSortedRowModel(),
       onSortingChange: setSorting,
     }),
+
     ...(enableFiltering && {
       getFilteredRowModel: getFilteredRowModel(),
       onColumnFiltersChange: setColumnFilters,
@@ -171,7 +172,6 @@ export default function DataTable<TData>({
           <tbody className="bg-white divide-y divide-gray-200">
             {table.getRowModel().rows.map((row) => (
               <React.Fragment key={row.id}>
-                {/* Main row */}
                 <tr
                   className={`hover:bg-gray-50 ${onRowClick ? "cursor-pointer" : ""}`}
                   onClick={() => onRowClick?.(row.original)}
@@ -188,8 +188,6 @@ export default function DataTable<TData>({
                     </td>
                   ))}
                 </tr>
-
-                {/* Expanded row */}
                 {enableExpanding &&
                   row.getIsExpanded() &&
                   renderExpandedRow && (
