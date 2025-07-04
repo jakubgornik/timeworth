@@ -4,6 +4,7 @@ export interface IOrganizationDto {
   createdAt: string;
   updatedAt: string;
   inviteCode: string;
+  managerId: string;
   industry?: string;
   size?: string;
   address?: string;
