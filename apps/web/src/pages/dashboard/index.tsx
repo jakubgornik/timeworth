@@ -12,7 +12,7 @@ export default function DashboardPage() {
   const currentUser = useCurrentUser();
 
   const userIsOnboarded = useMemo(
-    () => currentUser.data?.organization,
+    () => !!currentUser.data?.organization,
     [currentUser.data?.organization]
   );
 

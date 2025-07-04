@@ -27,11 +27,20 @@ import {
 } from "./validators/create-organization.validation";
 import { useCreateOrganization } from "@/hooks/organization/use-create-organization";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
+import { AxiosError } from "axios";
+import { useNotification } from "@/hooks/use-notification";
+
+const createOrganizationErrorMap: Record<number, { message: string }> = {
+  461: {
+    message: "You can only be a member of one organization.",
+  },
+};
 
 export function CreateOrganizationDialog() {
   const [open, setOpen] = useState(false);
   const currentUser = useCurrentUser();
   const { mutate: createOrganization } = useCreateOrganization();
+  const { showError, showSuccess } = useNotification();
 
   const form = useForm<CreateOrganizationForm>({
     resolver: zodResolver(createOrganizationSchema),
@@ -51,10 +60,13 @@ export function CreateOrganizationDialog() {
     };
     createOrganization(payload, {
       onSuccess: () => {
-        // TODO: add notification
+        showSuccess("Successfully created the organization");
       },
-      onError: () => {
-        // TODO: add notification
+      onError: (error) => {
+        const axiosError = error as AxiosError;
+        if (axiosError.status) {
+          showError(createOrganizationErrorMap[axiosError.status]?.message);
+        }
       },
     });
 
