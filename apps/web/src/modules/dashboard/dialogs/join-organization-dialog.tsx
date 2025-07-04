@@ -31,11 +31,23 @@ import {
 } from "./validators/join-organization.validation";
 import { useJoinOrganization } from "@/hooks/organization/use-join-organization";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
+import { useNotification } from "@/hooks/use-notification";
+import { AxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
+
+const joinOrganizationErrorMap: Record<number, { message: string }> = {
+  404: {
+    message:
+      "Organization not found. Please check the invite code and try again.",
+  },
+};
 
 export function JoinOrganizationDialog() {
   const [open, setOpen] = useState(false);
   const { mutate: joinOrganization } = useJoinOrganization();
   const currentUser = useCurrentUser();
+  const { showError, showSuccess } = useNotification();
+  const queryClient = useQueryClient();
 
   const form = useForm<JoinOrganizationForm>({
     resolver: zodResolver(joinOrganizationSchema),
@@ -50,12 +62,17 @@ export function JoinOrganizationDialog() {
       inviteCode: data.inviteCode,
       userId: currentUser.data!.id,
     };
+
     joinOrganization(payload, {
       onSuccess: () => {
-        // TODO: add notification
+        showSuccess("Successfully joined the organization");
+        queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       },
-      onError: () => {
-        // TODO: add notification
+      onError: (error) => {
+        const axiosError = error as AxiosError;
+        if (axiosError.status) {
+          showError(joinOrganizationErrorMap[axiosError.status]?.message);
+        }
       },
     });
     setOpen(false);
@@ -99,7 +116,7 @@ export function JoinOrganizationDialog() {
                   <FormLabel>Organization Code</FormLabel>
                   <FormControl>
                     <div className="flex justify-center">
-                      <InputOTP maxLength={6} {...field}>
+                      <InputOTP maxLength={8} {...field}>
                         <InputOTPGroup>
                           <InputOTPSlot index={0} />
                           <InputOTPSlot index={1} />
@@ -107,6 +124,8 @@ export function JoinOrganizationDialog() {
                           <InputOTPSlot index={3} />
                           <InputOTPSlot index={4} />
                           <InputOTPSlot index={5} />
+                          <InputOTPSlot index={6} />
+                          <InputOTPSlot index={7} />
                         </InputOTPGroup>
                       </InputOTP>
                     </div>

@@ -3,6 +3,7 @@ import { PrismaService } from '@packages/db';
 import { CreateOrganizationCommand } from './create-organization.command';
 import { randomBytes } from 'crypto';
 import { Prisma } from '@packages/db';
+import { SingleOrganizationLimitFoundException } from '../../exceptions/organization.exception';
 
 @CommandHandler(CreateOrganizationCommand)
 export class CreateOrganizationHandler
@@ -35,6 +36,14 @@ export class CreateOrganizationHandler
     inviteCode: string,
   ): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { id: dto.managerId },
+      });
+
+      if (user?.organizationId) {
+        throw new SingleOrganizationLimitFoundException();
+      }
+
       const organization = await tx.organization.create({
         data: {
           ...dto,
