@@ -2,10 +2,12 @@ import { DialogCard } from "@/components/dialog-card";
 import Layout from "@/components/layout";
 import SectionHeader from "@/components/section-header";
 import SectionWrapper from "@/components/section-wrapper";
+import DataTable from "@/components/table/table";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { CreateOrganizationDialog } from "@/modules/dashboard/dialogs/create-organization-dialog";
 import { JoinOrganizationDialog } from "@/modules/dashboard/dialogs/join-organization-dialog";
+import { useTableDemo } from "@/modules/dashboard/use-table-demo-columns";
 import { useMemo } from "react";
 
 export default function DashboardPage() {
@@ -15,6 +17,13 @@ export default function DashboardPage() {
     () => !!currentUser.data?.organization,
     [currentUser.data?.organization]
   );
+
+  const userIsManager = useMemo(
+    () => currentUser.data?.organization?.managerId === currentUser.data?.id,
+    [currentUser.data?.organization?.managerId, currentUser.data?.id]
+  );
+  console.log(userIsManager);
+  const { columns, data, renderExpandedRow } = useTableDemo();
 
   return (
     <Layout>
@@ -38,7 +47,20 @@ export default function DashboardPage() {
                 dialog={<CreateOrganizationDialog />}
               />
             </CardContent>
-          ) : null}
+          ) : (
+            <div className="flex w-full h-full p-6">
+              <DataTable
+                data={data}
+                columns={columns}
+                pageSize={10}
+                enableExpanding={true}
+                renderExpandedRow={renderExpandedRow}
+                getRowCanExpand={(person) =>
+                  !!(person.bio || person.skills || person.department)
+                }
+              />
+            </div>
+          )}
         </Card>
       </SectionWrapper>
     </Layout>

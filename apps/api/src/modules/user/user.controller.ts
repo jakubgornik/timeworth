@@ -38,6 +38,7 @@ export class UserController {
     return user;
   }
 
+  // TODO  use query bus
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   async getMe(@Req() req: RequestWithUser) {
@@ -53,6 +54,7 @@ export class UserController {
           select: {
             id: true,
             name: true,
+            managerId: true,
           },
         },
         role: true,
