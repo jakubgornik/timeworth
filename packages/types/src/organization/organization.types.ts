@@ -22,3 +22,9 @@ export interface ICreateOrganizationDto {
   size?: string;
   address?: string;
 }
+
+export interface IOrganizationUsersQueryDto {
+  managerId: string;
+  page: number;
+  pageSize: number;
+}

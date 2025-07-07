@@ -15,8 +15,6 @@ interface DataTableProps<TData> {
   data: TData[];
   columns: ColumnDef<TData>[];
   enableSorting?: boolean;
-  enableFiltering?: boolean;
-  enablePagination?: boolean;
   enableExpanding?: boolean;
   pageSize?: number;
   onRowClick?: (row: TData) => void;
@@ -61,7 +59,7 @@ export default function DataTable<TData>({
     <div className="w-full">
       <div className=" bg-background overflow-y-auto overflow-x-auto border rounded-lg">
         <table className="w-full">
-          <thead className="bg-background sticky top-0 z-10">
+          <thead className="bg-accent sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -104,8 +102,8 @@ export default function DataTable<TData>({
             {table.getRowModel().rows.map((row) => (
               <React.Fragment key={row.id}>
                 <tr
-                  className={`hover:bg-accent border ${onRowClick ? "cursor-pointer" : ""} ${
-                    enableExpanding && row.getIsExpanded() ? "bg-accent" : ""
+                  className={`hover:bg-accent/50 border ${onRowClick ? "cursor-pointer" : ""} ${
+                    enableExpanding && row.getIsExpanded() ? "bg-accent/50" : ""
                   }`}
                   onClick={() => onRowClick?.(row.original)}
                 >
@@ -138,7 +136,7 @@ export default function DataTable<TData>({
                       >
                         <td colSpan={columns.length}>
                           <motion.div
-                            className="border-l-4 bg-accent border-secondary/80 pl-4"
+                            className="border-l-4 bg-accent/50 border-secondary/80 pl-4"
                             initial={{ x: -10, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.05, duration: 0.25 }}
