@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -13,6 +14,8 @@ import { RegisterUserDto } from '../auth/dto/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '@packages/db';
 import { Request } from 'express';
+import { OrganizationUsersQueryDto } from './dto/organization-users.dto';
+import { UserService } from './user.service';
 
 export interface RequestWithUser extends Request {
   user: {
@@ -25,6 +28,7 @@ export class UserController {
   constructor(
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
+    private readonly service: UserService,
   ) {}
 
   @Delete(':id')
@@ -62,6 +66,13 @@ export class UserController {
     });
 
     return user;
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Get('organization-users')
+  async getOrganizationUsers(
+    @Query() organizationUsersQueryDto: OrganizationUsersQueryDto,
+  ) {
+    return await this.service.getOrganizationUsers(organizationUsersQueryDto);
   }
 
   // These are examples how to work with queries and commands
