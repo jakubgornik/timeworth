@@ -13,5 +13,8 @@
     "lint": "turbo run lint",
     "test": "turbo run test"
   },
-  "packageManager": "^npm@10.8.1"
+  "packageManager": "^npm@10.8.1",
+  "dependencies": {
+    "@faker-js/faker": "^9.9.0"
+  }
 }
