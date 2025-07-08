@@ -6,10 +6,11 @@ import { GetUsersQueryHandler } from './queries/get-users/get-users.handler';
 import { PrismaModule } from '@packages/db';
 import { DeleteUserHandler } from './commands/delete-user/delete-user.handler';
 import { AuthModule } from '../auth/auth.module';
+import { GetOrganizationUsersHandler } from './queries/get-organization-users/get-organization-users.handler';
 
 const services = [UserService];
 
-const queryHandlers = [GetUsersQueryHandler];
+const queryHandlers = [GetUsersQueryHandler, GetOrganizationUsersHandler];
 
 const commandHandlers = [DeleteUserHandler];
 
