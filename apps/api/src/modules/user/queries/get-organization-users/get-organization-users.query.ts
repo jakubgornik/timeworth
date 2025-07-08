@@ -6,7 +6,7 @@ import {
 import { OrganizationUsersQueryDto } from '../../dto/organization-users.dto';
 
 export class GetOrganizationUsersQuery extends Query<
-  PaginatedResponse<IUserDto>[]
+  PaginatedResponse<IUserDto>
 > {
   constructor(
     public readonly organizationUsersQueryDto: OrganizationUsersQueryDto,

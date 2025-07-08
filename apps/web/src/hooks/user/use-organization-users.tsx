@@ -7,15 +7,18 @@ import {
 import api from "@/lib/axios/axios";
 
 export const useOrganizationUsers = (query: IOrganizationUsersQueryDto) => {
+  console.log(query);
   return useQuery({
     queryKey: ["managedUsers", query],
     queryFn: async () => {
       const res = await api.get<PaginatedResponse<IUserDto>>(
-        "organization-users",
+        "user/organization-users",
         {
+          params: query,
           withCredentials: true,
         }
       );
+
       return res.data;
     },
     enabled: !!query.managerId && query.page > 0,

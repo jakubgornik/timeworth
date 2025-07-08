@@ -5,6 +5,7 @@ import SectionWrapper from "@/components/section-wrapper";
 import DataTable from "@/components/table/table";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
+import { useOrganizationUsers } from "@/hooks/user/use-organization-users";
 import { CreateOrganizationDialog } from "@/modules/dashboard/dialogs/create-organization-dialog";
 import { JoinOrganizationDialog } from "@/modules/dashboard/dialogs/join-organization-dialog";
 import { useTableDemo } from "@/modules/dashboard/use-table-demo-columns";
@@ -30,6 +31,13 @@ export default function DashboardPage() {
   // 4. add loading to table dispaly loader while fetching data
   //  .. and much more
   const { columns, data, renderExpandedRow } = useTableDemo();
+
+  const { data: organizationUsers } = useOrganizationUsers({
+    managerId: currentUser.data?.id ?? "",
+    page: 1,
+    pageSize: 50,
+  });
+  console.log(organizationUsers);
 
   return (
     <Layout>

@@ -20,6 +20,11 @@ export function LoginFormCard() {
     password: "testpassword123",
   };
 
+  const demoManagerAccountdata: AuthenticationFormSchema = {
+    email: "manager@demo.com",
+    password: "Managerpassword123",
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <motion.div
@@ -33,32 +38,49 @@ export function LoginFormCard() {
           <AuthForm variant="login" />
           <LoginFormCardInfo />
         </Card>
-        {/* TODO: create demo account, fetch from db */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={demoCardVariants}
         >
-          <Card className="max-w-2/3 mx-auto flex flex-row items-center justify-center  py-2 px-4 border-0">
+          <Card className="py-3 mx-auto flex flex-column gap-1 items-center justify-center shadow-xl backdrop-blur-sm  border-0">
             <span className="text-sm text-center font-medium">
               Use demo account
             </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                login(demoAccountdata, {
-                  onSuccess: () => {
-                    // todo add notification
-                  },
-                  onError: () => {
-                    // todo add notification
-                  },
-                })
-              }
-            >
-              Sign in
-            </Button>
+            <div className="py-2 flex flex-row w-full justify-around">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  login(demoAccountdata, {
+                    onSuccess: () => {
+                      // todo add notification
+                    },
+                    onError: () => {
+                      // todo add notification
+                    },
+                  })
+                }
+              >
+                Sign in as new user
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  login(demoManagerAccountdata, {
+                    onSuccess: () => {
+                      // todo add notification
+                    },
+                    onError: () => {
+                      // todo add notification
+                    },
+                  })
+                }
+              >
+                Sign in as existing manager
+              </Button>
+            </div>
           </Card>
         </motion.div>
       </motion.div>
