@@ -1,59 +1,34 @@
 import React from "react";
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getExpandedRowModel,
-  flexRender,
-  ColumnDef,
-  SortingState,
-  ExpandedState,
-} from "@tanstack/react-table";
+import { flexRender, Table } from "@tanstack/react-table";
 import { motion, AnimatePresence } from "motion/react";
 
 interface DataTableProps<TData> {
-  data: TData[];
-  columns: ColumnDef<TData>[];
-  enableSorting?: boolean;
-  enableExpanding?: boolean;
-  pageSize?: number;
-  onRowClick?: (row: TData) => void;
+  table: Table<TData>;
+  isLoading?: boolean;
   renderExpandedRow?: (row: TData) => React.ReactNode;
-  getRowCanExpand?: (row: TData) => boolean;
+  onRowClick?: (row: TData) => void;
 }
 
 export default function DataTable<TData>({
-  data,
-  columns,
-  enableSorting = true,
-  enableExpanding = false,
-  onRowClick,
+  table,
+  isLoading = false,
   renderExpandedRow,
-  getRowCanExpand,
+  onRowClick,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [expanded, setExpanded] = React.useState<ExpandedState>({});
-
-  const table = useReactTable<TData>({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    ...(enableSorting && {
-      getSortedRowModel: getSortedRowModel(),
-      onSortingChange: setSorting,
-    }),
-    ...(enableExpanding && {
-      getExpandedRowModel: getExpandedRowModel(),
-      onExpandedChange: setExpanded,
-      getRowCanExpand: getRowCanExpand
-        ? (row) => getRowCanExpand(row.original as TData)
-        : () => true,
-    }),
-    state: {
-      sorting,
-      ...(enableExpanding && { expanded }),
-    },
-  });
+  if (isLoading) {
+    return (
+      <div className="w-full bg-white rounded-lg border border-gray-200 p-8">
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded mb-4"></div>
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-4 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -84,7 +59,7 @@ export default function DataTable<TData>({
                           header.getContext()
                         )}
                       </span>
-                      {enableSorting && header.column.getCanSort() && (
+                      {header.column.getCanSort() && (
                         <span className="text-gray-400">
                           {{
                             asc: " ↑",
@@ -98,12 +73,13 @@ export default function DataTable<TData>({
               </tr>
             ))}
           </thead>
+
           <tbody className="bg-background divide-y">
             {table.getRowModel().rows.map((row) => (
               <React.Fragment key={row.id}>
                 <tr
                   className={`hover:bg-accent/50 border ${onRowClick ? "cursor-pointer" : ""} ${
-                    enableExpanding && row.getIsExpanded() ? "bg-accent/50" : ""
+                    row.getIsExpanded() ? "bg-accent/50" : ""
                   }`}
                   onClick={() => onRowClick?.(row.original)}
                 >
@@ -124,7 +100,7 @@ export default function DataTable<TData>({
                   ))}
                 </tr>
 
-                {enableExpanding && renderExpandedRow && (
+                {renderExpandedRow && (
                   <AnimatePresence mode="wait">
                     {row.getIsExpanded() && (
                       <motion.tr
@@ -134,9 +110,9 @@ export default function DataTable<TData>({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <td colSpan={columns.length}>
+                        <td colSpan={table.getAllColumns().length}>
                           <motion.div
-                            className="border-l-4 bg-accent/50 border-secondary/80 pl-4"
+                            className="border-l-4 bg-accent border-secondary/80 pl-4"
                             initial={{ x: -10, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.05, duration: 0.25 }}
