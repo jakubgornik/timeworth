@@ -17,7 +17,7 @@ export function LoginFormCard() {
 
   const demoAccountdata: AuthenticationFormSchema = {
     email: "test@test.com",
-    password: "testpassword123",
+    password: "Testpassword123",
   };
 
   const demoManagerAccountdata: AuthenticationFormSchema = {

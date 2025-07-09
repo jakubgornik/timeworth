@@ -9,7 +9,17 @@ import { useOrganizationUsers } from "@/hooks/user/use-organization-users";
 import { CreateOrganizationDialog } from "@/modules/dashboard/dialogs/create-organization-dialog";
 import { JoinOrganizationDialog } from "@/modules/dashboard/dialogs/join-organization-dialog";
 import { useTableDemo } from "@/modules/dashboard/use-table-demo-columns";
-import { useMemo } from "react";
+import {
+  ExpandedState,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  PaginationState,
+  SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
 
 export default function DashboardPage() {
   const currentUser = useCurrentUser();
@@ -23,21 +33,50 @@ export default function DashboardPage() {
     () => currentUser.data?.organization?.managerId === currentUser.data?.id,
     [currentUser.data?.organization?.managerId, currentUser.data?.id]
   );
-  console.log(userIsManager);
-  // TODO:
-  // 1. seed data with users to display
-  // 2. pass data to hook to create details jsx for each row, pass data, columns, and renderExpandedRow to table
-  // 3. adjust table styles to fit app layout, fix responsivness
-  // 4. add loading to table dispaly loader while fetching data
-  //  .. and much more
-  const { columns, data, renderExpandedRow } = useTableDemo();
 
   const { data: organizationUsers } = useOrganizationUsers({
     managerId: currentUser.data?.id ?? "",
     page: 1,
     pageSize: 50,
   });
+
+  // TODO
+  // 1. pass organizationUsers to hook to create details jsx for each row, pass data, columns, and renderExpandedRow to table
+  // 2. adjust user table
+  // 3. add pagination, sorting
+  const { columns, data, renderExpandedRow } = useTableDemo();
+
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
   console.log(organizationUsers);
+
+  // TODO: pass organizationUsers
+  const table = useReactTable({
+    data: data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+
+    manualPagination: true,
+    pageCount: 1, // TODO organizationUsers.totalPages,
+    onPaginationChange: setPagination,
+
+    onSortingChange: setSorting,
+    onExpandedChange: setExpanded,
+
+    state: {
+      sorting,
+      expanded,
+      pagination,
+    },
+  });
 
   return (
     <Layout>
@@ -63,18 +102,20 @@ export default function DashboardPage() {
                 />
               </CardContent>
             </>
-          ) : (
+          ) : userIsManager ? (
             <div className="flex w-full h-full px-6">
-              <DataTable
-                data={data}
-                columns={columns}
-                pageSize={10}
-                enableExpanding={true}
-                renderExpandedRow={renderExpandedRow}
-                getRowCanExpand={() => true}
-              />
+              <DataTable table={table} renderExpandedRow={renderExpandedRow} />
+
+              {/* 
+        <Pagination
+          table={table}
+          totalCount={data.total}
+          isLoading={isLoading}
+          pageSizeOptions={pageSizeOptions}
+        />
+       */}
             </div>
-          )}
+          ) : null}
         </Card>
       </SectionWrapper>
     </Layout>
