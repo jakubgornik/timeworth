@@ -1,5 +1,6 @@
 import { DialogCard } from "@/components/dialog-card";
 import Layout from "@/components/layout";
+import Pagination from "@/components/pagination/pagination";
 import SectionHeader from "@/components/section-header";
 import SectionWrapper from "@/components/section-wrapper";
 import DataTable from "@/components/table/table";
@@ -34,18 +35,6 @@ export default function DashboardPage() {
     [currentUser.data?.organization?.managerId, currentUser.data?.id]
   );
 
-  const { data: organizationUsers } = useOrganizationUsers({
-    managerId: currentUser.data?.id ?? "",
-    page: 1,
-    pageSize: 50,
-  });
-
-  // TODO
-  // 1. pass organizationUsers to hook to create details jsx for each row, pass data, columns, and renderExpandedRow to table
-  // 2. adjust user table
-  // 3. add pagination, sorting
-  const { columns, data, renderExpandedRow } = useTableDemo();
-
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [pagination, setPagination] = useState<PaginationState>({
@@ -53,24 +42,33 @@ export default function DashboardPage() {
     pageSize: 10,
   });
 
-  console.log(organizationUsers);
+  const { data: organizationUsers } = useOrganizationUsers({
+    managerId: currentUser.data?.id ?? "",
+    page: pagination.pageIndex + 1,
+    pageSize: pagination.pageSize,
+  });
 
-  // TODO: pass organizationUsers
+  // TODO
+  //  handle sorting on backend
+
+  const { columns, renderExpandedRow } = useTableDemo();
+
+  const data = useMemo(() => {
+    return organizationUsers?.data ?? [];
+  }, [organizationUsers?.data]);
+
   const table = useReactTable({
-    data: data,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-
     manualPagination: true,
-    pageCount: 1, // TODO organizationUsers.totalPages,
+    pageCount: organizationUsers?.totalPages,
     onPaginationChange: setPagination,
-
     onSortingChange: setSorting,
     onExpandedChange: setExpanded,
-
     state: {
       sorting,
       expanded,
@@ -103,17 +101,13 @@ export default function DashboardPage() {
               </CardContent>
             </>
           ) : userIsManager ? (
-            <div className="flex w-full h-full px-6">
+            <div className="flex flex-col w-full h-full px-6">
               <DataTable table={table} renderExpandedRow={renderExpandedRow} />
-
-              {/* 
-        <Pagination
-          table={table}
-          totalCount={data.total}
-          isLoading={isLoading}
-          pageSizeOptions={pageSizeOptions}
-        />
-       */}
+              <Pagination
+                table={table}
+                totalCount={organizationUsers?.totalCount ?? 0}
+                pageSizeOptions={[10, 15, 20]}
+              />
             </div>
           ) : null}
         </Card>

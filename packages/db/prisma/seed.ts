@@ -86,13 +86,64 @@ async function main() {
     const email = faker.internet.email({ firstName: name.split(" ")[0] });
     const userId = randomUUID();
 
+    const allSkills = [
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Node.js",
+      "Python",
+      "Java",
+      "C#",
+      "SQL",
+      "MongoDB",
+      "PostgreSQL",
+      "AWS",
+      "Docker",
+      "Kubernetes",
+      "Git",
+      "Agile",
+      "Scrum",
+      "REST APIs",
+      "GraphQL",
+      "Testing",
+      "DevOps",
+      "HTML",
+      "CSS",
+      "Vue.js",
+      "Angular",
+      "Express",
+      "Next.js",
+      "Redis",
+      "Project Management",
+      "Leadership",
+      "Communication",
+      "Problem Solving",
+    ];
+
+    const numSkills = faker.number.int({ min: 1, max: 3 });
+    const skills = faker.helpers.arrayElements(allSkills, numSkills);
+
+    const bioTemplates = [
+      `${faker.number.int({ min: 2, max: 8 })} years of experience in software development.`,
+      `Passionate about ${skills[0].toLowerCase()} and clean code.`,
+      `Full-stack developer with focus on ${skills[0].toLowerCase()}.`,
+      `Experienced in ${skills[0].toLowerCase()} and team collaboration.`,
+      `Software engineer specializing in ${skills[0].toLowerCase()}.`,
+      `${faker.number.int({ min: 1, max: 5 })} years in ${faker.company.buzzNoun()} industry.`,
+      `Enjoys solving complex problems with ${skills[0].toLowerCase()}.`,
+      `Detail-oriented developer with ${skills[0].toLowerCase()} expertise.`,
+    ];
+
+    const bio = faker.helpers.arrayElement(bioTemplates);
+
     try {
       await prisma.user.create({
         data: {
           id: userId,
           email,
           name,
-          role: "EMPLOYEE",
+          bio,
+          skills,
           organizationId: organization.id,
         },
       });
