@@ -32,15 +32,15 @@ export default function DataTable<TData>({
 
   return (
     <div className="w-full">
-      <div className=" bg-background overflow-y-auto overflow-x-auto border rounded-lg">
-        <table className="w-full">
+      <div className="max-h-[500px] 3xl:max-h-none bg-background border rounded-t-lg overflow-auto custom-scrollbar">
+        <table className="w-full border-separate ">
           <thead className="bg-accent sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-6 border py-3 text-xs font-medium text-secondary uppercase tracking-wider text-center"
+                    className="px-6 border-x border-b py-3 text-xs font-medium text-secondary uppercase tracking-wider text-center"
                     style={{
                       width: `${header.column.columnDef?.meta?.width}px`,
                     }}

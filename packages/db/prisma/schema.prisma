@@ -14,18 +14,31 @@ enum UserRole {
   EMPLOYEE
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  AVAILABLE
+  ASSIGNED
+  ON_LEAVE
+  SUSPENDED
+  ARCHIVED
+}
+
 model User {
-  id             String   @id // matches Supabase Auth UUID
-  email          String   @unique
+  id             String     @id // matches Supabase Auth UUID
+  email          String     @unique
   name           String?
+  bio            String?
+  status         UserStatus @default(AVAILABLE)
+  skills         String[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt()
   organizationId String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt()
 
   role          UserRole       @default(EMPLOYEE)
   workEntries   WorkEntry[]
-  refreshTokens RefreshToken[]
   organization  Organization?  @relation(fields: [organizationId], references: [id])
+  refreshTokens RefreshToken[]
 }
 
 model Organization {
@@ -57,7 +70,6 @@ model WorkEntry {
 
   userId         String
   organizationId String
-  projectId      String? // TODO: link to projects
 
   user         User         @relation(fields: [userId], references: [id])
   organization Organization @relation(fields: [organizationId], references: [id])
