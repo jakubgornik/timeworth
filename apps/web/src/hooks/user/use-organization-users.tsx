@@ -7,7 +7,6 @@ import {
 import api from "@/lib/axios/axios";
 
 export const useOrganizationUsers = (query: IOrganizationUsersQueryDto) => {
-  console.log(query);
   return useQuery({
     queryKey: ["managedUsers", query],
     queryFn: async () => {

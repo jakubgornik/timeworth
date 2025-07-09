@@ -37,7 +37,6 @@ async function createUserWithSupabase(email: string, password: string) {
 }
 
 async function main() {
-  // Create test demo account (no organization) - still create this one in Supabase since you'll log in
   console.log("Creating test demo user...");
   const testUserId = await createUserWithSupabase(
     demoAccount.email,
@@ -54,7 +53,6 @@ async function main() {
     },
   });
 
-  // Create organization manager - still create this one in Supabase since you might log in
   console.log("Creating organization manager...");
   const managerId = await createUserWithSupabase(
     managerAccount.email,
@@ -64,7 +62,7 @@ async function main() {
   const organization = await prisma.organization.create({
     data: {
       name: "DemoCorp Inc.",
-      inviteCode: faker.string.numeric(8),
+      inviteCode: faker.string.alphanumeric(8),
       managerId,
       industry: faker.company.buzzNoun(),
       size: "51-200",
@@ -82,12 +80,11 @@ async function main() {
     },
   });
 
-  // Create 20 employee users - just use random UUIDs, no Supabase auth
   console.log("Creating 20 employee users...");
   for (let i = 0; i < 20; i++) {
     const name = faker.person.fullName();
     const email = faker.internet.email({ firstName: name.split(" ")[0] });
-    const userId = randomUUID(); // Generate random UUID instead of Supabase auth
+    const userId = randomUUID();
 
     try {
       await prisma.user.create({
