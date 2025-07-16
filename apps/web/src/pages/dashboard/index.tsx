@@ -1,5 +1,4 @@
 import { DialogCard } from "@/components/dialog-card";
-import Layout from "@/components/layout";
 import Pagination from "@/components/pagination/pagination";
 import SectionHeader from "@/components/section-header";
 import SectionWrapper from "@/components/section-wrapper";
@@ -77,7 +76,7 @@ export default function DashboardPage() {
   });
 
   return (
-    <Layout>
+    <>
       <SectionHeader title="Dashboard Page" />
       <SectionWrapper className="h-full">
         <Card className="w-full h-full bg-primary">
@@ -112,6 +111,6 @@ export default function DashboardPage() {
           ) : null}
         </Card>
       </SectionWrapper>
-    </Layout>
+    </>
   );
 }
