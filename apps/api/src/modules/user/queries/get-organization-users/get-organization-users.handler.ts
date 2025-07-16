@@ -2,14 +2,15 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PrismaService } from '@packages/db';
 import { GetOrganizationUsersQuery } from './get-organization-users.query';
 import {
+  IPaginatedResponseDto,
   ICurrentUserDto as IUserDto,
-  PaginatedResponse,
 } from '@packages/types';
+import { mapUsersSortDtoToOrderBy } from 'src/shared/mappers/map-users-sort-dto-to-order-by';
 
 @QueryHandler(GetOrganizationUsersQuery)
 export class GetOrganizationUsersHandler
   implements
-    IQueryHandler<GetOrganizationUsersQuery, PaginatedResponse<IUserDto>>
+    IQueryHandler<GetOrganizationUsersQuery, IPaginatedResponseDto<IUserDto>>
 {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -19,18 +20,24 @@ export class GetOrganizationUsersHandler
 
   private async getOrganizationUsers(
     organizationUsersQueryDto: GetOrganizationUsersQuery,
-  ): Promise<PaginatedResponse<IUserDto>> {
-    const { managerId, page, pageSize } =
-      organizationUsersQueryDto.organizationUsersQueryDto;
-
+  ): Promise<IPaginatedResponseDto<IUserDto>> {
+    const {
+      managerId,
+      paginationDto: { page, pageSize },
+      sortDto,
+    } = organizationUsersQueryDto;
     // TODO custom exception
     if (!managerId) {
       throw new Error('Manager ID is required');
     }
 
+    const orderBy = mapUsersSortDtoToOrderBy(sortDto);
+
     const [users, totalCount] = await Promise.all([
       this.prisma.user.findMany({
+        orderBy,
         where: {
+          role: 'EMPLOYEE',
           organization: {
             managerId,
           },

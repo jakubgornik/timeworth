@@ -1,16 +1,18 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
-  IOrganizationUsersQueryDto,
+  IPaginatedOrganizationUsersQueryDto,
+  IPaginatedResponseDto,
   ICurrentUserDto as IUserDto,
-  PaginatedResponse,
 } from "@packages/types";
 import api from "@/lib/axios/axios";
 
-export const useOrganizationUsers = (query: IOrganizationUsersQueryDto) => {
+export const useOrganizationUsers = (
+  query: IPaginatedOrganizationUsersQueryDto
+) => {
   return useQuery({
     queryKey: ["managedUsers", query],
     queryFn: async () => {
-      const res = await api.get<PaginatedResponse<IUserDto>>(
+      const res = await api.get<IPaginatedResponseDto<IUserDto>>(
         "user/organization-users",
         {
           params: query,
