@@ -6,13 +6,14 @@ import {
 import { AppSidebar } from "./app-sidebar";
 import { Button } from "./ui/button";
 import { SidebarIcon } from "lucide-react";
+import { Outlet } from "react-router";
 
-function MobileLayoutNavigation({ children }: { children: React.ReactNode }) {
+function MainContent({ children }: { children: React.ReactNode }) {
   const { setOpenMobile } = useSidebar();
 
   return (
     <SidebarInset>
-      <nav className="flex justify-between  sticky h-16 shrink-0 items-center px-4 border-b md:hidden bg-primary">
+      <nav className="flex justify-between sticky h-16 shrink-0 items-center px-4 border-b md:hidden bg-primary">
         <Button
           size="icon"
           onClick={() => setOpenMobile(true)}
@@ -29,11 +30,13 @@ function MobileLayoutNavigation({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <MobileLayoutNavigation>{children}</MobileLayoutNavigation>
+      <MainContent>
+        <Outlet />
+      </MainContent>
     </SidebarProvider>
   );
 }
