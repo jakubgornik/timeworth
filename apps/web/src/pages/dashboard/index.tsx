@@ -13,8 +13,6 @@ import {
   ExpandedState,
   getCoreRowModel,
   getExpandedRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   PaginationState,
   SortingState,
   useReactTable,
@@ -41,14 +39,23 @@ export default function DashboardPage() {
     pageSize: 10,
   });
 
+  const sortingQuery = useMemo(
+    () =>
+      sorting.length > 0
+        ? {
+            id: sorting[0].id,
+            desc: sorting[0].desc,
+          }
+        : undefined,
+    [sorting]
+  );
+
   const { data: organizationUsers } = useOrganizationUsers({
     managerId: currentUser.data?.id ?? "",
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
+    ...sortingQuery,
   });
-
-  // TODO
-  //  handle sorting on backend
 
   const { columns, renderExpandedRow } = useTableDemo();
 
@@ -60,10 +67,9 @@ export default function DashboardPage() {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
+    manualSorting: true,
     pageCount: organizationUsers?.totalPages,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,

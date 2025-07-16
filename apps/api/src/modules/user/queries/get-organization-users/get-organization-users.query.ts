@@ -1,15 +1,18 @@
 import { Query } from '@nestjs/cqrs';
 import {
+  IPaginatedResponseDto,
   ICurrentUserDto as IUserDto,
-  PaginatedResponse,
 } from '@packages/types';
-import { OrganizationUsersQueryDto } from '../../dto/organization-users.dto';
+import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { SortDto } from 'src/shared/dto/sort.dto';
 
 export class GetOrganizationUsersQuery extends Query<
-  PaginatedResponse<IUserDto>
+  IPaginatedResponseDto<IUserDto>
 > {
   constructor(
-    public readonly organizationUsersQueryDto: OrganizationUsersQueryDto,
+    public readonly managerId: string,
+    public readonly paginationDto: PaginationDto,
+    public readonly sortDto: SortDto,
   ) {
     super();
   }

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
-import { OrganizationUsersQueryDto } from './dto/organization-users.dto';
 import { GetOrganizationUsersQuery } from './queries/get-organization-users/get-organization-users.query';
+import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { SortDto } from 'src/shared/dto/sort.dto';
 
 @Injectable()
 export class UserService {
@@ -11,10 +12,12 @@ export class UserService {
   ) {}
 
   async getOrganizationUsers(
-    organizationUsersQueryDto: OrganizationUsersQueryDto,
+    managerId: string,
+    paginationDto: PaginationDto,
+    sortDto: SortDto,
   ) {
     return await this.queryBus.execute(
-      new GetOrganizationUsersQuery(organizationUsersQueryDto),
+      new GetOrganizationUsersQuery(managerId, paginationDto, sortDto),
     );
   }
 

@@ -1,3 +1,5 @@
+import { IPaginatedQueryDto } from "../utils";
+
 export interface IOrganizationDto {
   id: string;
   name: string;
@@ -23,8 +25,7 @@ export interface ICreateOrganizationDto {
   address?: string;
 }
 
-export interface IOrganizationUsersQueryDto {
+export interface IPaginatedOrganizationUsersQueryDto
+  extends IPaginatedQueryDto {
   managerId: string;
-  page: number;
-  pageSize: number;
 }
