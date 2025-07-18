@@ -18,6 +18,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
+import Test from "../test/test";
 
 export default function DashboardPage() {
   const currentUser = useCurrentUser();
@@ -107,12 +108,13 @@ export default function DashboardPage() {
             </>
           ) : userIsManager ? (
             <div className="flex flex-col w-full h-full px-6">
-              <DataTable table={table} renderExpandedRow={renderExpandedRow} />
+              {/* <DataTable table={table} renderExpandedRow={renderExpandedRow} />
               <Pagination
                 table={table}
                 totalCount={organizationUsers?.totalCount ?? 0}
                 pageSizeOptions={[10, 15, 20]}
-              />
+              /> */}
+              <Test />
             </div>
           ) : null}
         </Card>
