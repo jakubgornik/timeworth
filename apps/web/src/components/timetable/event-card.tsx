@@ -1,21 +1,6 @@
-"use client";
-
 import type React from "react";
-
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
+import { Event } from "./timetable.types";
 
 interface EventCardProps {
   event: Event;
@@ -30,6 +15,7 @@ interface EventCardProps {
   onEventClick: (event: Event, e: React.MouseEvent) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
+  cellHeight?: number;
 }
 
 export function EventCard({
@@ -41,15 +27,18 @@ export function EventCard({
   onEventClick,
   onMouseEnter,
   onMouseLeave,
+  cellHeight = 25,
 }: EventCardProps) {
   // Calculate duration in hours (duration is in 15-minute slots)
+  // TODO should match
   const durationInHours = (event.duration * 15) / 60;
+
   return (
     <div
       data-event-id={event.id}
       className={`absolute ${isSelecting ? "pointer-events-none" : ""} transition-all duration-200 ease-in-out`}
       style={{
-        height: `${event.duration * 25 - 8}px`,
+        height: `${event.duration * cellHeight - 8}px`,
         width: layoutInfo.width,
         left: layoutInfo.left,
         top: "4px",
@@ -58,38 +47,39 @@ export function EventCard({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <Card
+      <div
         className={`
           ${event.color} 
           cursor-pointer transition-all duration-200 ease-in-out hover:shadow-lg
           border-l-4 shadow-sm h-full rounded-sm overflow-hidden
           ${overlappingCount > 1 ? "border-r border-slate-600/50" : ""}
           ${isSelecting ? "opacity-75" : ""}
-          ${isHovered ? "!z-[100] ring-1 ring-teal-400" : ""}
+          ${isHovered ? " ring-1 ring-teal-400" : ""}
+          flex flex-col justify-center p-2
         `}
         onClick={(e) => !isSelecting && onEventClick(event, e)}
-        style={{ zIndex: layoutInfo.zIndex }}
+        style={{ zIndex: layoutInfo.zIndex, minHeight: "unset" }}
       >
-        <CardContent className="h-full flex flex-col justify-center p-2">
-          <div className="font-medium truncate text-xs">{event.title}</div>
-          <div className="text-xs opacity-70 font-normal">
-            {event.startTime} - {event.endTime}
+        <div className="font-medium truncate text-xs leading-tight">
+          {event.title}
+        </div>
+        <div className="text-xs opacity-70 font-normal leading-tight">
+          {event.startTime} - {event.endTime}
+        </div>
+        {event.description && event.duration > 2 && (
+          <div className="text-xs opacity-60 mt-1 truncate">
+            {event.description}
           </div>
-          {event.description && (
-            <div className="text-xs opacity-60 mt-1 truncate">
-              {event.description}
-            </div>
-          )}
-          {event.duration > 4 && (
-            <Badge
-              variant="secondary"
-              className="text-xs mt-1 w-fit bg-slate-700 text-slate-300"
-            >
-              {durationInHours}h
-            </Badge>
-          )}
-        </CardContent>
-      </Card>
+        )}
+        {event.duration > 4 && (
+          <Badge
+            variant="secondary"
+            className="text-xs mt-1 w-fit bg-slate-700 text-slate-300"
+          >
+            {durationInHours}h
+          </Badge>
+        )}
+      </div>
     </div>
   );
 }

@@ -6,35 +6,7 @@ import { useTimetableState } from "./hooks/use-timetable-state";
 import { formatDate, getWeekRange } from "./utils/timetable-utils";
 import { EventDetailsDialog } from "./dialogs/event-details-dialog";
 import { NewEventDialog } from "./dialogs/new-event-dialog";
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
-
-interface TimetableConfig {
-  timeSlots: string[];
-  daysOfWeek: string[];
-  colors: string[];
-  startHour?: number;
-  endHour?: number;
-  intervalMinutes?: number;
-}
-
-interface TimetableCallbacks {
-  onEventCreate?: (event: Omit<Event, "id" | "color">) => void;
-  onEventUpdate?: (eventId: string, event: Partial<Event>) => void;
-  onEventDelete?: (eventId: string) => void;
-  onEventClick?: (event: Event) => void;
-  onWeekChange?: (direction: "prev" | "next", currentWeek: Date) => void;
-}
+import { Event, TimetableCallbacks, TimetableConfig } from "./timetable.types";
 
 interface TimetableProps {
   events: Event[];

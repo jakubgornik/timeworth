@@ -1,35 +1,12 @@
+"use client";
+
 import { useState } from "react";
-
-import { getDefaultConfig, getWeekDates } from "../utils/timetable-utils";
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
-
-interface TimetableConfig {
-  timeSlots: string[];
-  daysOfWeek: string[];
-  colors: string[];
-  startHour?: number;
-  endHour?: number;
-  intervalMinutes?: number;
-}
-
-interface TimetableCallbacks {
-  onEventCreate?: (event: Omit<Event, "id" | "color">) => void;
-  onEventUpdate?: (eventId: string, event: Partial<Event>) => void;
-  onEventDelete?: (eventId: string) => void;
-  onEventClick?: (event: Event) => void;
-  onWeekChange?: (direction: "prev" | "next", currentWeek: Date) => void;
-}
+import {
+  getDefaultConfig,
+  getWeekDates,
+  generateTimeSlots,
+} from "../utils/timetable-utils";
+import { Event, TimetableCallbacks, TimetableConfig } from "../timetable.types";
 
 interface UseTimetableStateProps {
   events: Event[];
@@ -44,9 +21,18 @@ export function useTimetableState({
   callbacks,
   initialWeek,
 }: UseTimetableStateProps) {
+  // FIXED: Properly merge config and regenerate timeSlots based on config
+  const defaultConfig = getDefaultConfig();
+  const mergedConfig = { ...defaultConfig, ...config };
+
+  // Regenerate timeSlots if custom hours/intervals are provided
   const timetableConfig: TimetableConfig = {
-    ...getDefaultConfig(),
-    ...config,
+    ...mergedConfig,
+    timeSlots: generateTimeSlots(
+      mergedConfig.startHour || 6,
+      mergedConfig.endHour || 22,
+      mergedConfig.intervalMinutes || 15
+    ),
   };
 
   const [currentWeek, setCurrentWeek] = useState(initialWeek || new Date());
@@ -112,13 +98,18 @@ export function useTimetableState({
     callbacks?.onEventClick?.(event);
   };
 
+  // FIXED: Default to today's date instead of Monday
   const addNewEvent = () => {
+    const today = new Date();
+    const todayString = formatDateForStorage(today);
+    const dayName = today.toLocaleDateString("en-US", { weekday: "long" });
+
     setNewEvent({
       title: "",
       startTime: timetableConfig.timeSlots[0],
       endTime: timetableConfig.timeSlots[1],
-      day: timetableConfig.daysOfWeek[0],
-      date: weekDates[0].toISOString().split("T")[0],
+      day: dayName,
+      date: todayString,
       description: "",
       duration: 1,
     });

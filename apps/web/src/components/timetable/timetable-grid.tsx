@@ -1,17 +1,6 @@
 import React from "react";
 import { TimeSlotCell } from "./time-slot-cell";
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
+import { Event } from "./timetable.types";
 
 interface TimetableGridProps {
   timeSlots: string[];
@@ -93,13 +82,13 @@ export function TimetableGrid({
   };
 
   return (
-    <div className="overflow-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800 max-h-[600px]">
+    <div className="overflow-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800 min-h-[500px] max-h-[500px] 3xl:max-h-none ">
       <div
         className="grid gap-0 min-w-[1000px]"
         style={{ gridTemplateColumns: "100px repeat(5, 1fr)" }}
       >
         {/* Header row */}
-        <div className="sticky top-0 z-20 bg-slate-800 border-b border-slate-700"></div>
+        <div className="sticky top-0 z-[101] bg-slate-800 border-b border-slate-700"></div>
         {daysOfWeek.map((day, index) => {
           const dayDate = weekDates[index];
           const todayHighlight = isToday(dayDate);
@@ -107,7 +96,7 @@ export function TimetableGrid({
           return (
             <div
               key={day}
-              className="sticky top-0 z-20 text-center p-4 bg-slate-800 border-b  border-l border-slate-700"
+              className="sticky top-0 z-[101] text-center p-4 bg-slate-800 border-b  border-l border-slate-700"
             >
               <div className="text-xs text-slate-400 uppercase tracking-wide mb-1">
                 {day.slice(0, 2)}
@@ -127,7 +116,7 @@ export function TimetableGrid({
 
         {/* Time slots and events */}
         {timeSlots.map((timeSlot, timeIndex) => (
-          <>
+          <React.Fragment key={timeSlot}>
             <div
               key={timeSlot}
               className="text-xs p-2 text-slate-400 border-b border-slate-700 sticky left-0 z-15 h-[25px] flex items-start justify-end pr-3 pt-2"
@@ -170,7 +159,7 @@ export function TimetableGrid({
                 />
               );
             })}
-          </>
+          </React.Fragment>
         ))}
       </div>
     </div>
