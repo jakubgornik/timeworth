@@ -1,3 +1,5 @@
+"use client";
+
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,7 +31,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { getDurationInHours, getEndTime } from "../utils/timetable-utils";
 import { useEffect, useMemo } from "react";
-import { Event, TimetableConfig } from "../timetable.types";
+import { TimetableConfig, Event } from "../timetable.types";
 
 interface NewEventDialogProps {
   open: boolean;
@@ -40,7 +42,7 @@ interface NewEventDialogProps {
   config?: TimetableConfig & { weekDates?: Date[] };
 }
 
-// FIXED: Helper function to format date without timezone issues
+// Helper function to format date without timezone issues
 const formatDateForStorage = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -178,7 +180,6 @@ export function NewEventDialog({
       const dayName = watchedDate.toLocaleDateString("en-US", {
         weekday: "long",
       });
-
       return dayName;
     }
     return "";
@@ -206,30 +207,57 @@ export function NewEventDialog({
     }
   }, [open, newEvent, reset, timeSlots]);
 
-  // Calculate maximum duration based on selected start time
+  // UPDATED: Calculate maximum duration based on selected start time - removed 8-hour limit
   const getMaxDuration = (startTime: string) => {
-    if (!startTime || !timeSlots.length) return 32; // 8 hours default
+    if (!startTime || !timeSlots.length) return 64; // Default to 16 hours if no constraints
 
     const startIndex = timeSlots.indexOf(startTime);
-    if (startIndex === -1) return 32;
+    if (startIndex === -1) return 64;
 
-    const maxSlots = timeSlots.length - startIndex;
-    return Math.min(maxSlots, 32); // Max 8 hours or until end of day
+    // Calculate max slots until end of day
+    const maxSlotsUntilEndOfDay = timeSlots.length - startIndex;
+
+    // Calculate max slots until midnight (24:00)
+    const [startHour, startMinute] = startTime.split(":").map(Number);
+    const startTimeInMinutes = startHour * 60 + startMinute;
+    const minutesUntilMidnight = 24 * 60 - startTimeInMinutes;
+    const maxSlotsUntilMidnight = Math.floor(
+      minutesUntilMidnight / intervalMinutes
+    );
+
+    // Return the smaller of the two constraints
+    return Math.min(maxSlotsUntilEndOfDay, maxSlotsUntilMidnight);
   };
 
-  // Generate duration options based on start time
+  // UPDATED: Generate duration options with better formatting for longer durations
   const getDurationOptions = (startTime: string) => {
     const maxDuration = getMaxDuration(startTime);
     const options = [];
 
     for (let i = 1; i <= maxDuration; i++) {
       const hours = getDurationInHours(i, intervalMinutes);
-      const label =
-        hours < 1
-          ? `${i * intervalMinutes} min`
-          : hours === 1
-            ? "1 hour"
-            : `${hours} hours`;
+
+      let label: string;
+      if (hours < 1) {
+        // Less than 1 hour: show in minutes
+        label = `${i * intervalMinutes} min`;
+      } else if (hours === 1) {
+        // Exactly 1 hour
+        label = "1 hour";
+      } else if (hours % 1 === 0) {
+        // Whole hours
+        label = `${hours} hours`;
+      } else {
+        // Hours with minutes (e.g., 1.5 hours = 1h 30m)
+        const wholeHours = Math.floor(hours);
+        const remainingMinutes = (hours - wholeHours) * 60;
+        if (remainingMinutes === 30) {
+          label = `${wholeHours}h 30m`;
+        } else {
+          label = `${wholeHours}h ${remainingMinutes}m`;
+        }
+      }
+
       options.push({ value: i, label });
     }
 
@@ -240,7 +268,7 @@ export function NewEventDialog({
     // Calculate end time at submission
     const endTime = getEndTime(data.startTime, data.duration, intervalMinutes);
 
-    // FIXED: Use timezone-safe date formatting
+    // Use timezone-safe date formatting
     const dateString = formatDateForStorage(data.date);
     const dayName = data.date.toLocaleDateString("en-US", { weekday: "long" });
 
@@ -323,7 +351,7 @@ export function NewEventDialog({
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 relative z-[999]">
+                  <PopoverContent className="w-auto p-0  relative z-[9999]">
                     <CalendarComponent
                       mode="single"
                       selected={field.value}
@@ -397,7 +425,7 @@ export function NewEventDialog({
                     >
                       <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-60 relative z-[9999]">
+                    <SelectContent className="max-h-60  relative z-[9999]">
                       {getDurationOptions(watchedStartTime).map((option) => (
                         <SelectItem
                           key={option.value}
@@ -446,16 +474,16 @@ export function NewEventDialog({
 
           {/* Show validation errors */}
           {errors.date?.message?.includes("weekdays") && (
-            <div className="mt-2 text-sm text-red-500 flex items-center">
-              <AlertCircle className="w-4 h-4 mr-1" />
+            <div className="text-sm text-red-500">
+              <AlertCircle className="inline mr-1" />
               {errors.date.message}
             </div>
           )}
 
           {(errors.duration?.message?.includes("exceeds") ||
             errors.duration?.message?.includes("midnight")) && (
-            <div className="mt-2 text-sm text-red-500 flex items-center">
-              <AlertCircle className="w-4 h-4 mr-1" />
+            <div className="text-sm text-red-500">
+              <AlertCircle className="inline mr-1" />
               {errors.duration.message}
             </div>
           )}

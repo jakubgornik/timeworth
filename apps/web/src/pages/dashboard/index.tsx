@@ -107,16 +107,17 @@ export default function DashboardPage() {
               </CardContent>
             </>
           ) : userIsManager ? (
-            <div className="flex flex-col w-full h-full px-6">
-              {/* <DataTable table={table} renderExpandedRow={renderExpandedRow} />
-              <Pagination
-                table={table}
-                totalCount={organizationUsers?.totalCount ?? 0}
-                pageSizeOptions={[10, 15, 20]}
-              /> */}
-              <Test />
-            </div>
-          ) : null}
+            // <div className="flex flex-col w-full h-full px-6">
+            //   <DataTable table={table} renderExpandedRow={renderExpandedRow} />
+            //   <Pagination
+            //     table={table}
+            //     totalCount={organizationUsers?.totalCount ?? 0}
+            //     pageSizeOptions={[10, 15, 20]}
+            //   />
+            // </div>
+            <Test />
+          ) : // <Test />
+          null}
         </Card>
       </SectionWrapper>
     </>

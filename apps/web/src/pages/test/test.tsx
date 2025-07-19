@@ -9,13 +9,14 @@ export default function Component() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading] = useState(false);
 
+  // TODO
   const callbacks: TimetableCallbacks = {
     // TODO: create on be
     onEventCreate: (newEvent) => {
       const event: Event = {
         id: Date.now().toString(),
         ...newEvent,
-        color: "bg-blue-600/80 border-blue-500 text-blue-100",
+        color: "bg-slate-600/80",
       };
       setEvents((prev) => [...prev, event]);
     },

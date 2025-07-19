@@ -18,19 +18,6 @@ const timeSlots = generateTimeSlots();
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
-const colors = [
-  "bg-blue-600/80 border-blue-500 text-blue-100",
-  "bg-green-600/80 border-green-500 text-green-100",
-  "bg-purple-600/80 border-purple-500 text-purple-100",
-  "bg-orange-600/80 border-orange-500 text-orange-100",
-  "bg-pink-600/80 border-pink-500 text-pink-100",
-  "bg-indigo-600/80 border-indigo-500 text-indigo-100",
-  "bg-teal-600/80 border-teal-500 text-teal-100",
-  "bg-red-600/80 border-red-500 text-red-100",
-  "bg-yellow-600/80 border-yellow-500 text-yellow-100",
-  "bg-cyan-600/80 border-cyan-500 text-cyan-100",
-];
-
 export function useTimetable() {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
@@ -111,19 +98,22 @@ export function useTimetable() {
     return `${endHour.toString().padStart(2, "0")}:${endMinute.toString().padStart(2, "0")}`;
   };
 
-  const createNewEvent = () => {
-    if (!newEvent.title) return;
+  // const createNewEvent = () => {
+  //   const color = colors[Math.floor(Math.random() * colors.length)];
+  //   console.log(color);
+  //   if (!newEvent.title) return;
+  //   // const color = colors[Math.floor(Math.random() * colors.length)];
+  //   const event: Event = {
+  //     id: Date.now().toString(),
+  //     ...newEvent,
+  //     endTime: getEndTime(newEvent.startTime, newEvent.duration),
 
-    const event: Event = {
-      id: Date.now().toString(),
-      ...newEvent,
-      endTime: getEndTime(newEvent.startTime, newEvent.duration),
-      color: colors[Math.floor(Math.random() * colors.length)],
-    };
+  //     color: color,
+  //   };
 
-    setEvents([...events, event]);
-    setNewEventDialogOpen(false);
-  };
+  //   setEvents([...events, event]);
+  //   setNewEventDialogOpen(false);
+  // };
 
   const deleteEvent = (eventId: string) => {
     setEvents(events.filter((event) => event.id !== eventId));
@@ -134,7 +124,6 @@ export function useTimetable() {
     // Constants
     timeSlots,
     daysOfWeek,
-    colors,
 
     // State
     currentWeek,
@@ -159,7 +148,7 @@ export function useTimetable() {
     navigateWeek,
     getCurrentWeekEvents,
     getEndTime,
-    createNewEvent,
+    // createNewEvent,
     deleteEvent,
 
     // Setters
