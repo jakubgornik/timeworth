@@ -76,7 +76,10 @@ export function TimetableGrid({
     return date.toDateString() === today.toDateString();
   };
 
-  // Function to format time slot display
+  // Define cell height constant
+  const CELL_HEIGHT = 25;
+
+  // Function to format time slot display - FIXED: Now uses intervalMinutes parameter
   const formatTimeSlotDisplay = (timeSlot: string) => {
     const [hours, minutes] = timeSlot.split(":").map(Number);
     const nextMinutes = minutes + intervalMinutes;
@@ -104,7 +107,7 @@ export function TimetableGrid({
           return (
             <div
               key={day}
-              className="sticky top-0 z-20 text-center p-4 bg-slate-800 border-b border-slate-700 border-l "
+              className="sticky top-0 z-20 text-center p-4 bg-slate-800 border-b  border-l border-slate-700"
             >
               <div className="text-xs text-slate-400 uppercase tracking-wide mb-1">
                 {day.slice(0, 2)}
@@ -124,8 +127,9 @@ export function TimetableGrid({
 
         {/* Time slots and events */}
         {timeSlots.map((timeSlot, timeIndex) => (
-          <React.Fragment key={`time-slot-${timeSlot}`}>
+          <>
             <div
+              key={timeSlot}
               className="text-xs p-2 text-slate-400 border-b border-slate-700 sticky left-0 z-15 h-[25px] flex items-start justify-end pr-3 pt-2"
               style={{ backgroundColor: "#1e293b" }}
             >
@@ -162,10 +166,11 @@ export function TimetableGrid({
                   onEventClick={onEventClick}
                   onEventHover={onEventHover}
                   getEventLayoutInfo={getEventLayoutInfo}
+                  cellHeight={CELL_HEIGHT} // Pass cell height to TimeSlotCell
                 />
               );
             })}
-          </React.Fragment>
+          </>
         ))}
       </div>
     </div>
