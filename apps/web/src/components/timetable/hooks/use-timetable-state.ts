@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   getDefaultConfig,
@@ -81,11 +79,6 @@ export function useTimetableState({
     callbacks?.onWeekChange?.(direction, newDate);
   };
 
-  const createNewEvent = () => {
-    callbacks?.onEventCreate?.(newEvent);
-    setNewEventDialogOpen(false);
-  };
-
   const deleteEvent = (eventId: string) => {
     callbacks?.onEventDelete?.(eventId);
     setSelectedEvent(null);
@@ -130,7 +123,6 @@ export function useTimetableState({
     weekDates,
     currentWeekEvents,
     navigateWeek,
-    createNewEvent,
     deleteEvent,
     handleEventClick,
     addNewEvent,

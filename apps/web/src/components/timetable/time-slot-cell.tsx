@@ -59,7 +59,7 @@ export function TimeSlotCell({
   return (
     <div
       key={`${day}-${timeSlot}`}
-      className={`relative transition-all duration-200 select-none bg-slate-900 border-b border-l border-slate-700 p-1`}
+      className={`relative transition-all duration-200 select-none bg-background border-b border-l  p-1`}
       style={{ height: `${cellHeight}px` }}
       onMouseDown={(e) => onCellClick(day, timeSlot, e)}
       onMouseEnter={(e) => onMouseEnter(day, timeSlot, e)}

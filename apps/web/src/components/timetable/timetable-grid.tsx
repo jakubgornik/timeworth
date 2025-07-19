@@ -82,13 +82,13 @@ export function TimetableGrid({
   };
 
   return (
-    <div className="overflow-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800 min-h-[500px] max-h-[500px] 3xl:max-h-none ">
+    <div className="overflow-auto custom-scrollbar min-h-[500px] max-h-[500px] 3xl:max-h-none ">
       <div
-        className="grid gap-0 min-w-[1000px]"
+        className="grid gap-0 min-w-[1000px] overflow-x-hidden"
         style={{ gridTemplateColumns: "100px repeat(5, 1fr)" }}
       >
         {/* Header row */}
-        <div className="sticky top-0 z-[101] bg-slate-800 border-b border-slate-700"></div>
+        <div className="sticky top-0 z-[50] bg-accent border-b "></div>
         {daysOfWeek.map((day, index) => {
           const dayDate = weekDates[index];
           const todayHighlight = isToday(dayDate);
@@ -96,7 +96,7 @@ export function TimetableGrid({
           return (
             <div
               key={day}
-              className="sticky top-0 z-[101] text-center p-4 bg-slate-800 border-b  border-l border-slate-700"
+              className="sticky top-0 z-[50] text-center p-4 bg-accent border-b border-l"
             >
               <div className="text-xs text-slate-400 uppercase tracking-wide mb-1">
                 {day.slice(0, 2)}
@@ -119,8 +119,7 @@ export function TimetableGrid({
           <React.Fragment key={timeSlot}>
             <div
               key={timeSlot}
-              className="text-xs p-2 text-slate-400 border-b border-slate-700 sticky left-0 z-15 h-[25px] flex items-start justify-end pr-3 pt-2"
-              style={{ backgroundColor: "#1e293b" }}
+              className="bg-background text-xs p-2 text-secondary border-b sticky left-0 z-15 h-[25px] flex items-center justify-center pr-3 pt-2"
             >
               <div className="text-right leading-tight">
                 {formatTimeSlotDisplay(timeSlot)}

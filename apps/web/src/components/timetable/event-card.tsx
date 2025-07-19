@@ -29,8 +29,7 @@ export function EventCard({
   onMouseLeave,
   cellHeight = 25,
 }: EventCardProps) {
-  // Calculate duration in hours (duration is in 15-minute slots)
-  // TODO should match
+  // TODO should match intervals
   const durationInHours = (event.duration * 15) / 60;
 
   return (
@@ -54,7 +53,7 @@ export function EventCard({
           border-l-4 shadow-sm h-full rounded-sm overflow-hidden
           ${overlappingCount > 1 ? "border-r border-slate-600/50" : ""}
           ${isSelecting ? "opacity-75" : ""}
-          ${isHovered ? " ring-1 ring-teal-400" : ""}
+          ${isHovered ? "ring-1 ring-slate-400" : ""}
           flex flex-col justify-center p-2
         `}
         onClick={(e) => !isSelecting && onEventClick(event, e)}
