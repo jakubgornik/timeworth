@@ -9,6 +9,12 @@ interface TimetableHeaderProps {
   onAddEvent: () => void;
 }
 
+interface TimetableHeaderProps {
+  weekRange: string;
+  onNavigateWeek: (direction: "prev" | "next") => void;
+  onAddEvent: () => void;
+}
+
 export function TimetableHeader({
   weekRange,
   onNavigateWeek,

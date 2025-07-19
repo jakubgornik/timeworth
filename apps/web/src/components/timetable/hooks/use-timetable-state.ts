@@ -1,13 +1,6 @@
-"use client";
+import { useState } from "react";
 
-import { useState, useCallback, useMemo } from "react";
-
-import {
-  getDefaultConfig,
-  getWeekDates,
-  formatDateForStorage,
-  getEndTime,
-} from "../utils/timetable-utils";
+import { getDefaultConfig, getWeekDates } from "../utils/timetable-utils";
 
 interface Event {
   id: string;
@@ -51,6 +44,11 @@ export function useTimetableState({
   callbacks,
   initialWeek,
 }: UseTimetableStateProps) {
+  const timetableConfig: TimetableConfig = {
+    ...getDefaultConfig(),
+    ...config,
+  };
+
   const [currentWeek, setCurrentWeek] = useState(initialWeek || new Date());
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -79,93 +77,55 @@ export function useTimetableState({
     duration: 1,
   });
 
-  const timetableConfig = useMemo(
-    () => ({ ...getDefaultConfig(), ...config }),
-    [config]
-  );
-  const weekDates = useMemo(() => getWeekDates(currentWeek), [currentWeek]);
+  const weekDates = getWeekDates(currentWeek);
 
-  const getCurrentWeekEvents = useCallback(() => {
+  const formatDateForStorage = (date: Date) => {
+    return date.toISOString().split("T")[0];
+  };
+
+  const currentWeekEvents = events.filter((event) => {
     const weekDateStrings = weekDates.map((date) => formatDateForStorage(date));
-    return events.filter((event) => weekDateStrings.includes(event.date));
-  }, [events, weekDates]);
+    return weekDateStrings.includes(event.date);
+  });
 
-  const navigateWeek = useCallback(
-    (direction: "prev" | "next") => {
-      const newDate = new Date(currentWeek);
-      newDate.setDate(currentWeek.getDate() + (direction === "next" ? 7 : -7));
-      setCurrentWeek(newDate);
-      callbacks?.onWeekChange?.(direction, newDate);
-    },
-    [currentWeek, callbacks]
-  );
+  const navigateWeek = (direction: "prev" | "next") => {
+    const newDate = new Date(currentWeek);
+    newDate.setDate(currentWeek.getDate() + (direction === "next" ? 7 : -7));
+    setCurrentWeek(newDate);
+    callbacks?.onWeekChange?.(direction, newDate);
+  };
 
-  const createNewEvent = useCallback(() => {
-    if (!newEvent.title || !newEvent.startTime || !newEvent.day) return;
-
-    const eventToCreate: Omit<Event, "id" | "color"> = {
-      ...newEvent,
-      endTime: getEndTime(
-        newEvent.startTime,
-        newEvent.duration,
-        timetableConfig.intervalMinutes
-      ),
-    };
-
-    callbacks?.onEventCreate?.(eventToCreate);
+  const createNewEvent = () => {
+    callbacks?.onEventCreate?.(newEvent);
     setNewEventDialogOpen(false);
+  };
+
+  const deleteEvent = (eventId: string) => {
+    callbacks?.onEventDelete?.(eventId);
+    setSelectedEvent(null);
+    setDialogOpen(false);
+  };
+
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event);
+    setDialogOpen(true);
+    callbacks?.onEventClick?.(event);
+  };
+
+  const addNewEvent = () => {
     setNewEvent({
       title: "",
-      startTime: "",
-      endTime: "",
-      day: "",
-      date: "",
-      description: "",
-      duration: 1,
-    });
-  }, [newEvent, callbacks, timetableConfig.intervalMinutes]);
-
-  const deleteEvent = useCallback(
-    (eventId: string) => {
-      callbacks?.onEventDelete?.(eventId);
-      setSelectedEvent(null);
-      setDialogOpen(false);
-    },
-    [callbacks]
-  );
-
-  const handleEventClick = useCallback(
-    (event: Event) => {
-      setSelectedEvent(event);
-      setDialogOpen(true);
-      callbacks?.onEventClick?.(event);
-    },
-    [callbacks]
-  );
-
-  const addNewEvent = useCallback(() => {
-    const dayIndex = 0;
-    const eventDate = formatDateForStorage(weekDates[dayIndex]);
-
-    setNewEvent({
-      title: "",
-      day: timetableConfig.daysOfWeek[0],
-      date: eventDate,
       startTime: timetableConfig.timeSlots[0],
-      endTime: getEndTime(
-        timetableConfig.timeSlots[0],
-        1,
-        timetableConfig.intervalMinutes
-      ),
+      endTime: timetableConfig.timeSlots[1],
+      day: timetableConfig.daysOfWeek[0],
+      date: weekDates[0].toISOString().split("T")[0],
       description: "",
       duration: 1,
     });
     setNewEventDialogOpen(true);
-  }, [weekDates, timetableConfig]);
+  };
 
   return {
-    // State
-    currentWeek,
     hoveredEvent,
     dialogOpen,
     newEventDialogOpen,
@@ -175,20 +135,14 @@ export function useTimetableState({
     selectionStart,
     selectionEnd,
     newEvent,
-
-    // Computed
     timetableConfig,
     weekDates,
-    currentWeekEvents: getCurrentWeekEvents(),
-
-    // Actions
+    currentWeekEvents,
     navigateWeek,
     createNewEvent,
     deleteEvent,
     handleEventClick,
     addNewEvent,
-
-    // Setters
     setHoveredEvent,
     setDialogOpen,
     setNewEventDialogOpen,

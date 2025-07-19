@@ -1,5 +1,3 @@
-"use client";
-
 interface SelectionOverlayProps {
   selectionInfo: {
     duration: number;
