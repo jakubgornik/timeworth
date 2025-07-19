@@ -38,7 +38,7 @@ export default function Component() {
       callbacks={callbacks}
       loading={loading}
       config={{
-        startHour: 6,
+        startHour: 8,
         endHour: 20,
         intervalMinutes: 15,
       }}
