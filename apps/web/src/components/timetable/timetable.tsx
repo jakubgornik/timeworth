@@ -284,22 +284,20 @@ export function Timetable({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-100 p-6 flex items-center justify-center">
-        <div className="text-slate-400">Loading timetable...</div>
+      <div className="min-h-screen bg-accent text-secondary p-6 flex items-center justify-center">
+        <div className="text-secondary">Loading timetable...</div>
       </div>
     );
   }
 
   return (
-    <div
-      className={`min-h-screen bg-slate-900 text-slate-100 p-6 ${className || ""}`}
-    >
+    <div className={`min-h-screen text-secondary p-6 ${className || ""}`}>
       <div
         className="max-w-full mx-auto"
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        <div className="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-2xl">
+        <div className="rounded-lg overflow-hidden shadow-2xl">
           <TimetableHeader
             weekRange={getWeekRange(weekDates)}
             onNavigateWeek={navigateWeek}

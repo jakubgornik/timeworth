@@ -124,7 +124,6 @@
   }
 }
 
-/* Add to your global CSS file */
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgb(from var(--secondary) r g b / 0.2) transparent;

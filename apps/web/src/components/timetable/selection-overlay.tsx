@@ -10,7 +10,7 @@ export function SelectionOverlay({ selectionInfo }: SelectionOverlayProps) {
 
   return (
     <div
-      className="absolute bg-teal-600/20 border-2 border-teal-500 rounded-sm shadow-sm backdrop-blur-sm z-[9999] pointer-events-none"
+      className="absolute bg-slate-600/80 border-2  rounded-sm shadow-sm backdrop-blur-sm z-[9999] pointer-events-none"
       style={{
         top: "4px",
         left: "4px",
@@ -19,10 +19,8 @@ export function SelectionOverlay({ selectionInfo }: SelectionOverlayProps) {
       }}
     >
       <div className="h-full flex items-center justify-center">
-        <div className="bg-slate-800/90 px-3 py-1 rounded-full shadow-sm border border-teal-500">
-          <span className="text-teal-400 font-medium text-xs">
-            {durationInHours}h
-          </span>
+        <div className="bg-accent px-3 py-1 rounded-full shadow-sm">
+          <span className="text-xs">{durationInHours}h</span>
         </div>
       </div>
     </div>
