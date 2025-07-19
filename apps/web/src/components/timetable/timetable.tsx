@@ -267,7 +267,7 @@ export function Timetable({
       return {
         width: `${columnWidth}%`,
         left: `${leftPosition}%`,
-        zIndex: hoveredEvent === event.id ? 100 : 10 + eventIndex,
+        zIndex: hoveredEvent === event.id ? 20 : 10 + eventIndex,
       };
     },
     [currentWeekEvents, timetableConfig.timeSlots, hoveredEvent]

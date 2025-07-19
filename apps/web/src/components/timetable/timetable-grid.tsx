@@ -84,11 +84,11 @@ export function TimetableGrid({
   return (
     <div className="overflow-auto custom-scrollbar min-h-[500px] max-h-[500px] 3xl:max-h-none ">
       <div
-        className="grid gap-0 min-w-[1000px] overflow-x-hidden"
-        style={{ gridTemplateColumns: "100px repeat(5, 1fr)" }}
+        className="grid gap-0 "
+        style={{ gridTemplateColumns: "100px repeat(5, minmax(80px, 1fr))" }}
       >
         {/* Header row */}
-        <div className="sticky top-0 z-[50] bg-accent border-b "></div>
+        <div className="sticky top-0 z-[50] bg-accent border-b"></div>
         {daysOfWeek.map((day, index) => {
           const dayDate = weekDates[index];
           const todayHighlight = isToday(dayDate);
@@ -96,7 +96,7 @@ export function TimetableGrid({
           return (
             <div
               key={day}
-              className="sticky top-0 z-[50] text-center p-4 bg-accent border-b border-l"
+              className="sticky top-0 z-[50] text-center p-1 bg-accent border-b border-l"
             >
               <div className="text-xs text-slate-400 uppercase tracking-wide mb-1">
                 {day.slice(0, 2)}
@@ -119,7 +119,7 @@ export function TimetableGrid({
           <React.Fragment key={timeSlot}>
             <div
               key={timeSlot}
-              className="bg-background text-xs p-2 text-secondary border-b sticky left-0 z-15 h-[25px] flex items-center justify-center pr-3 pt-2"
+              className="bg-background text-xs p-2 text-secondary border-b  border-r md:border-r-0 sticky  left-0 z-[40] h-[25px] flex items-center justify-center pr-3 pt-2"
             >
               <div className="text-right leading-tight">
                 {formatTimeSlotDisplay(timeSlot)}
