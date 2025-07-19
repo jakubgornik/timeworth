@@ -107,6 +107,7 @@ export default function DashboardPage() {
               </CardContent>
             </>
           ) : userIsManager ? (
+            // Table test
             // <div className="flex flex-col w-full h-full px-6">
             //   <DataTable table={table} renderExpandedRow={renderExpandedRow} />
             //   <Pagination
@@ -115,9 +116,9 @@ export default function DashboardPage() {
             //     pageSizeOptions={[10, 15, 20]}
             //   />
             // </div>
+            // Timetable test
             <Test />
-          ) : // <Test />
-          null}
+          ) : null}
         </Card>
       </SectionWrapper>
     </>

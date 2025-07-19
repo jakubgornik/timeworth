@@ -302,7 +302,7 @@ export function NewEventDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Calendar className="w-5 h-5 text-primary" />
+            <Calendar className="w-5 h-5 text-secondary" />
             Create New Event
           </DialogTitle>
         </DialogHeader>
@@ -351,13 +351,12 @@ export function NewEventDialog({
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0  relative z-[9999]">
+                  <PopoverContent className="w-auto p-0  relative z-[99999]">
                     <CalendarComponent
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
                       disabled={disableWeekends}
-                      initialFocus
                     />
                   </PopoverContent>
                 </Popover>
@@ -387,11 +386,11 @@ export function NewEventDialog({
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
-                      className={errors.startTime ? "border-red-500" : ""}
+                      className={`w-full ${errors.startTime ? "border-red-500" : ""}`}
                     >
                       <SelectValue placeholder="Select start time" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-60 relative z-[9999]">
+                    <SelectContent className="max-h-60 relative z-[99999]">
                       {timeSlots.map((time) => (
                         <SelectItem key={time} value={time}>
                           {time}
@@ -421,11 +420,11 @@ export function NewEventDialog({
                     }
                   >
                     <SelectTrigger
-                      className={errors.duration ? "border-red-500" : ""}
+                      className={`w-full ${errors.duration ? "border-red-500" : ""}`}
                     >
                       <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-60  relative z-[9999]">
+                    <SelectContent className="max-h-60 relative z-[99999]">
                       {getDurationOptions(watchedStartTime).map((option) => (
                         <SelectItem
                           key={option.value}

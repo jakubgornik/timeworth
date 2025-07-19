@@ -63,11 +63,11 @@ export function AppSidebar() {
             <SidebarGroupLabel
               className={clsx(
                 "border-b flex items-center w-full",
-                isMobile ? "justify-center" : "justify-between pl-6 "
+                isMobile ? "justify-center" : "justify-between pl-2 "
               )}
             >
               {!isMobile && (
-                <h1 className="text-2xl font-bold text-secondary">Timeworth</h1>
+                <h1 className="text-lg font-bold text-secondary">Timeworth</h1>
               )}
               <Button size="icon" onClick={toggleSidebar}>
                 <SidebarIcon />
