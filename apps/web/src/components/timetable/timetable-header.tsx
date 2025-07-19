@@ -1,13 +1,5 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
-
-interface TimetableHeaderProps {
-  weekRange: string;
-  onNavigateWeek: (direction: "prev" | "next") => void;
-  onAddEvent: () => void;
-}
 
 interface TimetableHeaderProps {
   weekRange: string;
@@ -21,7 +13,7 @@ export function TimetableHeader({
   onAddEvent,
 }: TimetableHeaderProps) {
   return (
-    <div className="bg-slate-800 text-slate-100 p-4 rounded-t-lg border-b border-slate-700">
+    <div className="bg-slate-800 text-slate-100 p-4 rounded-t-lg border-b border-slate-700 relative">
       <div className="flex items-center justify-between max-w-full">
         <div className="flex items-center gap-6">
           <h1 className="text-xl font-semibold text-white">Timetable</h1>

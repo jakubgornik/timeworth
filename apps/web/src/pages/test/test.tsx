@@ -1,84 +1,29 @@
 import { Timetable } from "@/components/timetable/timetable";
+import {
+  Event,
+  TimetableCallbacks,
+} from "@/components/timetable/timetable.types";
 import { useState } from "react";
 
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
-
-interface TimetableCallbacks {
-  onEventCreate?: (event: Omit<Event, "id" | "color">) => void;
-  onEventDelete?: (eventId: string) => void;
-  onEventClick?: (event: Event) => void;
-  onWeekChange?: (direction: "prev" | "next", currentWeek: Date) => void;
-}
-
-// export default function Test() {
-//   const [events, setEvents] = useState<Event[]>([]);
-
-//   const callbacks: TimetableCallbacks = {
-//     onEventCreate: (newEvent) => {
-//       // TODO replace with actual event creation logic on the be
-//       const event: Event = {
-//         id: Date.now().toString(),
-//         ...newEvent,
-//         color: "bg-blue-600/80 border-blue-500 text-blue-100",
-//       };
-//       setEvents((prev) => [...prev, event]);
-//     },
-//     onEventDelete: (eventId) => {
-//       // TODO
-//       console.log("Delete event with ID:", eventId);
-//     },
-//     onEventClick: (event) => {
-//       // TODO
-//       console.log("Event details id:", event.id);
-//     },
-//     onWeekChange: (direction, newWeek) => {
-//       console.log("Week changed:", direction, newWeek);
-//       // TODO could fetch new events for the week
-//     },
-//   };
-
-//   return (
-//     <Timetable
-//       events={events}
-//       callbacks={callbacks}
-//       loading={false} // Set to query loading state
-//       config={{
-//         startHour: 6,
-//         endHour: 22,
-//         intervalMinutes: 15,
-//       }}
-//     />
-//   );
-// }
-
-// Example usage component - this shows how to use the refactored timetable
 export default function Component() {
   const [events, setEvents] = useState<Event[]>([]);
+  const [loading] = useState(false);
 
   const callbacks: TimetableCallbacks = {
+    // TODO: create on be
     onEventCreate: (newEvent) => {
       const event: Event = {
         id: Date.now().toString(),
         ...newEvent,
-        color: "bg-blue-600/80 border-blue-500 text-blue-100", // You can randomize this
+        color: "bg-blue-600/80 border-blue-500 text-blue-100",
       };
       setEvents((prev) => [...prev, event]);
     },
     onEventDelete: (eventId) => {
-      setEvents((prev) => prev.filter((event) => event.id !== eventId));
+      console.log("Event deleted", eventId);
     },
     onEventClick: (event) => {
-      console.log("Event clicked:", event);
+      console.log("Event clicked:", event.id);
     },
     onWeekChange: (direction, newWeek) => {
       console.log("Week changed:", direction, newWeek);
@@ -90,10 +35,10 @@ export default function Component() {
     <Timetable
       events={events}
       callbacks={callbacks}
-      loading={false}
+      loading={loading}
       config={{
         startHour: 6,
-        endHour: 22,
+        endHour: 20,
         intervalMinutes: 15,
       }}
     />

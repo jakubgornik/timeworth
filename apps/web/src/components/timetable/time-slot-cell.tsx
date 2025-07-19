@@ -1,21 +1,7 @@
-"use client";
-
 import type React from "react";
-
 import { EventCard } from "./event-card";
 import { SelectionOverlay } from "./selection-overlay";
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
+import { Event } from "./timetable.types";
 
 interface TimeSlotCellProps {
   day: string;
@@ -50,6 +36,7 @@ interface TimeSlotCellProps {
     left: string;
     zIndex: number;
   };
+  cellHeight?: number;
 }
 
 export function TimeSlotCell({
@@ -67,13 +54,13 @@ export function TimeSlotCell({
   onEventClick,
   onEventHover,
   getEventLayoutInfo,
+  cellHeight = 25,
 }: TimeSlotCellProps) {
   return (
     <div
       key={`${day}-${timeSlot}`}
-      className={`h-[25px] border-b border-l border-slate-700 p-1 relative transition-all duration-200 select-none bg-slate-900
-       }
-      `}
+      className={`relative transition-all duration-200 select-none bg-slate-900 border-b border-l border-slate-700 p-1`}
+      style={{ height: `${cellHeight}px` }}
       onMouseDown={(e) => onCellClick(day, timeSlot, e)}
       onMouseEnter={(e) => onMouseEnter(day, timeSlot, e)}
       onMouseLeave={onMouseLeave}
@@ -96,6 +83,7 @@ export function TimeSlotCell({
             onEventClick={onEventClick}
             onMouseEnter={() => onEventHover(event.id)}
             onMouseLeave={() => onEventHover(null)}
+            cellHeight={cellHeight}
           />
         );
       })}

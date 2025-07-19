@@ -9,18 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Trash2 } from "lucide-react";
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
+import { Event } from "../timetable.types";
 
 interface EventDetailsDialogProps {
   open: boolean;

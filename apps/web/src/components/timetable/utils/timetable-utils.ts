@@ -1,3 +1,5 @@
+import { TimetableConfig } from "../timetable.types";
+
 export const generateTimeSlots = (
   startHour = 6,
   endHour = 22,
@@ -13,15 +15,6 @@ export const generateTimeSlots = (
   }
   return slots;
 };
-
-interface TimetableConfig {
-  timeSlots: string[];
-  daysOfWeek: string[];
-  colors: string[];
-  startHour?: number;
-  endHour?: number;
-  intervalMinutes?: number;
-}
 
 export const getDefaultConfig = (): TimetableConfig => ({
   timeSlots: generateTimeSlots(),

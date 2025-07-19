@@ -10,7 +10,7 @@ export function SelectionOverlay({ selectionInfo }: SelectionOverlayProps) {
 
   return (
     <div
-      className="absolute bg-teal-600/20 border-2 border-teal-500 rounded-sm shadow-sm backdrop-blur-sm z-20 pointer-events-none"
+      className="absolute bg-teal-600/20 border-2 border-teal-500 rounded-sm shadow-sm backdrop-blur-sm z-[9999] pointer-events-none"
       style={{
         top: "4px",
         left: "4px",
