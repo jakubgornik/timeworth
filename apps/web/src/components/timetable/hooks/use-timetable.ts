@@ -1,16 +1,5 @@
 import { useState } from "react";
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
+import { Event } from "../timetable.types";
 
 // Generate 15-minute intervals from 06:00 to 22:00
 const generateTimeSlots = () => {

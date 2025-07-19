@@ -18,30 +18,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Plus, AlertCircle } from "lucide-react";
+import { Calendar, Plus, AlertCircle, CalendarIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { getDurationInHours, getEndTime } from "../utils/timetable-utils";
-import { useEffect } from "react";
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  day: string;
-  date: string;
-  color: string;
-  description?: string;
-  duration: number;
-}
-
-interface TimetableConfig {
-  timeSlots: string[];
-  daysOfWeek: string[];
-  colors: string[];
-  startHour?: number;
-  endHour?: number;
-  intervalMinutes?: number;
-}
+import { useEffect, useMemo } from "react";
+import { Event, TimetableConfig } from "../timetable.types";
 
 interface NewEventDialogProps {
   open: boolean;
@@ -52,21 +40,51 @@ interface NewEventDialogProps {
   config?: TimetableConfig & { weekDates?: Date[] };
 }
 
+// FIXED: Helper function to format date without timezone issues
+const formatDateForStorage = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // Create validation schema
-const createEventSchema = (timeSlots: string[], intervalMinutes: number) => {
+const createEventSchema = (
+  timeSlots: string[],
+  intervalMinutes: number,
+  allowedDays: string[]
+) => {
   return z
     .object({
       title: z
         .string()
         .min(1, "Event title is required")
         .max(100, "Title must be less than 100 characters"),
-      day: z.string().min(1, "Day is required"),
+      date: z.date({ required_error: "Date is required" }),
       startTime: z.string().min(1, "Start time is required"),
       duration: z.number().min(1, "Duration must be at least 15 minutes"),
-      endTime: z.string(),
       description: z.string().optional(),
-      date: z.string(),
     })
+    .refine(
+      (data) => {
+        // Validate that the selected date is a weekday (Monday-Friday)
+        const dayNames = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+        const selectedDayName = dayNames[data.date.getDay()];
+        return allowedDays.includes(selectedDayName);
+      },
+      {
+        message: "Events can only be created for weekdays (Monday-Friday)",
+        path: ["date"],
+      }
+    )
     .refine(
       (data) => {
         // Validate that the event doesn't exceed the day boundary
@@ -108,27 +126,35 @@ export function NewEventDialog({
   intervalMinutes = 15,
   config,
 }: NewEventDialogProps) {
-  const timeSlots = config?.timeSlots || [];
+  const timeSlots = useMemo(() => config?.timeSlots || [], [config?.timeSlots]);
+  const allowedDays = config?.daysOfWeek || [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+  ];
 
-  const eventSchema = createEventSchema(timeSlots, intervalMinutes);
+  const eventSchema = createEventSchema(
+    timeSlots,
+    intervalMinutes,
+    allowedDays
+  );
 
   const {
     control,
     handleSubmit,
     watch,
-    setValue,
     reset,
     formState: { errors, isValid },
   } = useForm<EventFormData>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       title: "",
-      day: "",
+      date: new Date(),
       startTime: "",
       duration: 1,
-      endTime: "",
       description: "",
-      date: "",
     },
     mode: "onChange",
   });
@@ -136,33 +162,49 @@ export function NewEventDialog({
   // Watch for changes to recalculate end time
   const watchedStartTime = watch("startTime");
   const watchedDuration = watch("duration");
+  const watchedDate = watch("date");
+
+  // Calculate end time using useMemo to prevent infinite loops
+  const calculatedEndTime = useMemo(() => {
+    if (watchedStartTime && watchedDuration) {
+      return getEndTime(watchedStartTime, watchedDuration, intervalMinutes);
+    }
+    return "";
+  }, [watchedStartTime, watchedDuration, intervalMinutes]);
+
+  // Calculate day name from selected date
+  const dayName = useMemo(() => {
+    if (watchedDate) {
+      const dayName = watchedDate.toLocaleDateString("en-US", {
+        weekday: "long",
+      });
+
+      return dayName;
+    }
+    return "";
+  }, [watchedDate]);
+
+  // Check if selected date is a weekend
+  const isWeekend = useMemo(() => {
+    if (watchedDate) {
+      const day = watchedDate.getDay();
+      return day === 0 || day === 6; // Sunday or Saturday
+    }
+    return false;
+  }, [watchedDate]);
 
   // Update form when newEvent prop changes (from parent component)
   useEffect(() => {
     if (open && newEvent) {
       reset({
         title: newEvent.title || "",
-        day: newEvent.day || "",
-        startTime: newEvent.startTime || "",
+        date: newEvent.date ? new Date(newEvent.date) : new Date(),
+        startTime: newEvent.startTime || timeSlots[0] || "",
         duration: newEvent.duration || 1,
-        endTime: newEvent.endTime || "",
         description: newEvent.description || "",
-        date: newEvent.date || "",
       });
     }
-  }, [open, newEvent, reset]);
-
-  // Recalculate end time when start time or duration changes
-  useEffect(() => {
-    if (watchedStartTime && watchedDuration) {
-      const endTime = getEndTime(
-        watchedStartTime,
-        watchedDuration,
-        intervalMinutes
-      );
-      setValue("endTime", endTime, { shouldValidate: false });
-    }
-  }, [watchedStartTime, watchedDuration, setValue, intervalMinutes]);
+  }, [open, newEvent, reset, timeSlots]);
 
   // Calculate maximum duration based on selected start time
   const getMaxDuration = (startTime: string) => {
@@ -195,21 +237,36 @@ export function NewEventDialog({
   };
 
   const onSubmit = (data: EventFormData) => {
-    // Call the parent's create event function with the form data
-    onCreateEvent({
+    // Calculate end time at submission
+    const endTime = getEndTime(data.startTime, data.duration, intervalMinutes);
+
+    // FIXED: Use timezone-safe date formatting
+    const dateString = formatDateForStorage(data.date);
+    const dayName = data.date.toLocaleDateString("en-US", { weekday: "long" });
+
+    const eventData = {
       title: data.title,
-      day: data.day,
+      day: dayName,
       startTime: data.startTime,
       duration: data.duration,
-      endTime: data.endTime,
+      endTime: endTime,
       description: data.description || "",
-      date: data.date,
-    });
+      date: dateString,
+    };
+
+    // Call the parent's create event function with the form data
+    onCreateEvent(eventData);
   };
 
   const handleClose = () => {
     reset();
     onOpenChange(false);
+  };
+
+  // Disable weekend dates in the calendar
+  const disableWeekends = (date: Date) => {
+    const day = date.getDay();
+    return day === 0 || day === 6; // Disable Sunday (0) and Saturday (6)
   };
 
   return (
@@ -243,19 +300,54 @@ export function NewEventDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="selectedDay">Selected Day</Label>
+            <Label>Event Date</Label>
             <Controller
-              name="day"
+              name="date"
               control={control}
               render={({ field }) => (
-                <Input
-                  {...field}
-                  id="selectedDay"
-                  disabled
-                  className="bg-muted text-muted-foreground"
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !field.value && "text-muted-foreground",
+                        errors.date && "border-red-500"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 relative z-[999]">
+                    <CalendarComponent
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={disableWeekends}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               )}
             />
+            {errors.date && (
+              <p className="text-sm text-red-500">{errors.date.message}</p>
+            )}
+            {dayName && (
+              <p className="text-sm text-muted-foreground">
+                Selected day: <span className="font-medium">{dayName}</span>
+                {isWeekend && (
+                  <span className="text-red-500 ml-2">
+                    (Weekend - not allowed)
+                  </span>
+                )}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -272,7 +364,7 @@ export function NewEventDialog({
                       <SelectValue placeholder="Select start time" />
                     </SelectTrigger>
                     <SelectContent className="max-h-60 relative z-[9999]">
-                      {timeSlots.map((time: string) => (
+                      {timeSlots.map((time) => (
                         <SelectItem key={time} value={time}>
                           {time}
                         </SelectItem>
@@ -328,17 +420,11 @@ export function NewEventDialog({
 
           <div className="space-y-2">
             <Label htmlFor="endTime">End Time (Calculated)</Label>
-            <Controller
-              name="endTime"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  id="endTime"
-                  disabled
-                  className="bg-muted text-muted-foreground"
-                />
-              )}
+            <Input
+              id="endTime"
+              value={calculatedEndTime}
+              disabled
+              className="bg-muted text-muted-foreground"
             />
           </div>
 
@@ -359,13 +445,18 @@ export function NewEventDialog({
           </div>
 
           {/* Show validation errors */}
+          {errors.date?.message?.includes("weekdays") && (
+            <div className="mt-2 text-sm text-red-500 flex items-center">
+              <AlertCircle className="w-4 h-4 mr-1" />
+              {errors.date.message}
+            </div>
+          )}
+
           {(errors.duration?.message?.includes("exceeds") ||
             errors.duration?.message?.includes("midnight")) && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-              <span className="text-sm text-red-700">
-                {errors.duration.message}
-              </span>
+            <div className="mt-2 text-sm text-red-500 flex items-center">
+              <AlertCircle className="w-4 h-4 mr-1" />
+              {errors.duration.message}
             </div>
           )}
 
