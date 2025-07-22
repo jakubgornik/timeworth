@@ -4,17 +4,17 @@ import { Event } from "./timetable.types";
 
 interface EventCardProps {
   event: Event;
-  layoutInfo: {
-    width: string;
-    left: string;
-    zIndex: number;
-  };
   isHovered: boolean;
   isSelecting: boolean;
   overlappingCount: number;
   onEventClick: (event: Event, e: React.MouseEvent) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
+  layoutInfo: {
+    width: string;
+    left: string;
+    zIndex: number;
+  };
   cellHeight?: number;
 }
 

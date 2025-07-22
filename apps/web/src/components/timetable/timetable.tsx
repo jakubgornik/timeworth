@@ -14,7 +14,6 @@ interface TimetableProps {
   callbacks?: TimetableCallbacks;
   currentWeek?: Date;
   loading?: boolean;
-  className?: string;
 }
 
 export function Timetable({
@@ -23,7 +22,6 @@ export function Timetable({
   callbacks,
   currentWeek,
   loading,
-  className,
 }: TimetableProps) {
   const {
     hoveredEvent,
@@ -162,7 +160,6 @@ export function Timetable({
 
   const selectionInfo = getSelectionInfo();
 
-  // Helper functions for grid
   const getEventsStartingInSlot = useCallback(
     (day: string, timeSlot: string) => {
       return currentWeekEvents.filter(
@@ -291,7 +288,7 @@ export function Timetable({
   }
 
   return (
-    <div className={`min-h-screen text-secondary p-6 ${className || ""}`}>
+    <div className="min-h-screen text-secondary p-6">
       <div
         className="max-w-full mx-auto"
         onMouseUp={handleMouseUp}
@@ -331,14 +328,12 @@ export function Timetable({
             />
           </div>
         </div>
-
         <EventDetailsDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           event={selectedEvent}
           onDeleteEvent={deleteEvent}
         />
-
         <NewEventDialog
           open={newEventDialogOpen}
           onOpenChange={setNewEventDialogOpen}

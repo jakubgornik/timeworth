@@ -1,13 +1,14 @@
 import { DialogCard } from "@/components/dialog-card";
-import Pagination from "@/components/pagination/pagination";
 import SectionHeader from "@/components/section-header";
 import SectionWrapper from "@/components/section-wrapper";
 import DataTable from "@/components/table/table";
+import Pagination from "@/components/pagination/pagination";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useOrganizationUsers } from "@/hooks/user/use-organization-users";
 import { CreateOrganizationDialog } from "@/modules/dashboard/dialogs/create-organization-dialog";
 import { JoinOrganizationDialog } from "@/modules/dashboard/dialogs/join-organization-dialog";
+import MvpTimetable from "@/modules/dashboard/mvp-timetable";
 import { useTableDemo } from "@/modules/dashboard/use-table-demo-columns";
 import {
   ExpandedState,
@@ -18,7 +19,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import Test from "../test/test";
 
 export default function DashboardPage() {
   const currentUser = useCurrentUser();
@@ -117,7 +117,7 @@ export default function DashboardPage() {
             //   />
             // </div>
             // Timetable test
-            <Test />
+            <MvpTimetable />
           ) : null}
         </Card>
       </SectionWrapper>
