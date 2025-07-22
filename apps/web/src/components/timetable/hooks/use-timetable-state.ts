@@ -19,11 +19,9 @@ export function useTimetableState({
   callbacks,
   initialWeek,
 }: UseTimetableStateProps) {
-  // FIXED: Properly merge config and regenerate timeSlots based on config
   const defaultConfig = getDefaultConfig();
   const mergedConfig = { ...defaultConfig, ...config };
 
-  // Regenerate timeSlots if custom hours/intervals are provided
   const timetableConfig: TimetableConfig = {
     ...mergedConfig,
     timeSlots: generateTimeSlots(
@@ -61,11 +59,11 @@ export function useTimetableState({
     duration: 1,
   });
 
-  const weekDates = getWeekDates(currentWeek);
-
   const formatDateForStorage = (date: Date) => {
     return date.toISOString().split("T")[0];
   };
+
+  const weekDates = getWeekDates(currentWeek);
 
   const currentWeekEvents = events.filter((event) => {
     const weekDateStrings = weekDates.map((date) => formatDateForStorage(date));
@@ -91,7 +89,6 @@ export function useTimetableState({
     callbacks?.onEventClick?.(event);
   };
 
-  // FIXED: Default to today's date instead of Monday
   const addNewEvent = () => {
     const today = new Date();
     const todayString = formatDateForStorage(today);

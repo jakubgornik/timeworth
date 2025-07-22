@@ -1,43 +1,6 @@
-import type React from "react";
 import { EventCard } from "./event-card";
 import { SelectionOverlay } from "./selection-overlay";
-import { Event } from "./timetable.types";
-
-interface TimeSlotCellProps {
-  day: string;
-  timeSlot: string;
-  timeIndex: number;
-  eventsStartingHere: Event[];
-  overlappingEvents: Event[];
-  isEmpty: boolean;
-  isCellSelected: boolean;
-  isCellHovered: boolean;
-  isSelecting: boolean;
-  isTopSelectedCell: boolean | null;
-  selectionInfo: {
-    startIndex: number;
-    endIndex: number;
-    duration: number;
-    topTimeSlot: string;
-    selectedSlots: string[];
-    day: string;
-  } | null;
-  hoveredEvent: string | null;
-  onCellClick: (day: string, timeSlot: string, e: React.MouseEvent) => void;
-  onMouseEnter: (day: string, timeSlot: string, e: React.MouseEvent) => void;
-  onMouseLeave: () => void;
-  onEventClick: (event: Event, e: React.MouseEvent) => void;
-  onEventHover: (eventId: string | null) => void;
-  getEventLayoutInfo: (
-    event: Event,
-    day: string
-  ) => {
-    width: string;
-    left: string;
-    zIndex: number;
-  };
-  cellHeight?: number;
-}
+import { TimeSlotCellProps } from "./timetable.types";
 
 export function TimeSlotCell({
   day,

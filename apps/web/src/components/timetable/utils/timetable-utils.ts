@@ -8,7 +8,7 @@ export const generateTimeSlots = (
   const slots = [];
   for (let hour = startHour; hour <= endHour; hour++) {
     for (let minute = 0; minute < 60; minute += intervalMinutes) {
-      if (hour === endHour && minute > 0) break; // Stop at end hour
+      if (hour === endHour && minute > 0) break;
       const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
       slots.push(timeString);
     }
@@ -19,20 +19,8 @@ export const generateTimeSlots = (
 export const getDefaultConfig = (): TimetableConfig => ({
   timeSlots: generateTimeSlots(),
   daysOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  colors: [
-    "bg-blue-600/80 border-blue-500 text-blue-100",
-    "bg-green-600/80 border-green-500 text-green-100",
-    "bg-purple-600/80 border-purple-500 text-purple-100",
-    "bg-orange-600/80 border-orange-500 text-orange-100",
-    "bg-pink-600/80 border-pink-500 text-pink-100",
-    "bg-indigo-600/80 border-indigo-500 text-indigo-100",
-    "bg-teal-600/80 border-teal-500 text-teal-100",
-    "bg-red-600/80 border-red-500 text-red-100",
-    "bg-yellow-600/80 border-yellow-500 text-yellow-100",
-    "bg-cyan-600/80 border-cyan-500 text-cyan-100",
-  ],
   startHour: 6,
-  endHour: 22,
+  endHour: 20,
   intervalMinutes: 15,
 });
 
@@ -56,7 +44,10 @@ export const formatDate = (date: Date): string => {
 };
 
 export const formatDateForStorage = (date: Date): string => {
-  return date.toISOString().split("T")[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 export const getWeekRange = (weekDates: Date[]): string => {
@@ -91,9 +82,77 @@ export const formatTimeSlotDisplay = (
   const [hours, minutes] = timeSlot.split(":").map(Number);
   const nextMinutes = minutes + intervalMinutes;
   const nextHours = nextMinutes >= 60 ? hours + 1 : hours;
+
   const adjustedNextMinutes =
-    nextMinutes >= 60 ? nextMinutes - intervalMinutes : nextMinutes;
+    nextMinutes >= 60 ? nextMinutes - 60 : nextMinutes;
 
   const nextTime = `${nextHours.toString().padStart(2, "0")}:${adjustedNextMinutes.toString().padStart(2, "0")}`;
   return `${timeSlot}-${nextTime}`;
+};
+
+export const defaultAllowedDays = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+];
+
+export const getMaxDuration = (
+  startTime: string,
+  timeSlots: string[],
+  intervalMinutes: number
+) => {
+  if (!startTime || !timeSlots.length) return 64; // Default to 16 hours if no constraints
+
+  const startIndex = timeSlots.indexOf(startTime);
+  if (startIndex === -1) return 64;
+
+  // Calculate max slots until end of day
+  const maxSlotsUntilEndOfDay = timeSlots.length - startIndex;
+
+  // Calculate max slots until midnight (24:00)
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+  const startTimeInMinutes = startHour * 60 + startMinute;
+  const minutesUntilMidnight = 24 * 60 - startTimeInMinutes;
+  const maxSlotsUntilMidnight = Math.floor(
+    minutesUntilMidnight / intervalMinutes
+  );
+
+  // Return the smaller of the two constraints
+  return Math.min(maxSlotsUntilEndOfDay, maxSlotsUntilMidnight);
+};
+
+export const getDurationOptions = (
+  startTime: string,
+  timeSlots: string[],
+  intervalMinutes: number
+) => {
+  const maxDuration = getMaxDuration(startTime, timeSlots, intervalMinutes);
+  const options = [];
+
+  for (let i = 1; i <= maxDuration; i++) {
+    const hours = getDurationInHours(i, intervalMinutes);
+
+    let label: string;
+    if (hours < 1) {
+      label = `${i * intervalMinutes} min`;
+    } else if (hours === 1) {
+      label = "1 hour";
+    } else if (hours % 1 === 0) {
+      label = `${hours} hours`;
+    } else {
+      const wholeHours = Math.floor(hours);
+      const remainingMinutes = (hours - wholeHours) * 60;
+      if (remainingMinutes === 30) {
+        label = `${wholeHours}h 30m`;
+      } else {
+        label = `${wholeHours}h ${remainingMinutes}m`;
+      }
+    }
+
+    options.push({ value: i, label });
+  }
+
+  return options;
 };

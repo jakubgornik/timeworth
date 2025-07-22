@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Dialog,
   DialogContent,
@@ -26,7 +24,6 @@ export function EventDetailsDialog({
 }: EventDetailsDialogProps) {
   if (!event) return null;
 
-  // Calculate duration in hours (duration is in 15-minute slots)
   const durationInHours = (event.duration * 15) / 60;
 
   return (
@@ -34,14 +31,14 @@ export function EventDetailsDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Clock className="w-5 h-5 text-primary" />
+            <Clock className="w-5 h-5 text-secondary" />
             Event Details
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="p-4 rounded-lg bg-muted border border-border">
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              {event.title}
+          <div className="p-4 rounded-lg bg-accent border border-border">
+            <h3 className="text-lg font-semibold mb-2 text-secondary">
+              Title: {event.title}
             </h3>
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">

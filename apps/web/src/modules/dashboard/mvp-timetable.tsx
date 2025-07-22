@@ -5,11 +5,14 @@ import {
 } from "@/components/timetable/timetable.types";
 import { useState } from "react";
 
-export default function Component() {
+export default function MvpTimetable() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading] = useState(false);
 
   // TODO
+  // This should be replaced with actual callbacks to handle event creation, deletion, etc.
+  // Repalce events with work entries, adjust accordingly
+
   const callbacks: TimetableCallbacks = {
     // TODO: create on be
     onEventCreate: (newEvent) => {
@@ -28,7 +31,6 @@ export default function Component() {
     },
     onWeekChange: (direction, newWeek) => {
       console.log("Week changed:", direction, newWeek);
-      // Here you could fetch new events for the week
     },
   };
 
