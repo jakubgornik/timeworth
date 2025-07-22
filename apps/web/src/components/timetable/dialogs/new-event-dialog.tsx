@@ -1,5 +1,3 @@
-"use client";
-
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,7 +27,12 @@ import {
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { getDurationInHours, getEndTime } from "../utils/timetable-utils";
+import {
+  defaultAllowedDays,
+  formatDateForStorage,
+  getDurationOptions,
+  getEndTime,
+} from "../utils/timetable-utils";
 import { useEffect, useMemo } from "react";
 import { TimetableConfig, Event } from "../timetable.types";
 
@@ -42,15 +45,7 @@ interface NewEventDialogProps {
   config?: TimetableConfig & { weekDates?: Date[] };
 }
 
-// Helper function to format date without timezone issues
-const formatDateForStorage = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-// Create validation schema
+// TODO: extract to separate utility file
 const createEventSchema = (
   timeSlots: string[],
   intervalMinutes: number,
@@ -101,7 +96,7 @@ const createEventSchema = (
     )
     .refine(
       (data) => {
-        // Additional validation: ensure end time is within the same day
+        // Validate ensure end time is within the same day
         const [startHour] = data.startTime.split(":").map(Number);
         const durationInMinutes = data.duration * intervalMinutes;
         const endTimeInMinutes =
@@ -129,13 +124,7 @@ export function NewEventDialog({
   config,
 }: NewEventDialogProps) {
   const timeSlots = useMemo(() => config?.timeSlots || [], [config?.timeSlots]);
-  const allowedDays = config?.daysOfWeek || [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-  ];
+  const allowedDays = config?.daysOfWeek || defaultAllowedDays;
 
   const eventSchema = createEventSchema(
     timeSlots,
@@ -161,20 +150,16 @@ export function NewEventDialog({
     mode: "onChange",
   });
 
-  // Watch for changes to recalculate end time
   const watchedStartTime = watch("startTime");
   const watchedDuration = watch("duration");
   const watchedDate = watch("date");
 
-  // Calculate end time using useMemo to prevent infinite loops
   const calculatedEndTime = useMemo(() => {
     if (watchedStartTime && watchedDuration) {
       return getEndTime(watchedStartTime, watchedDuration, intervalMinutes);
     }
-    return "";
   }, [watchedStartTime, watchedDuration, intervalMinutes]);
 
-  // Calculate day name from selected date
   const dayName = useMemo(() => {
     if (watchedDate) {
       const dayName = watchedDate.toLocaleDateString("en-US", {
@@ -182,19 +167,8 @@ export function NewEventDialog({
       });
       return dayName;
     }
-    return "";
   }, [watchedDate]);
 
-  // Check if selected date is a weekend
-  const isWeekend = useMemo(() => {
-    if (watchedDate) {
-      const day = watchedDate.getDay();
-      return day === 0 || day === 6; // Sunday or Saturday
-    }
-    return false;
-  }, [watchedDate]);
-
-  // Update form when newEvent prop changes (from parent component)
   useEffect(() => {
     if (open && newEvent) {
       reset({
@@ -207,72 +181,14 @@ export function NewEventDialog({
     }
   }, [open, newEvent, reset, timeSlots]);
 
-  // UPDATED: Calculate maximum duration based on selected start time - removed 8-hour limit
-  const getMaxDuration = (startTime: string) => {
-    if (!startTime || !timeSlots.length) return 64; // Default to 16 hours if no constraints
-
-    const startIndex = timeSlots.indexOf(startTime);
-    if (startIndex === -1) return 64;
-
-    // Calculate max slots until end of day
-    const maxSlotsUntilEndOfDay = timeSlots.length - startIndex;
-
-    // Calculate max slots until midnight (24:00)
-    const [startHour, startMinute] = startTime.split(":").map(Number);
-    const startTimeInMinutes = startHour * 60 + startMinute;
-    const minutesUntilMidnight = 24 * 60 - startTimeInMinutes;
-    const maxSlotsUntilMidnight = Math.floor(
-      minutesUntilMidnight / intervalMinutes
-    );
-
-    // Return the smaller of the two constraints
-    return Math.min(maxSlotsUntilEndOfDay, maxSlotsUntilMidnight);
-  };
-
-  // UPDATED: Generate duration options with better formatting for longer durations
-  const getDurationOptions = (startTime: string) => {
-    const maxDuration = getMaxDuration(startTime);
-    const options = [];
-
-    for (let i = 1; i <= maxDuration; i++) {
-      const hours = getDurationInHours(i, intervalMinutes);
-
-      let label: string;
-      if (hours < 1) {
-        // Less than 1 hour: show in minutes
-        label = `${i * intervalMinutes} min`;
-      } else if (hours === 1) {
-        // Exactly 1 hour
-        label = "1 hour";
-      } else if (hours % 1 === 0) {
-        // Whole hours
-        label = `${hours} hours`;
-      } else {
-        // Hours with minutes (e.g., 1.5 hours = 1h 30m)
-        const wholeHours = Math.floor(hours);
-        const remainingMinutes = (hours - wholeHours) * 60;
-        if (remainingMinutes === 30) {
-          label = `${wholeHours}h 30m`;
-        } else {
-          label = `${wholeHours}h ${remainingMinutes}m`;
-        }
-      }
-
-      options.push({ value: i, label });
-    }
-
-    return options;
-  };
-
   const onSubmit = (data: EventFormData) => {
-    // Calculate end time at submission
     const endTime = getEndTime(data.startTime, data.duration, intervalMinutes);
 
-    // Use timezone-safe date formatting
+    // timezone-safe date formatting
     const dateString = formatDateForStorage(data.date);
-    const dayName = data.date.toLocaleDateString("en-US", { weekday: "long" });
 
-    const eventData = {
+    const dayName = data.date.toLocaleDateString("en-US", { weekday: "long" });
+    const eventDataPayload = {
       title: data.title,
       day: dayName,
       startTime: data.startTime,
@@ -282,8 +198,7 @@ export function NewEventDialog({
       date: dateString,
     };
 
-    // Call the parent's create event function with the form data
-    onCreateEvent(eventData);
+    onCreateEvent(eventDataPayload);
   };
 
   const handleClose = () => {
@@ -291,11 +206,14 @@ export function NewEventDialog({
     onOpenChange(false);
   };
 
-  // Disable weekend dates in the calendar
-  const disableWeekends = (date: Date) => {
+  const isWeekend = (date: Date) => {
     const day = date.getDay();
-    return day === 0 || day === 6; // Disable Sunday (0) and Saturday (6)
+    return day === 0 || day === 6;
   };
+
+  const currentDateIsWeekend = useMemo(() => {
+    return watchedDate ? isWeekend(watchedDate) : false;
+  }, [watchedDate]);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -356,7 +274,7 @@ export function NewEventDialog({
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={disableWeekends}
+                      disabled={isWeekend}
                     />
                   </PopoverContent>
                 </Popover>
@@ -368,7 +286,7 @@ export function NewEventDialog({
             {dayName && (
               <p className="text-sm text-muted-foreground">
                 Selected day: <span className="font-medium">{dayName}</span>
-                {isWeekend && (
+                {currentDateIsWeekend && (
                   <span className="text-red-500 ml-2">
                     (Weekend - not allowed)
                   </span>
@@ -425,7 +343,11 @@ export function NewEventDialog({
                       <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
                     <SelectContent className="max-h-60 relative z-[99999]">
-                      {getDurationOptions(watchedStartTime).map((option) => (
+                      {getDurationOptions(
+                        watchedStartTime,
+                        timeSlots,
+                        intervalMinutes
+                      ).map((option) => (
                         <SelectItem
                           key={option.value}
                           value={option.value.toString()}
