@@ -5,12 +5,11 @@ interface SelectionOverlayProps {
 }
 
 export function SelectionOverlay({ selectionInfo }: SelectionOverlayProps) {
-  // Calculate duration in hours (duration is in 15-minute slots)
   const durationInHours = (selectionInfo.duration * 15) / 60;
 
   return (
     <div
-      className="absolute bg-slate-600/80 border-2  rounded-sm shadow-sm backdrop-blur-sm z-[9999] pointer-events-none"
+      className="absolute bg-slate-600/80 border-2 rounded-sm shadow-sm backdrop-blur-sm z-[10] pointer-events-none"
       style={{
         top: "4px",
         left: "4px",
