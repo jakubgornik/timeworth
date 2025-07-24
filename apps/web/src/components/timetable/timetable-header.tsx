@@ -15,8 +15,8 @@ export function TimetableHeader({
   return (
     <div className="bg-accent text-secondary p-3 sm:p-4 rounded-t-lg border-b ">
       <div className="flex items-center justify-between max-w-full">
-        <div className="flex items-center gap-3 sm:gap-6 min-w-0 flex-1">
-          <h1 className="text-md sm:text-xl font-semibold text-secondary truncate">
+        <div className="flex items-center gap-3  min-w-0 flex-1">
+          <h1 className="hidden sm:block text-md sm:text-lg md:text-xl font-semibold text-secondary truncate">
             <span>Timetable</span>
           </h1>
 
@@ -25,7 +25,7 @@ export function TimetableHeader({
               <ChevronLeft className="w-4 h-4" />
             </Button>
 
-            <span className="text-sm sm:text-lg font-medium px-2 sm:px-4 text-secondary text-center min-w-0 truncate">
+            <span className="text-sm sm:text-md md:text-lg font-medium px-1 sm:px-2 text-secondary text-center min-w-0 truncate">
               {weekRange}
             </span>
 
