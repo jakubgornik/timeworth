@@ -1,13 +1,14 @@
 export interface Event {
   id: string;
-  title: string;
+
+  title: string; // add to WorkEntry
+  day: string;
+  date: string; // add to WorkEntry
+
   startTime: string;
   endTime: string;
-  day: string;
-  date: string;
-  color: string;
+  duration: number; // calculate hours worked
   description?: string;
-  duration: number;
 }
 
 export interface TimetableCallbacks {
