@@ -17,7 +17,7 @@ export function TimetableGridColumnHeader({
       <div
         className={`text-lg font-medium ${
           isToday
-            ? "bg-teal-600 text-white w-8 h-8 rounded-full flex items-center justify-center mx-auto"
+            ? "bg-secondary text-primary w-8 h-8 rounded-full flex items-center justify-center mx-auto"
             : "text-slate-200"
         }`}
       >
