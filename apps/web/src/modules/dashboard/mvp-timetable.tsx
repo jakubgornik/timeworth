@@ -10,16 +10,14 @@ export default function MvpTimetable() {
   const [loading] = useState(false);
 
   // TODO
-  // This should be replaced with actual callbacks to handle event creation, deletion, etc.
+  // This should be replaced with actual callbacks to handle event creation, deletion on db etc.
   // Repalce events with work entries, adjust accordingly
 
   const callbacks: TimetableCallbacks = {
-    // TODO: create on be
     onEventCreate: (newEvent) => {
       const event: Event = {
         id: Date.now().toString(),
         ...newEvent,
-        color: "bg-slate-600/80",
       };
       setEvents((prev) => [...prev, event]);
     },

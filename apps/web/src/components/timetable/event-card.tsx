@@ -48,8 +48,8 @@ export function EventCard({
     >
       <div
         className={`
-          ${event.color} 
-          cursor-pointer transition-all duration-200 ease-in-out hover:shadow-lg
+
+          cursor-pointer transition-all duration-200 ease-in-out hover:shadow-lg  bg-slate-600/80
           border-l-4 shadow-sm h-full rounded-sm overflow-hidden
           ${overlappingCount > 1 ? "border-r border-slate-600/50" : ""}
           ${isSelecting ? "opacity-75" : ""}
