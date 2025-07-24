@@ -10,7 +10,7 @@ export function TimetableGridColumnHeader({
   isToday,
 }: TimetableGridColumnHeaderProps) {
   return (
-    <div className="sticky top-0 z-[50] text-center p-1 bg-accent border-b border-l min-w-[140px]">
+    <div className="sticky top-0 z-[50] text-center p-1 bg-accent border-b border-l ">
       <div className="text-xs text-slate-400 uppercase tracking-wide mb-1">
         {day.slice(0, 2)}
       </div>
