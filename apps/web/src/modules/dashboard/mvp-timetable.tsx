@@ -3,6 +3,7 @@ import {
   Event,
   TimetableCallbacks,
 } from "@/components/timetable/timetable.types";
+import { getWorkWeekRange } from "@/components/timetable/utils/timetable-utils";
 import { useState } from "react";
 
 export default function MvpTimetable() {
@@ -15,6 +16,7 @@ export default function MvpTimetable() {
 
   const callbacks: TimetableCallbacks = {
     onEventCreate: (newEvent) => {
+      // TODO: Replace with actual API call, create workentry,
       const event: Event = {
         id: Date.now().toString(),
         ...newEvent,
@@ -28,7 +30,11 @@ export default function MvpTimetable() {
       console.log("Event clicked:", event.id);
     },
     onWeekChange: (direction, newWeek) => {
-      console.log("Week changed:", direction, newWeek);
+      console.log(
+        "Week changed:",
+        direction,
+        getWorkWeekRange(new Date(newWeek))
+      );
     },
   };
 
