@@ -57,16 +57,17 @@ model Organization {
 }
 
 model WorkEntry {
-  id          String    @id @default(cuid())
-  description String?
+  id          String   @id @default(cuid())
+  title       String
   startedAt   DateTime
-  endedAt     DateTime?
-  hoursWorked Float?
+  endedAt     DateTime
+  hoursWorked Float
+  description String?
   hourlyRate  Float?
-  billable    Boolean   @default(true)
-  approved    Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt()
+  billable    Boolean  @default(true)
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
 
   userId         String
   organizationId String
