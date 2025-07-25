@@ -1,4 +1,5 @@
 import { TimetableConfig } from "../timetable.types";
+import { startOfWeek, addDays, startOfDay, endOfDay } from "date-fns";
 
 export const generateTimeSlots = (
   startHour = 6,
@@ -155,4 +156,14 @@ export const getDurationOptions = (
   }
 
   return options;
+};
+
+export const getWorkWeekRange = (date: Date) => {
+  const monday = startOfWeek(date, { weekStartsOn: 1 });
+  const friday = addDays(monday, 4);
+
+  const from = startOfDay(monday);
+  const to = endOfDay(friday);
+
+  return { from, to };
 };
