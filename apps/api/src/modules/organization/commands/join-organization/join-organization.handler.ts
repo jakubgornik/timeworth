@@ -10,9 +10,9 @@ export class JoinOrganizationHandler
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({
-    JoinOrganizationDto,
+    joinOrganizationDto,
   }: JoinOrganizationCommand): Promise<void> {
-    const { userId, inviteCode } = JoinOrganizationDto;
+    const { userId, inviteCode } = joinOrganizationDto;
 
     const organization = await this.prisma.organization.findUnique({
       where: {

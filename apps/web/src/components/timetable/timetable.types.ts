@@ -1,13 +1,11 @@
 export interface Event {
   id: string;
-
-  title: string; // add to WorkEntry
+  title: string;
   day: string;
-  date: string; // add to WorkEntry
-
+  date: string;
   startTime: string;
   endTime: string;
-  duration: number; // calculate hours worked
+  duration: number;
   description?: string;
 }
 
@@ -77,4 +75,9 @@ export interface TimeSlotCellProps extends BaseTimetableProps {
   isCellHovered: boolean;
   isTopSelectedCell: boolean | null;
   cellHeight?: number;
+}
+
+export interface TimePeriod {
+  from: Date;
+  to: Date;
 }

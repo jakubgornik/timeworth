@@ -33,8 +33,8 @@ export function useTimetableState({
 
   const [currentWeek, setCurrentWeek] = useState(initialWeek || new Date());
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
+  const [isEventDialogOpened, setIsEventDialogOpened] = useState(false);
+  const [isNewEventDialogOpened, setIsNewEventDialogOpened] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [hoveredCell, setHoveredCell] = useState<{
     day: string;
@@ -74,19 +74,17 @@ export function useTimetableState({
     const newDate = new Date(currentWeek);
     newDate.setDate(currentWeek.getDate() + (direction === "next" ? 7 : -7));
     setCurrentWeek(newDate);
-    callbacks?.onWeekChange?.(direction, newDate);
   };
 
   const deleteEvent = (eventId: string) => {
     callbacks?.onEventDelete?.(eventId);
     setSelectedEvent(null);
-    setDialogOpen(false);
+    setIsEventDialogOpened(false);
   };
 
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
-    setDialogOpen(true);
-    callbacks?.onEventClick?.(event);
+    setIsEventDialogOpened(true);
   };
 
   const addNewEvent = () => {
@@ -103,13 +101,15 @@ export function useTimetableState({
       description: "",
       duration: 1,
     });
-    setNewEventDialogOpen(true);
+    setIsNewEventDialogOpened(true);
   };
 
   return {
+    isEventDialogOpened,
+    setIsEventDialogOpened,
+    isNewEventDialogOpened,
+    setIsNewEventDialogOpened,
     hoveredEvent,
-    dialogOpen,
-    newEventDialogOpen,
     selectedEvent,
     hoveredCell,
     isSelecting,
@@ -124,8 +124,6 @@ export function useTimetableState({
     handleEventClick,
     addNewEvent,
     setHoveredEvent,
-    setDialogOpen,
-    setNewEventDialogOpen,
     setSelectedEvent,
     setHoveredCell,
     setIsSelecting,

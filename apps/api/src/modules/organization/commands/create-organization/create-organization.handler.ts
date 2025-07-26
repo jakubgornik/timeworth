@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PrismaService } from '@packages/db';
+import { PrismaService, UserRole } from '@packages/db';
 import { CreateOrganizationCommand } from './create-organization.command';
 import { randomBytes } from 'crypto';
 import { Prisma } from '@packages/db';
@@ -11,11 +11,16 @@ export class CreateOrganizationHandler
 {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute({ dto }: CreateOrganizationCommand): Promise<void> {
+  async execute({
+    createOrganizationDto,
+  }: CreateOrganizationCommand): Promise<void> {
     const inviteCode = this.generateInviteCode();
 
     try {
-      await this.createOrganizationWithManager(dto, inviteCode);
+      await this.createOrganizationWithManager(
+        createOrganizationDto,
+        inviteCode,
+      );
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -24,7 +29,10 @@ export class CreateOrganizationHandler
         error.meta.target.includes('inviteCode')
       ) {
         const retryCode = this.generateInviteCode();
-        await this.createOrganizationWithManager(dto, retryCode);
+        await this.createOrganizationWithManager(
+          createOrganizationDto,
+          retryCode,
+        );
       } else {
         throw error;
       }
@@ -53,7 +61,7 @@ export class CreateOrganizationHandler
 
       await tx.user.update({
         where: { id: dto.managerId },
-        data: { organizationId: organization.id },
+        data: { organizationId: organization.id, role: UserRole.MANAGER },
       });
     });
   }
