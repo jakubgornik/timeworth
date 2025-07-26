@@ -17,5 +17,11 @@ export interface IWorkEntryDto {
 export interface ICreateWorkEntryDto
   extends Omit<
     IWorkEntryDto,
-    "id" | "createdAt" | "updatedAt" | "billable" | "approved" | "hourlyRate"
+    | "id"
+    | "createdAt"
+    | "updatedAt"
+    | "billable"
+    | "approved"
+    | "hourlyRate"
+    | "hoursWorked"
   > {}

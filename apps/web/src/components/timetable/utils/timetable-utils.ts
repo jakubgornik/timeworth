@@ -1,4 +1,4 @@
-import { TimetableConfig } from "../timetable.types";
+import { TimePeriod, TimetableConfig } from "../timetable.types";
 import { startOfWeek, addDays, startOfDay, endOfDay } from "date-fns";
 
 export const generateTimeSlots = (
@@ -164,6 +164,40 @@ export const getWorkWeekRange = (date: Date) => {
 
   const from = startOfDay(monday);
   const to = endOfDay(friday);
+
+  return { from, to };
+};
+
+export const combineDateAndTime = (date: string, time: string): Date => {
+  if (!date || !time) {
+    throw new Error(`Invalid date/time: date='${date}', time='${time}'`);
+  }
+
+  const dateTimeString = `${date}T${time}`;
+  const result = new Date(dateTimeString);
+
+  if (isNaN(result.getTime())) {
+    throw new Error(`Invalid Date constructed from "${dateTimeString}"`);
+  }
+
+  return result;
+};
+
+export const getDateRangeFromDates = (dates: Date[]): TimePeriod => {
+  if (dates.length === 0) {
+    throw new Error("Dates array cannot be empty");
+  }
+
+  const sortedDates = dates.slice().sort((a, b) => a.getTime() - b.getTime());
+
+  const firstDay = sortedDates[0];
+  const lastDay = sortedDates[sortedDates.length - 1];
+
+  const from = new Date(firstDay);
+  from.setHours(0, 0, 0, 0);
+
+  const to = new Date(lastDay);
+  to.setHours(23, 59, 59, 999);
 
   return { from, to };
 };

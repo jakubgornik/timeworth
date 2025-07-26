@@ -1,12 +1,21 @@
 import type React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { TimetableHeader } from "./timetable-header";
 import { TimetableGrid } from "./timetable-grid";
 import { useTimetableState } from "./hooks/use-timetable-state";
-import { formatDate, getWeekRange } from "./utils/timetable-utils";
+import {
+  formatDate,
+  getDateRangeFromDates,
+  getWeekRange,
+} from "./utils/timetable-utils";
 import { EventDetailsDialog } from "./dialogs/event-details-dialog";
 import { NewEventDialog } from "./dialogs/new-event-dialog";
-import { Event, TimetableCallbacks, TimetableConfig } from "./timetable.types";
+import {
+  Event,
+  TimePeriod,
+  TimetableCallbacks,
+  TimetableConfig,
+} from "./timetable.types";
 
 interface TimetableProps {
   events: Event[];
@@ -14,6 +23,7 @@ interface TimetableProps {
   callbacks?: TimetableCallbacks;
   currentWeek?: Date;
   loading?: boolean;
+  setCurrentWeek?: React.Dispatch<React.SetStateAction<TimePeriod | undefined>>;
 }
 
 export function Timetable({
@@ -21,12 +31,16 @@ export function Timetable({
   config,
   callbacks,
   currentWeek,
+  setCurrentWeek,
   loading,
 }: TimetableProps) {
   const {
     hoveredEvent,
-    dialogOpen,
-    newEventDialogOpen,
+    isEventDialogOpened,
+    setIsEventDialogOpened,
+    isNewEventDialogOpened,
+
+    setIsNewEventDialogOpened,
     selectedEvent,
     hoveredCell,
     isSelecting,
@@ -41,8 +55,7 @@ export function Timetable({
     handleEventClick,
     addNewEvent,
     setHoveredEvent,
-    setDialogOpen,
-    setNewEventDialogOpen,
+
     setHoveredCell,
     setIsSelecting,
     setSelectionStart,
@@ -95,7 +108,6 @@ export function Timetable({
       const duration = maxIndex - minIndex + 1;
       const dayIndex = timetableConfig.daysOfWeek.indexOf(selectionStart.day);
       const eventDate = weekDates[dayIndex]?.toISOString().split("T")[0] || "";
-
       setNewEvent({
         title: "",
         day: selectionStart.day,
@@ -107,7 +119,7 @@ export function Timetable({
         description: "",
         duration,
       });
-      setNewEventDialogOpen(true);
+      setIsNewEventDialogOpened(true);
     }
 
     setIsSelecting(false);
@@ -120,7 +132,7 @@ export function Timetable({
     timetableConfig,
     weekDates,
     setNewEvent,
-    setNewEventDialogOpen,
+    setIsNewEventDialogOpened,
     setIsSelecting,
     setSelectionStart,
     setSelectionEnd,
@@ -270,15 +282,34 @@ export function Timetable({
     [currentWeekEvents, timetableConfig.timeSlots, hoveredEvent]
   );
 
-  // Handle form submission from dialog
+  const memoizedWeekRange = useMemo(
+    () => getDateRangeFromDates(weekDates),
+    [weekDates]
+  );
+
+  useEffect(() => {
+    if (!setCurrentWeek) return;
+
+    setCurrentWeek((prev: { from: Date; to: Date } | undefined) => {
+      if (
+        prev?.from.getTime() === memoizedWeekRange.from.getTime() &&
+        prev?.to.getTime() === memoizedWeekRange.to.getTime()
+      ) {
+        return prev;
+      }
+      return memoizedWeekRange;
+    });
+  }, [memoizedWeekRange, setCurrentWeek]);
+
   const handleCreateEventFromForm = useCallback(
     (eventData: Omit<Event, "id" | "color">) => {
       callbacks?.onEventCreate?.(eventData);
-      setNewEventDialogOpen(false);
+      setIsNewEventDialogOpened(false);
     },
-    [callbacks, setNewEventDialogOpen]
+    [callbacks, setIsNewEventDialogOpened]
   );
 
+  // TODO: better loading
   if (loading) {
     return (
       <div className="min-h-screen bg-accent text-secondary p-6 flex items-center justify-center">
@@ -329,14 +360,14 @@ export function Timetable({
           </div>
         </div>
         <EventDetailsDialog
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          open={isEventDialogOpened}
+          onOpenChange={setIsEventDialogOpened}
           event={selectedEvent}
           onDeleteEvent={deleteEvent}
         />
         <NewEventDialog
-          open={newEventDialogOpen}
-          onOpenChange={setNewEventDialogOpen}
+          open={isNewEventDialogOpened}
+          onOpenChange={setIsNewEventDialogOpened}
           newEvent={newEvent}
           onCreateEvent={handleCreateEventFromForm}
           intervalMinutes={timetableConfig.intervalMinutes}
