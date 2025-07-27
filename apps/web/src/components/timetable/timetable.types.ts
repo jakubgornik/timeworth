@@ -81,3 +81,8 @@ export interface TimePeriod {
   from: Date;
   to: Date;
 }
+
+export interface CellPosition {
+  day: string;
+  timeSlot: string;
+}

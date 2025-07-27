@@ -4,7 +4,12 @@ import {
   getWeekDates,
   generateTimeSlots,
 } from "../utils/timetable-utils";
-import { Event, TimetableCallbacks, TimetableConfig } from "../timetable.types";
+import {
+  CellPosition,
+  Event,
+  TimetableCallbacks,
+  TimetableConfig,
+} from "../timetable.types";
 
 interface UseTimetableStateProps {
   events: Event[];
@@ -33,23 +38,17 @@ export function useTimetableState({
 
   const [currentWeek, setCurrentWeek] = useState(initialWeek || new Date());
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [hoveredCell, setHoveredCell] = useState<CellPosition | null>(null);
+
+  const [selectionStart, setSelectionStart] = useState<CellPosition | null>(
+    null
+  );
+  const [selectionEnd, setSelectionEnd] = useState<CellPosition | null>(null);
+  const [isSelecting, setIsSelecting] = useState(false);
   const [isEventDialogOpened, setIsEventDialogOpened] = useState(false);
   const [isNewEventDialogOpened, setIsNewEventDialogOpened] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [hoveredCell, setHoveredCell] = useState<{
-    day: string;
-    timeSlot: string;
-  } | null>(null);
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [selectionStart, setSelectionStart] = useState<{
-    day: string;
-    timeSlot: string;
-  } | null>(null);
-  const [selectionEnd, setSelectionEnd] = useState<{
-    day: string;
-    timeSlot: string;
-  } | null>(null);
-  const [newEvent, setNewEvent] = useState<Omit<Event, "id" | "color">>({
+  const [newEvent, setNewEvent] = useState<Omit<Event, "id">>({
     title: "",
     startTime: "",
     endTime: "",
@@ -92,6 +91,7 @@ export function useTimetableState({
     const todayString = formatDateForStorage(today);
     const dayName = today.toLocaleDateString("en-US", { weekday: "long" });
 
+    // Reset new event state
     setNewEvent({
       title: "",
       startTime: timetableConfig.timeSlots[0],
