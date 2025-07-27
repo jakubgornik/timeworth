@@ -4,6 +4,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateWorkEntryCommand } from './commands/create-work-entry/create-work-entry.command';
 import { GetWorkEntriesQuery } from './query/get-work-entries.query';
 import { GetWorkEntriesQueryDto } from './dto/get-work-entries.dto';
+import { DeleteWorkEntryCommand } from './commands/delete-work-entry/delete-work-entry.command';
 
 @Injectable()
 export class WorkEntryService {
@@ -18,5 +19,9 @@ export class WorkEntryService {
 
   async createWorkEntry(dto: CreateWorkEntryDto) {
     return await this.commandBus.execute(new CreateWorkEntryCommand(dto));
+  }
+
+  async deleteWorkEntry(id: string) {
+    return await this.commandBus.execute(new DeleteWorkEntryCommand(id));
   }
 }

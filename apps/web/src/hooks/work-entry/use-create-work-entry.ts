@@ -1,12 +1,25 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/axios/axios";
 import { ICreateWorkEntryDto } from "@packages/types";
+import { useNotification } from "../use-notification";
 
 export function useCreateWorkEntry() {
+  const queryClient = useQueryClient();
+  const { showSuccess } = useNotification();
+
   return useMutation({
     mutationFn: async (data: ICreateWorkEntryDto) => {
-      const res = await api.post("/work-entry/create", data);
+      const res = await api.post("/work-entry", {
+        ...data,
+        withCredentials: true,
+      });
       return res.data;
+    },
+    onSuccess: () => {
+      showSuccess("Successfully created work entry");
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === "workEntries",
+      });
     },
   });
 }
