@@ -68,6 +68,7 @@ export class UserController {
 
     return user;
   }
+
   @UseGuards(AuthGuard('jwt'))
   @Get('organization-users')
   async getOrganizationUsers(
