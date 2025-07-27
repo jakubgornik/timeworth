@@ -11,7 +11,7 @@ export const createEventSchema = (
         .string()
         .min(1, "Event title is required")
         .max(100, "Title must be less than 100 characters"),
-      date: z.date({ required_error: "Date is required" }),
+      date: z.date(),
       startTime: z.string().min(1, "Start time is required"),
       duration: z.number().min(1, "Duration must be at least 15 minutes"),
       description: z.string().optional(),

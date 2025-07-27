@@ -44,8 +44,8 @@ import FormInputError from "@/components/form-input-error";
 interface NewEventDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  newEvent: Omit<Event, "id" | "color">;
-  onCreateEvent: (eventData: Omit<Event, "id" | "color">) => void;
+  newEvent: Omit<Event, "id">;
+  onCreateEvent: (eventData: Omit<Event, "id">) => void;
   intervalMinutes?: number;
   config?: TimetableConfig & { weekDates?: Date[] };
 }
@@ -85,15 +85,6 @@ export function NewEventDialog({
     mode: "onChange",
   });
 
-  const watchedStartTime = watch("startTime");
-  const watchedDuration = watch("duration");
-
-  const calculatedEndTime = useMemo(() => {
-    if (watchedStartTime && watchedDuration) {
-      return getEndTime(watchedStartTime, watchedDuration, intervalMinutes);
-    }
-  }, [watchedStartTime, watchedDuration, intervalMinutes]);
-
   useEffect(() => {
     if (open && newEvent) {
       reset({
@@ -105,6 +96,16 @@ export function NewEventDialog({
       });
     }
   }, [open, newEvent, reset, timeSlots]);
+
+  const watchedStartTime = watch("startTime");
+  const watchedDuration = watch("duration");
+  const watchedDate = watch("date");
+
+  const calculatedEndTime = useMemo(() => {
+    if (watchedStartTime && watchedDuration) {
+      return getEndTime(watchedStartTime, watchedDuration, intervalMinutes);
+    }
+  }, [watchedStartTime, watchedDuration, intervalMinutes]);
 
   const onSubmit = (data: EventFormData) => {
     const endTime = getEndTime(data.startTime, data.duration, intervalMinutes);
@@ -135,6 +136,10 @@ export function NewEventDialog({
     const day = date.getDay();
     return day === 0 || day === 6;
   };
+
+  const currentDateIsWeekend = useMemo(() => {
+    return watchedDate ? isWeekend(watchedDate) : false;
+  }, [watchedDate]);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -202,7 +207,16 @@ export function NewEventDialog({
               )}
             />
             <AnimatePresence>
-              {errors.date && <FormInputError message={errors.date.message} />}
+              {(errors.date || currentDateIsWeekend) && (
+                <FormInputError
+                  message={
+                    errors.date?.message ||
+                    (currentDateIsWeekend
+                      ? "Events cannot be created on weekends (Saturday/Sunday)"
+                      : "")
+                  }
+                />
+              )}
             </AnimatePresence>
           </div>
 
