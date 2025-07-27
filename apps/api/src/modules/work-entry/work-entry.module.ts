@@ -5,11 +5,10 @@ import { CreateWorkEntryHandler } from './commands/create-work-entry/create-work
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '@packages/db';
 import { GetWorkEntriesHandler } from './query/get-work-entries.handler';
+import { DeleteWorkEntryHandler } from './commands/delete-work-entry/delete-work-entry.handler';
 
 const services = [WorkEntryService];
-
-const commandHandlers = [CreateWorkEntryHandler];
-
+const commandHandlers = [CreateWorkEntryHandler, DeleteWorkEntryHandler];
 const queryHandlers = [GetWorkEntriesHandler];
 
 @Module({

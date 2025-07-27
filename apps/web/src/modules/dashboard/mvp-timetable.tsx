@@ -9,22 +9,17 @@ import { useCreateWorkEntry } from "@/hooks/work-entry/use-create-work-entry";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { ICreateWorkEntryDto } from "@packages/types";
 import { useGetWorkEntries } from "@/hooks/work-entry/use-get-work-entries";
-import { useQueryClient } from "@tanstack/react-query";
-import { useNotification } from "@/hooks/use-notification";
+import { useDeleteWorkEntry } from "@/hooks/work-entry/use-delete-work-entry";
 
 export default function MvpTimetable() {
-  const queryClient = useQueryClient();
   const currentUser = useCurrentUser();
-
   const [currentWeek, setCurrentWeek] = useState<TimePeriod>();
-
   const { data: workEntries, isLoading } = useGetWorkEntries({
     userId: currentUser.data!.id,
     currentWeek,
   });
-
   const { mutate: createWorkEntry } = useCreateWorkEntry();
-  const { showSuccess } = useNotification();
+  const { mutate: deleteWorkEntry } = useDeleteWorkEntry();
 
   const callbacks: TimetableCallbacks = {
     onEventCreate: (newEvent) => {
@@ -37,17 +32,10 @@ export default function MvpTimetable() {
         organizationId: currentUser.data!.organization?.id ?? "",
       };
 
-      createWorkEntry(payload, {
-        onSuccess: () => {
-          showSuccess("Successfully created work entry");
-          queryClient.invalidateQueries({
-            predicate: (query) => query.queryKey[0] === "workEntries",
-          });
-        },
-      });
+      createWorkEntry(payload);
     },
     onEventDelete: (eventId) => {
-      console.log(`Event with id ${eventId} deleted`);
+      deleteWorkEntry(eventId);
     },
   };
 
