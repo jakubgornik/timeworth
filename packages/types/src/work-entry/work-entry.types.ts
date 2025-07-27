@@ -4,7 +4,6 @@ export interface IWorkEntryDto {
   startedAt: Date;
   endedAt: Date;
   description?: string;
-  hoursWorked: number;
   userId: string;
   organizationId: string;
   createdAt: Date;
@@ -12,6 +11,7 @@ export interface IWorkEntryDto {
   billable: boolean;
   approved: boolean;
   hourlyRate: number;
+  hoursWorked: number;
 }
 
 export interface ICreateWorkEntryDto
@@ -25,3 +25,24 @@ export interface ICreateWorkEntryDto
     | "hourlyRate"
     | "hoursWorked"
   > {}
+
+interface TimePeriod {
+  from: Date;
+  to: Date;
+}
+
+export interface IWorkEntryToEventDto {
+  id: string;
+  title: string;
+  day: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  duration: number;
+  description?: string;
+}
+
+export interface IGetWorkEntriesQueryDto {
+  userId: string;
+  currentWeek?: TimePeriod;
+}
