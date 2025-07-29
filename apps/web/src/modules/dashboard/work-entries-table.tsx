@@ -11,7 +11,7 @@ import { ICreateWorkEntryDto } from "@packages/types";
 import { useGetWorkEntries } from "@/hooks/work-entry/use-get-work-entries";
 import { useDeleteWorkEntry } from "@/hooks/work-entry/use-delete-work-entry";
 
-export default function MvpTimetable() {
+export default function WorkEntriesTimetable() {
   const currentUser = useCurrentUser();
   const [currentWeek, setCurrentWeek] = useState<TimePeriod>();
   const { data: workEntries, isLoading } = useGetWorkEntries({

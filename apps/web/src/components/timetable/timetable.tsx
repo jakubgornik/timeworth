@@ -319,7 +319,7 @@ export function Timetable({
   }
 
   return (
-    <div className="min-h-screen text-secondary p-6">
+    <div className="text-secondary p-4">
       <div
         className="max-w-full mx-auto"
         onMouseUp={handleMouseUp}

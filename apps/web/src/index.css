@@ -126,7 +126,7 @@
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgb(from var(--secondary) r g b / 0.2) transparent;
+  scrollbar-color: rgb(from var(--secondary) r g b / 0.2) var(--accent);
 }
 
 .custom-scrollbar::-webkit-scrollbar {

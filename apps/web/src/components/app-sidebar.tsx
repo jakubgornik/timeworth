@@ -16,18 +16,33 @@ import {
   Settings as SettingsIcon,
   LogOut as LogOutIcon,
   SidebarIcon,
+  Indent,
+  LayoutList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
 import { useLogout } from "@/hooks/auth/logout/use-logout";
 import clsx from "clsx";
 import { ROUTES } from "@/routes/routes";
+import { useIsUserManager } from "@/hooks/user/use-is-user-manager";
 
 const items = [
   {
     title: "Dashboard",
     url: ROUTES.DASHBOARD,
     icon: HomeIcon,
+  },
+  {
+    title: "Details",
+    url: ROUTES.DETAILS,
+    icon: Indent,
+    isManagerRoute: true,
+  },
+  {
+    title: "Entries",
+    url: ROUTES.ENTRIES,
+    icon: LayoutList,
+    isManagerRoute: true,
   },
   {
     title: "Settings",
@@ -39,6 +54,8 @@ const items = [
 export function AppSidebar() {
   const { mutate: logout } = useLogout();
   const { state, open, setOpen, isMobile, setOpenMobile } = useSidebar();
+
+  const isManager = useIsUserManager();
 
   const handleLogout = () => {
     logout();
@@ -87,22 +104,24 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className={isMobile ? "justify-center" : ""}
-                    tooltip={state === "collapsed" ? item.title : undefined}
-                  >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span className={isMobile ? "hidden" : ""}>
-                        {item.title}
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items
+                .filter((item) => !item.isManagerRoute || isManager)
+                .map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className={isMobile ? "justify-center" : ""}
+                      tooltip={state === "collapsed" ? item.title : undefined}
+                    >
+                      <Link to={item.url}>
+                        <item.icon />
+                        <span className={isMobile ? "hidden" : ""}>
+                          {item.title}
+                        </span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
