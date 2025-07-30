@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { motion } from "motion/react";
 import { ICurrentUserDto } from "@packages/types";
 
-export function useTableDemo() {
+export function useUserDetailsTableColumns() {
   const columns: ColumnDef<ICurrentUserDto>[] = useMemo(
     () => [
       {

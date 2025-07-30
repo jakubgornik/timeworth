@@ -33,6 +33,10 @@ export const router = createBrowserRouter([
             path: ROUTES.DETAILS,
             lazy: lazyWrap(() => import("@/pages/details"), ManagerRouteGuard),
           },
+          {
+            path: ROUTES.ENTRIES,
+            lazy: lazyWrap(() => import("@/pages/entries"), ManagerRouteGuard),
+          },
         ],
       },
     ],
