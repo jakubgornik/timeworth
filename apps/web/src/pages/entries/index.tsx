@@ -2,9 +2,7 @@ import SectionHeader from "@/components/section-header";
 import SectionWrapper from "@/components/section-wrapper";
 import { Card } from "@/components/ui/card";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
-import { useOrganizationUsers } from "@/hooks/user/use-organization-users";
 import {
-  ExpandedState,
   getCoreRowModel,
   getExpandedRowModel,
   PaginationState,
@@ -12,13 +10,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import UserDetailsTable from "@/modules/details/user-details-table";
-import { useUserDetailsTableColumns } from "@/modules/dashboard/use-details-table-columns";
+import OrganizationWorkEntriesTable from "@/modules/entries/organization-work-entries";
+import { useOrganizationWorkEntries } from "@/hooks/work-entry/use-organization-work-entries";
 
-export default function DetailsPage() {
+export default function EntriesPage() {
   const currentUser = useCurrentUser();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [expanded, setExpanded] = useState<ExpandedState>({});
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -35,7 +32,7 @@ export default function DetailsPage() {
     [sorting]
   );
 
-  const { data: organizationUsers } = useOrganizationUsers({
+  const { data: workEntries } = useOrganizationWorkEntries({
     managerId: currentUser.data?.id ?? "",
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
@@ -43,40 +40,39 @@ export default function DetailsPage() {
   });
 
   const data = useMemo(() => {
-    return organizationUsers?.data ?? [];
-  }, [organizationUsers?.data]);
+    return workEntries?.data ?? [];
+  }, [workEntries?.data]);
 
-  const { columns, renderExpandedRow } = useUserDetailsTableColumns();
+  // TODO
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    manualPagination: true,
-    manualSorting: true,
-    pageCount: organizationUsers?.totalPages,
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    onExpandedChange: setExpanded,
-    state: {
-      sorting,
-      expanded,
-      pagination,
-    },
-  });
+  //   const { columns } = useOrganizationWorkEntriesTableColumns();
+
+  //   const table = useReactTable({
+  //     data,
+  //     columns,
+  //     getCoreRowModel: getCoreRowModel(),
+  //     getExpandedRowModel: getExpandedRowModel(),
+  //     manualPagination: true,
+  //     manualSorting: true,
+  //     onPaginationChange: setPagination,
+  //     onSortingChange: setSorting,
+  //     state: {
+  //       sorting,
+  //       pagination,
+  //     },
+  //     pageCount: workEntries?.totalPages,
+  //   });
 
   return (
     <>
-      <SectionHeader title="Details Page" />
+      <SectionHeader title="Entries Page" />
       <SectionWrapper className="h-full">
         <Card className="w-full h-full bg-primary">
-          <UserDetailsTable
+          {/* <OrganizationWorkEntriesTable
             table={table}
-            renderExpandedRow={renderExpandedRow}
-            totalCount={organizationUsers?.totalCount ?? 0}
+            totalCount={workEntries?.totalCount ?? 0}
             pageSizeOptions={[10, 15, 20]}
-          />
+          /> */}
         </Card>
       </SectionWrapper>
     </>

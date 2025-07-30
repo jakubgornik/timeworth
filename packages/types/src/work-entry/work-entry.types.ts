@@ -1,3 +1,5 @@
+import { IPaginatedQueryDto } from "../utils/utils.types";
+
 export interface IWorkEntryDto {
   id: string;
   title: string;
@@ -46,3 +48,13 @@ export interface IGetWorkEntriesQueryDto {
   userId: string;
   currentWeek?: TimePeriod;
 }
+
+export interface IOrganizationWorkEntriesFiltersDto {
+  // ... filters
+}
+
+export type IPaginatedOrganizationWorkEntriesQueryDto =
+  IOrganizationWorkEntriesFiltersDto &
+    IPaginatedQueryDto & {
+      managerId: string;
+    };
