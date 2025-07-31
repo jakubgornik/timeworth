@@ -7,16 +7,15 @@ import {
   Post,
   Query,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { RegisterUserDto } from '../auth/dto/auth.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from '@packages/db';
 import { Request } from 'express';
 import { UserService } from './user.service';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
+import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
 
 export interface RequestWithUser extends Request {
   user: {
@@ -44,8 +43,8 @@ export class UserController {
   }
 
   // TODO  use query bus
-  @UseGuards(AuthGuard('jwt'))
   @Get('me')
+  @AuthEndpoint()
   async getMe(@Req() req: RequestWithUser) {
     const userId = req.user.userId;
 
@@ -69,8 +68,8 @@ export class UserController {
     return user;
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('organization-users')
+  @AuthEndpoint()
   async getOrganizationUsers(
     @Query('managerId') managerId: string,
     @Query() paginationDto: PaginationDto,
