@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { RegisterUserDto } from '../auth/dto/auth.dto';
-import { PrismaService } from '@packages/db';
 import { Request } from 'express';
 import { UserService } from './user.service';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
@@ -27,7 +26,6 @@ export interface RequestWithUser extends Request {
 export class UserController {
   constructor(
     private readonly authService: AuthService,
-    private readonly prisma: PrismaService,
     private readonly service: UserService,
   ) {}
 
@@ -42,30 +40,12 @@ export class UserController {
     return user;
   }
 
-  // TODO  use query bus
   @Get('me')
   @AuthEndpoint()
   async getMe(@Req() req: RequestWithUser) {
     const userId = req.user.userId;
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        organization: {
-          select: {
-            id: true,
-            name: true,
-            managerId: true,
-          },
-        },
-        role: true,
-      },
-    });
-
-    return user;
+    return await this.service.getUserById(userId);
   }
 
   @Get('organization-users')
