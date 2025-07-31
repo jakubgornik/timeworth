@@ -29,7 +29,10 @@ export interface IUserDto {
 }
 
 export interface ICurrentUserDto extends IUserDto {
-  organization: IOrganizationDto | null;
+  organization: Omit<
+    IOrganizationDto,
+    "createdAt" | "updatedAt" | "inviteCode"
+  > | null;
   role: UserRole;
 }
 

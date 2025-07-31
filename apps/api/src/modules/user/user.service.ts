@@ -3,6 +3,7 @@ import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { GetOrganizationUsersQuery } from './queries/get-organization-users/get-organization-users.query';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
+import { GetUserByIdQuery } from './queries/get-user-by-id/get-user-by-id.query';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,10 @@ export class UserService {
     return await this.queryBus.execute(
       new GetOrganizationUsersQuery(managerId, paginationDto, sortDto),
     );
+  }
+
+  async getUserById(userId: string) {
+    return await this.queryBus.execute(new GetUserByIdQuery(userId));
   }
 
   // These are examples how to work with queries and commands

@@ -7,10 +7,15 @@ import { PrismaModule } from '@packages/db';
 import { DeleteUserHandler } from './commands/delete-user/delete-user.handler';
 import { AuthModule } from '../auth/auth.module';
 import { GetOrganizationUsersHandler } from './queries/get-organization-users/get-organization-users.handler';
+import { GetUserByIdHandler } from './queries/get-user-by-id/get-user-by-id.handler';
 
 const services = [UserService];
 
-const queryHandlers = [GetUsersQueryHandler, GetOrganizationUsersHandler];
+const queryHandlers = [
+  GetUsersQueryHandler,
+  GetOrganizationUsersHandler,
+  GetUserByIdHandler,
+];
 
 const commandHandlers = [DeleteUserHandler];
 
