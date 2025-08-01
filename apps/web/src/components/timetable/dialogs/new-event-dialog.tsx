@@ -109,8 +109,6 @@ export function NewEventDialog({
 
   const onSubmit = (data: EventFormData) => {
     const endTime = getEndTime(data.startTime, data.duration, intervalMinutes);
-
-    // timezone-safe date formatting
     const dateString = formatDateForStorage(data.date);
 
     const dayName = data.date.toLocaleDateString("en-US", { weekday: "long" });
@@ -123,7 +121,6 @@ export function NewEventDialog({
       description: data.description || "",
       date: dateString,
     };
-
     onCreateEvent(eventDataPayload);
   };
 

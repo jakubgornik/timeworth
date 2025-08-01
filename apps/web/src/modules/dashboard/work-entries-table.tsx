@@ -31,7 +31,6 @@ export default function WorkEntriesTimetable() {
         description: newEvent.description,
         organizationId: currentUser.data!.organization?.id ?? "",
       };
-
       createWorkEntry(payload);
     },
     onEventDelete: (eventId) => {

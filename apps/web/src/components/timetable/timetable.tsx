@@ -5,6 +5,7 @@ import { TimetableGrid } from "./timetable-grid";
 import { useTimetableState } from "./hooks/use-timetable-state";
 import {
   formatDate,
+  formatDateForStorage,
   getDateRangeFromDates,
   getWeekRange,
 } from "./utils/timetable-utils";
@@ -107,7 +108,9 @@ export function Timetable({
       const maxIndex = Math.max(startIndex, endIndex);
       const duration = maxIndex - minIndex + 1;
       const dayIndex = timetableConfig.daysOfWeek.indexOf(selectionStart.day);
-      const eventDate = weekDates[dayIndex]?.toISOString().split("T")[0] || "";
+      const eventDate = weekDates[dayIndex]
+        ? formatDateForStorage(weekDates[dayIndex])
+        : "";
       setNewEvent({
         title: "",
         day: selectionStart.day,

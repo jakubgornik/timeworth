@@ -3,6 +3,7 @@ import {
   getDefaultConfig,
   getWeekDates,
   generateTimeSlots,
+  formatDateForStorage,
 } from "../utils/timetable-utils";
 import {
   CellPosition,
@@ -10,7 +11,7 @@ import {
   TimetableCallbacks,
   TimetableConfig,
 } from "../timetable.types";
-
+import { startOfDay } from "date-fns";
 interface UseTimetableStateProps {
   events: Event[];
   config?: Partial<TimetableConfig>;
@@ -58,10 +59,6 @@ export function useTimetableState({
     duration: 1,
   });
 
-  const formatDateForStorage = (date: Date) => {
-    return date.toISOString().split("T")[0];
-  };
-
   const weekDates = getWeekDates(currentWeek);
 
   const currentWeekEvents = events.filter((event) => {
@@ -87,7 +84,7 @@ export function useTimetableState({
   };
 
   const addNewEvent = () => {
-    const today = new Date();
+    const today = startOfDay(new Date());
     const todayString = formatDateForStorage(today);
     const dayName = today.toLocaleDateString("en-US", { weekday: "long" });
 
