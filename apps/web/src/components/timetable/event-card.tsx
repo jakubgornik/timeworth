@@ -29,7 +29,6 @@ export function EventCard({
   onMouseLeave,
   cellHeight = 25,
 }: EventCardProps) {
-  // TODO should match intervals
   const durationInHours = (event.duration * 15) / 60;
 
   return (
