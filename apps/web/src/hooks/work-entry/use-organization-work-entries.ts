@@ -13,7 +13,7 @@ export const useOrganizationWorkEntries = (
     queryKey: ["organizationWorkEntries", query],
     queryFn: async () => {
       const res = await api.get<IPaginatedResponseDto<IWorkEntryDto>>(
-        "user/organization-work-entries",
+        "work-entry/organization/work-entries",
         {
           params: query,
           withCredentials: true,

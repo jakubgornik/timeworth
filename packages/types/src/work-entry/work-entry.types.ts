@@ -5,14 +5,14 @@ export interface IWorkEntryDto {
   title: string;
   startedAt: Date;
   endedAt: Date;
-  description?: string;
+  description?: string | null;
   userId: string;
   organizationId: string;
   createdAt: Date;
   updatedAt: Date;
   billable: boolean;
   approved: boolean;
-  hourlyRate: number;
+  hourlyRate?: number | null;
   hoursWorked: number;
 }
 
