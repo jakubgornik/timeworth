@@ -7,16 +7,18 @@ interface OrganizationWorkEntriesTableProps<TData> {
   table: Table<TData>;
   totalCount: number;
   pageSizeOptions: number[];
+  renderExpandedRow?: (row: TData) => React.ReactNode;
 }
 
 export default function OrganizationWorkEntriesTable({
   pageSizeOptions,
   table,
   totalCount,
+  renderExpandedRow,
 }: OrganizationWorkEntriesTableProps<IWorkEntryDto>) {
   return (
     <div className="flex flex-col w-full h-full px-6">
-      <DataTable table={table} />
+      <DataTable table={table} renderExpandedRow={renderExpandedRow} />
       <Pagination
         table={table}
         totalCount={totalCount}

@@ -3,24 +3,17 @@ import SectionWrapper from "@/components/section-wrapper";
 import { Card } from "@/components/ui/card";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
 import {
+  ExpandedState,
   getCoreRowModel,
   getExpandedRowModel,
   PaginationState,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useOrganizationWorkEntries } from "@/hooks/work-entry/use-organization-work-entries";
 import OrganizationWorkEntriesTable from "@/modules/entries/organization-work-entries-table";
-
-export interface FilterState {
-  search?: string;
-  filters: Array<{
-    column: string;
-    value: string | { from: string; to: string };
-    type: "text" | "dateRange";
-  }>;
-}
+import { useOrganizationWorkEntriesTableColumns } from "@/modules/entries/use-organization-work-entries-table-columns";
 
 export default function EntriesPage() {
   const currentUser = useCurrentUser();
@@ -29,6 +22,7 @@ export default function EntriesPage() {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [expanded, setExpanded] = useState<ExpandedState>({});
 
   const sortingQuery = useMemo(
     () =>
@@ -52,34 +46,43 @@ export default function EntriesPage() {
     return workEntries?.data ?? [];
   }, [workEntries?.data]);
 
-  // const { columns } = useOrganizationWorkEntriesTableColumns();
+  const { columns, renderExpandedRow } =
+    useOrganizationWorkEntriesTableColumns();
 
-  // const table = useReactTable({
-  //   data,
-  //   columns,
-  //   getCoreRowModel: getCoreRowModel(),
-  //   getExpandedRowModel: getExpandedRowModel(),
-  //   manualPagination: true,
-  //   manualSorting: true,
-  //   onPaginationChange: setPagination,
-  //   onSortingChange: setSorting,
-  //   state: {
-  //     sorting,
-  //     pagination,
-  //   },
-  //   pageCount: workEntries?.totalPages,
-  // });
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    manualPagination: true,
+    manualSorting: true,
+    pageCount: workEntries?.totalPages,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    onExpandedChange: setExpanded,
+    state: {
+      sorting,
+      expanded,
+      pagination,
+    },
+  });
+
+  useEffect(
+    () => setExpanded({}),
+    [workEntries?.data, pagination.pageIndex, pagination.pageSize, sorting]
+  );
 
   return (
     <>
       <SectionHeader title="Entries Page" />
       <SectionWrapper className="h-full">
         <Card className="w-full h-full bg-primary">
-          {/* <OrganizationWorkEntriesTable
+          <OrganizationWorkEntriesTable
             table={table}
+            renderExpandedRow={renderExpandedRow}
             totalCount={workEntries?.totalCount ?? 0}
             pageSizeOptions={[10, 15, 20]}
-          /> */}
+          />
         </Card>
       </SectionWrapper>
     </>

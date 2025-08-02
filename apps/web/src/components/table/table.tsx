@@ -32,7 +32,7 @@ export default function DataTable<TData>({
 
   return (
     <div className="w-full">
-      <div className="min-h-[500px] max-h-[500px] 3xl:max-h-none bg-background border rounded-t-lg overflow-auto custom-scrollbar">
+      <div className="min-h-[500px] max-h-[500px] 3xl:max-h-[1100px] bg-background border rounded-t-lg overflow-auto custom-scrollbar">
         <table className="w-full border-separate ">
           <thead className="bg-accent sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
