@@ -11,7 +11,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import UserDetailsTable from "@/modules/details/user-details-table";
 import { useUserDetailsTableColumns } from "@/modules/dashboard/use-details-table-columns";
 
@@ -65,6 +65,16 @@ export default function DetailsPage() {
       pagination,
     },
   });
+
+  useEffect(
+    () => setExpanded({}),
+    [
+      organizationUsers?.data,
+      pagination.pageIndex,
+      pagination.pageSize,
+      sorting,
+    ]
+  );
 
   return (
     <>
