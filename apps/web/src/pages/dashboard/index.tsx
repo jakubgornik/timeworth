@@ -4,8 +4,8 @@ import { Card } from "@/components/ui/card";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useMemo } from "react";
 import { useIsUserManager } from "@/hooks/user/use-is-user-manager";
-import WorkEntriesTimetable from "@/modules/dashboard/work-entries-table";
 import OnboardingContent from "@/modules/dashboard/onboarding-content";
+import WorkEntriesTimetable from "@/modules/dashboard/work-entries-timetable";
 
 export default function DashboardPage() {
   const currentUser = useCurrentUser();

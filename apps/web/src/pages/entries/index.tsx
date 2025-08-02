@@ -10,8 +10,17 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import OrganizationWorkEntriesTable from "@/modules/entries/organization-work-entries";
 import { useOrganizationWorkEntries } from "@/hooks/work-entry/use-organization-work-entries";
+import OrganizationWorkEntriesTable from "@/modules/entries/organization-work-entries-table";
+
+export interface FilterState {
+  search?: string;
+  filters: Array<{
+    column: string;
+    value: string | { from: string; to: string };
+    type: "text" | "dateRange";
+  }>;
+}
 
 export default function EntriesPage() {
   const currentUser = useCurrentUser();
@@ -43,25 +52,23 @@ export default function EntriesPage() {
     return workEntries?.data ?? [];
   }, [workEntries?.data]);
 
-  // TODO
+  // const { columns } = useOrganizationWorkEntriesTableColumns();
 
-  //   const { columns } = useOrganizationWorkEntriesTableColumns();
-
-  //   const table = useReactTable({
-  //     data,
-  //     columns,
-  //     getCoreRowModel: getCoreRowModel(),
-  //     getExpandedRowModel: getExpandedRowModel(),
-  //     manualPagination: true,
-  //     manualSorting: true,
-  //     onPaginationChange: setPagination,
-  //     onSortingChange: setSorting,
-  //     state: {
-  //       sorting,
-  //       pagination,
-  //     },
-  //     pageCount: workEntries?.totalPages,
-  //   });
+  // const table = useReactTable({
+  //   data,
+  //   columns,
+  //   getCoreRowModel: getCoreRowModel(),
+  //   getExpandedRowModel: getExpandedRowModel(),
+  //   manualPagination: true,
+  //   manualSorting: true,
+  //   onPaginationChange: setPagination,
+  //   onSortingChange: setSorting,
+  //   state: {
+  //     sorting,
+  //     pagination,
+  //   },
+  //   pageCount: workEntries?.totalPages,
+  // });
 
   return (
     <>
