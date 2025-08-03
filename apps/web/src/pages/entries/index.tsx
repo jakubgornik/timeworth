@@ -14,6 +14,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useOrganizationWorkEntries } from "@/hooks/work-entry/use-organization-work-entries";
 import OrganizationWorkEntriesTable from "@/modules/entries/organization-work-entries-table";
 import { useOrganizationWorkEntriesTableColumns } from "@/modules/entries/use-organization-work-entries-table-columns";
+import { TableToolbar } from "./table-toolbar";
+import { AdditionalFilter, FilterState } from "./filters.types";
 
 export default function EntriesPage() {
   const currentUser = useCurrentUser();
@@ -23,7 +25,17 @@ export default function EntriesPage() {
     pageSize: 10,
   });
   const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [filters, setFilters] = useState<FilterState>({
+    search: "",
+    filters: [],
+  });
 
+  const handleFiltersChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  };
+
+  // todo func to convert to sorting
   const sortingQuery = useMemo(
     () =>
       sorting.length > 0
@@ -69,14 +81,31 @@ export default function EntriesPage() {
 
   useEffect(
     () => setExpanded({}),
-    [workEntries?.data, pagination.pageIndex, pagination.pageSize, sorting]
+    [
+      workEntries?.data,
+      pagination.pageIndex,
+      pagination.pageSize,
+      sorting,
+      filters,
+    ]
   );
 
+  const additionalFilters: AdditionalFilter[] = [
+    { columnId: "workPeriod", type: "dateRange", label: "Work Period" },
+  ];
+  console.log(filters);
   return (
     <>
       <SectionHeader title="Entries Page" />
       <SectionWrapper className="h-full">
         <Card className="w-full h-full bg-primary">
+          <TableToolbar
+            table={table}
+            onFiltersChange={handleFiltersChange}
+            currentFilters={filters}
+            additionalFilters={additionalFilters}
+            enableSearch
+          />
           <OrganizationWorkEntriesTable
             table={table}
             renderExpandedRow={renderExpandedRow}

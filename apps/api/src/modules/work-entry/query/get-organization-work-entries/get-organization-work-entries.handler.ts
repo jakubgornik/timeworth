@@ -16,7 +16,6 @@ export class GetOrganizationWorkEntriesHandler
   async execute(
     query: GetOrganizationWorkEntriesQuery,
   ): Promise<IPaginatedResponseDto<IWorkEntryDto>> {
-    console.log(this.getOrganizationWorkEntries(query));
     return this.getOrganizationWorkEntries(query);
   }
 
