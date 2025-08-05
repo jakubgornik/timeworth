@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import { ExpandableSearch } from "./expandable-search";
 import { FilterState } from "./filters.types";
 
@@ -10,28 +12,32 @@ export function SearchInput({
   onSearchChange,
   currentFilters,
 }: SearchInputProps) {
-  const handleSearchChange = (value: string) => {
-    if (onSearchChange) {
-      onSearchChange({
-        search: value,
-        filters: currentFilters.filters,
-      });
-    }
+  const [searchTerm, setSearchTerm] = useState(currentFilters.search ?? "");
+
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    onSearchChange({
+      search: value,
+      filters: currentFilters.filters,
+    });
+  }, 400);
+
+  const handleChange = (value: string) => {
+    setSearchTerm(value);
+    debouncedSearch(value);
   };
 
   const handleClear = () => {
-    if (onSearchChange) {
-      onSearchChange({
-        search: "",
-        filters: currentFilters.filters,
-      });
-    }
+    setSearchTerm("");
+    onSearchChange({
+      search: "",
+      filters: currentFilters.filters,
+    });
   };
 
   return (
     <ExpandableSearch
-      value={currentFilters.search ?? ""}
-      onChange={handleSearchChange}
+      value={searchTerm}
+      onChange={handleChange}
       onClear={handleClear}
       placeholder="Search..."
     />

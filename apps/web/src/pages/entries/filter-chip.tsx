@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,6 +18,18 @@ export function FilterChip({
   onChange,
   onRemove,
 }: FilterChipProps) {
+  const [inputValue, setInputValue] = useState(value);
+
+  const debouncedChange = useDebouncedCallback((val: string) => {
+    onChange(val);
+  }, 400);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setInputValue(val);
+    debouncedChange(val);
+  };
+
   return (
     <div className="flex items-center gap-0 border rounded-lg bg-background shadow-sm overflow-hidden h-10">
       <div className="flex items-center gap-2 px-3 py-2 bg-muted/30 border-r">
@@ -29,8 +43,8 @@ export function FilterChip({
       </div>
       <Input
         placeholder="Enter value..."
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        value={inputValue}
+        onChange={handleInputChange}
         className="h-10 w-30 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm"
       />
       <Button
