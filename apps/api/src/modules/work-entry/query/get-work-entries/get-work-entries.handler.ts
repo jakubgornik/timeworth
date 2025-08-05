@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PrismaService } from '@packages/db';
 import { IWorkEntryToEventDto } from '@packages/types';
 import { GetWorkEntriesQuery } from './get-work-entries.query';
-import { mapWorkEntryToEvent } from '../../utils/mapWorkEntryToEvent';
+import { mapWorkEntryToEvent } from '../../utils/map-work-entry-to-event';
 
 @QueryHandler(GetWorkEntriesQuery)
 export class GetWorkEntriesHandler

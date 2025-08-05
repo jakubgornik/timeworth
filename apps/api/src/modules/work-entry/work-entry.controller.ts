@@ -13,6 +13,7 @@ import { GetWorkEntriesQueryDto } from './dto/get-work-entries.dto';
 import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
+import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
 
 @Controller('work-entry')
 export class WorkEntryController {
@@ -40,14 +41,17 @@ export class WorkEntryController {
   @AuthEndpoint()
   async getOrganizationWorkEntries(
     @Query('managerId') managerId: string,
+    @Query('search') search: string,
+    @Query() filtersDto: OrganizationWorkEntriesFiltersDto,
     @Query() paginationDto: PaginationDto,
     @Query() sortDto: SortDto,
-    // todo filters
   ) {
     return await this.workEntryService.getOrganizationWorkEntries(
       managerId,
+      search,
       paginationDto,
       sortDto,
+      filtersDto,
     );
   }
 }

@@ -80,10 +80,7 @@ export function DynamicColumnFilter<TData>({
     setFilters(updatedFilters);
   };
 
-  const updateFilter = (
-    filterId: string,
-    value: string | DateRange | undefined
-  ) => {
+  const updateFilter = (filterId: string, value?: string | DateRange) => {
     const updatedFilters = filters.map((filter) =>
       filter.id === filterId ? { ...filter, value } : filter
     );

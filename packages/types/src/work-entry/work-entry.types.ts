@@ -1,4 +1,4 @@
-import { IPaginatedQueryDto } from "../utils/utils.types";
+import { IPaginatedQueryDto, ISearchDto } from "../utils/utils.types";
 
 export interface IWorkEntryDto {
   id: string;
@@ -50,11 +50,15 @@ export interface IGetWorkEntriesQueryDto {
 }
 
 export interface IOrganizationWorkEntriesFiltersDto {
-  // ... filters
+  workEntryStartedAt?: string;
+  workEntryEndedAt?: string;
+  hoursWorked?: number;
+  title?: string;
 }
 
 export type IPaginatedOrganizationWorkEntriesQueryDto =
-  IOrganizationWorkEntriesFiltersDto &
+  Partial<IOrganizationWorkEntriesFiltersDto> &
+    ISearchDto &
     IPaginatedQueryDto & {
       managerId: string;
     };

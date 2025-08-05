@@ -17,6 +17,7 @@ import { useOrganizationWorkEntriesTableColumns } from "@/modules/entries/use-or
 import { TableToolbar } from "./table-toolbar";
 import { AdditionalFilter, FilterState } from "./filters.types";
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
+import { mapFiltersToOrganizationWorkEntriesQuery } from "./utils/map-filters-to-work-entries-query";
 
 export default function EntriesPage() {
   const currentUser = useCurrentUser();
@@ -37,12 +38,18 @@ export default function EntriesPage() {
   };
 
   const sortingQuery = useMemo(() => convertSortingToQuery(sorting), [sorting]);
+  const filtersQuery = useMemo(
+    () => mapFiltersToOrganizationWorkEntriesQuery(filters),
+    [filters]
+  );
 
   const { data: workEntries } = useOrganizationWorkEntries({
     managerId: currentUser.data?.id ?? "",
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     ...sortingQuery,
+    ...filtersQuery,
+    search: filters.search,
   });
 
   const data = useMemo(() => {
@@ -70,21 +77,11 @@ export default function EntriesPage() {
     },
   });
 
-  useEffect(
-    () => setExpanded({}),
-    [
-      workEntries?.data,
-      pagination.pageIndex,
-      pagination.pageSize,
-      sorting,
-      filters,
-    ]
-  );
+  useEffect(() => setExpanded({}), [pagination.pageIndex, pagination.pageSize]);
 
   const additionalFilters: AdditionalFilter[] = [
     { columnId: "workPeriod", type: "dateRange", label: "Work Period" },
   ];
-  console.log(filters);
 
   return (
     <>
@@ -96,7 +93,6 @@ export default function EntriesPage() {
             onFiltersChange={handleFiltersChange}
             currentFilters={filters}
             additionalFilters={additionalFilters}
-            enableSearch
           />
           <OrganizationWorkEntriesTable
             table={table}

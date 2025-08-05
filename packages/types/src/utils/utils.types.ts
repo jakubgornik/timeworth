@@ -15,3 +15,7 @@ export interface ISortDto {
 }
 
 export interface IPaginatedQueryDto extends IPaginationDto, ISortDto {}
+
+export interface ISearchDto {
+  search?: string;
+}

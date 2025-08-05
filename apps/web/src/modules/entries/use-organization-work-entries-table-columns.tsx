@@ -104,7 +104,7 @@ export function useOrganizationWorkEntriesTableColumns() {
         }}
         className="overflow-hidden h-full"
       >
-        <div className="h-full py-2  pr-4 flex flex-col">
+        <div className="h-full py-2 pr-4 flex flex-col">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1 min-h-0">
             <div className="space-y-2 flex flex-col h-full">
               <Card className="bg-card p-4 rounded-lg border border-border/50 flex-1">
@@ -155,12 +155,11 @@ export function useOrganizationWorkEntriesTableColumns() {
                 <CardContent className="p-0 flex-1 flex flex-row">
                   <div className="flex-1 pb-1">
                     <div className="text-sm text-secondary/70 mb-2">Title</div>
-                    <h3 className="text-lg font-semibold text-secondary leading-relaxed">
+                    <h3 className="text-sm font-semibold text-secondary leading-relaxed">
                       {workEntry.title}
                     </h3>
                   </div>
-                  <div className="border-t border-border/30 my-3"></div>
-                  <div className="flex-1 pt-1">
+                  <div className="flex-1 pb-1">
                     <div className="text-sm text-secondary/70 mb-2">
                       Description
                     </div>

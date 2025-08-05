@@ -8,6 +8,7 @@ import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { GetOrganizationWorkEntriesQuery } from './query/get-organization-work-entries/get-organization-work-entries.query';
 import { GetWorkEntriesQuery } from './query/get-work-entries/get-work-entries.query';
+import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
 
 @Injectable()
 export class WorkEntryService {
@@ -30,12 +31,19 @@ export class WorkEntryService {
 
   async getOrganizationWorkEntries(
     managerId: string,
+    search: string,
     paginationDto: PaginationDto,
     sortDto: SortDto,
-    // fitlers
+    filtersDto: OrganizationWorkEntriesFiltersDto,
   ) {
     return await this.queryBus.execute(
-      new GetOrganizationWorkEntriesQuery(managerId, paginationDto, sortDto),
+      new GetOrganizationWorkEntriesQuery(
+        managerId,
+        search,
+        paginationDto,
+        sortDto,
+        filtersDto,
+      ),
     );
   }
 }

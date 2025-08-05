@@ -1,7 +1,10 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PrismaService } from '@packages/db';
+import { Prisma, PrismaService } from '@packages/db';
 import { IPaginatedResponseDto, IWorkEntryDto } from '@packages/types';
 import { GetOrganizationWorkEntriesQuery } from './get-organization-work-entries.query';
+import { mapOrganizationWorkEntriesSortDtoToOrderBy } from 'src/shared/mappers/map-organization-work-entries-sort-dto-to-order-by';
+import { ManagerNotFoundException } from '../../exceptions/manager.exception';
+import { mapOrganizationWorkEntriesFiltersDtoToWhere } from 'src/shared/mappers/map-organization-work-entries-filters-dto-to-where';
 
 @QueryHandler(GetOrganizationWorkEntriesQuery)
 export class GetOrganizationWorkEntriesHandler
@@ -25,25 +28,32 @@ export class GetOrganizationWorkEntriesHandler
     const {
       managerId,
       paginationDto: { page, pageSize },
-      //   sortDto,
+      sortDto,
+      filtersDto,
+      search,
     } = query;
 
-    // TODO custom exception
     if (!managerId) {
-      throw new Error('Manager ID is required');
+      throw new ManagerNotFoundException();
     }
 
-    // TODO: sorting, filtering
-    // const orderBy = mapOrganizationWorkEntriesSortDtoToOrderBy(sortDto);
+    const orderBy = mapOrganizationWorkEntriesSortDtoToOrderBy(sortDto);
+    const filtersWhere = mapOrganizationWorkEntriesFiltersDtoToWhere(
+      filtersDto,
+      search,
+    );
+
+    const where: Prisma.WorkEntryWhereInput = {
+      organization: {
+        managerId,
+      },
+      ...filtersWhere,
+    };
 
     const [workEntries, totalCount] = await Promise.all([
       this.prisma.workEntry.findMany({
-        // orderBy,
-        where: {
-          organization: {
-            managerId,
-          },
-        },
+        orderBy,
+        where,
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),

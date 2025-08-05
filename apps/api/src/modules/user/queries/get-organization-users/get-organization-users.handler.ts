@@ -6,6 +6,7 @@ import {
   ICurrentUserDto as IUserDto,
 } from '@packages/types';
 import { mapUsersSortDtoToOrderBy } from 'src/shared/mappers/map-users-sort-dto-to-order-by';
+import { ManagerNotFoundException } from 'src/modules/work-entry/exceptions/manager.exception';
 
 @QueryHandler(GetOrganizationUsersQuery)
 export class GetOrganizationUsersHandler
@@ -26,9 +27,9 @@ export class GetOrganizationUsersHandler
       paginationDto: { page, pageSize },
       sortDto,
     } = organizationUsersQueryDto;
-    // TODO custom exception
+
     if (!managerId) {
-      throw new Error('Manager ID is required');
+      throw new ManagerNotFoundException();
     }
 
     const orderBy = mapUsersSortDtoToOrderBy(sortDto);
