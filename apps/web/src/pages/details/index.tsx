@@ -14,6 +14,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import UserDetailsTable from "@/modules/details/user-details-table";
 import { useUserDetailsTableColumns } from "@/modules/dashboard/use-details-table-columns";
+import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
 
 export default function DetailsPage() {
   const currentUser = useCurrentUser();
@@ -24,16 +25,7 @@ export default function DetailsPage() {
     pageSize: 10,
   });
 
-  const sortingQuery = useMemo(
-    () =>
-      sorting.length > 0
-        ? {
-            id: sorting[0].id,
-            desc: sorting[0].desc,
-          }
-        : undefined,
-    [sorting]
-  );
+  const sortingQuery = useMemo(() => convertSortingToQuery(sorting), [sorting]);
 
   const { data: organizationUsers } = useOrganizationUsers({
     managerId: currentUser.data?.id ?? "",

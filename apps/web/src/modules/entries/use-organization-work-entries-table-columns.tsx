@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { motion } from "motion/react";
 import { IWorkEntryDto } from "@packages/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Clock, FileText, Info } from "lucide-react";
+import { Clock, FileText } from "lucide-react";
 
 export function useOrganizationWorkEntriesTableColumns() {
   const columns: ColumnDef<IWorkEntryDto>[] = useMemo(
@@ -89,24 +89,9 @@ export function useOrganizationWorkEntriesTableColumns() {
     };
   };
 
-  const calculateDuration = (
-    startedAt: string | Date,
-    endedAt: string | Date
-  ) => {
-    const start = startedAt instanceof Date ? startedAt : new Date(startedAt);
-    const end = endedAt instanceof Date ? endedAt : new Date(endedAt);
-    const diffMs = end.getTime() - start.getTime();
-    const diffHours = Math.round((diffMs / (1000 * 60 * 60)) * 100) / 100;
-    return diffHours;
-  };
-
   const renderExpandedRow = (workEntry: IWorkEntryDto) => {
     const startDateTime = formatDateTime(workEntry.startedAt);
     const endDateTime = formatDateTime(workEntry.endedAt);
-    const calculatedHours = calculateDuration(
-      workEntry.startedAt,
-      workEntry.endedAt
-    );
 
     return (
       <motion.div
@@ -119,69 +104,63 @@ export function useOrganizationWorkEntriesTableColumns() {
         }}
         className="overflow-hidden h-full"
       >
-        <div className="h-full py-4 p-4  flex flex-col">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 min-h-0">
-            <div className="space-y-4 flex flex-col h-full">
+        <div className="h-full py-2  pr-4 flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1 min-h-0">
+            <div className="space-y-2 flex flex-col h-full">
               <Card className="bg-card p-4 rounded-lg border border-border/50 flex-1">
                 <CardHeader className="font-semibold text-secondary mb-1 flex items-center p-0">
                   <Clock className="w-4 h-4 mr-2" />
-                  Time Details
+                  Worked Time Details
                 </CardHeader>
-                <CardContent className="space-y-6 p-0">
-                  <div>
-                    <span className="text-sm text-secondary/70 mb-1">
-                      Started at
-                    </span>
-                    <div className="font-medium text-secondary">
-                      {startDateTime.date}
+                <CardContent className="p-0 flex lg:flex-row flex-col">
+                  <div className="flex-1 flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <span className="text-sm text-secondary/70 ">
+                        Started at
+                      </span>
+                      <span className="text-sm font-medium text-secondary">
+                        {startDateTime.date}
+                      </span>
+                      <span className="text-sm text-secondary/80">
+                        {startDateTime.time}
+                      </span>
                     </div>
-                    <div className="text-sm text-secondary/80">
-                      {startDateTime.time}
+                    <div className="flex gap-2">
+                      <span className="text-sm text-secondary/70 ">
+                        Ended at
+                      </span>
+                      <span className="text-sm font-medium text-secondary">
+                        {endDateTime.date}
+                      </span>
+                      <span className="text-sm text-secondary/80">
+                        {endDateTime.time}
+                      </span>
                     </div>
                   </div>
-                  <div>
-                    <span className="text-sm text-secondary/70 mb-1">
-                      Ended at
-                    </span>
-                    <div className="font-medium text-secondary">
-                      {endDateTime.date}
-                    </div>
-                    <div className="text-sm text-secondary/80">
-                      {endDateTime.time}
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-border/30">
-                    <span className="text-sm text-secondary/70 mb-1">
-                      Duration
-                    </span>
-                    <div className="font-semibold text-secondary">
+                  <div className="flex  mt-2 gap-2">
+                    <span className="text-sm text-secondary/70">Duration</span>
+                    <span className="text-sm font-semibold text-secondary">
                       {workEntry.hoursWorked} hours
-                      {calculatedHours !== workEntry.hoursWorked && (
-                        <span className="text-xs text-secondary/60 ml-2">
-                          (calc: {calculatedHours}h)
-                        </span>
-                      )}
-                    </div>
+                    </span>
                   </div>
                 </CardContent>
               </Card>
             </div>
-            <div className="space-y-4 flex flex-col h-full">
-              <Card className="bg-card rounded-lg border border-border/50 flex flex-col p-4">
-                <CardHeader className="font-semibold text-secondary mb-1 flex items-center flex-shrink-0 p-0">
+            <div className="space-y-2 flex flex-col h-full flex-1">
+              <Card className="bg-card rounded-lg border border-border/50 flex flex-col flex-1 p-4">
+                <CardHeader className="font-semibold text-secondary mb-1 flex items-center p-0">
                   <FileText className="w-4 h-4 mr-2" />
                   Work Entry Details
                 </CardHeader>
                 <CardContent className="p-0 flex-1 flex flex-row">
-                  <div className="flex-1 pb-3">
+                  <div className="flex-1 pb-1">
                     <div className="text-sm text-secondary/70 mb-2">Title</div>
                     <h3 className="text-lg font-semibold text-secondary leading-relaxed">
                       {workEntry.title}
                     </h3>
                   </div>
                   <div className="border-t border-border/30 my-3"></div>
-                  <div className="flex-1 pt-3">
+                  <div className="flex-1 pt-1">
                     <div className="text-sm text-secondary/70 mb-2">
                       Description
                     </div>
@@ -194,26 +173,6 @@ export function useOrganizationWorkEntriesTableColumns() {
                         )}
                       </p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-card p-4 rounded-lg border border-border/50 flex-1">
-                <CardHeader className="font-semibold text-secondary mb-1 flex items-center p-0">
-                  <Info className="w-4 h-4 mr-2" />
-                  Additional Info
-                </CardHeader>
-                <CardContent className="space-y-5 text-sm p-0">
-                  <div className="flex justify-between">
-                    <span className="text-secondary/70">Created:</span>
-                    <span className="text-secondary">
-                      {formatDateTime(workEntry.createdAt).date}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-secondary/70">Last Updated:</span>
-                    <span className="text-secondary">
-                      {formatDateTime(workEntry.updatedAt).date}
-                    </span>
                   </div>
                 </CardContent>
               </Card>

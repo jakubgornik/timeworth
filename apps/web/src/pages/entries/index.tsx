@@ -16,6 +16,7 @@ import OrganizationWorkEntriesTable from "@/modules/entries/organization-work-en
 import { useOrganizationWorkEntriesTableColumns } from "@/modules/entries/use-organization-work-entries-table-columns";
 import { TableToolbar } from "./table-toolbar";
 import { AdditionalFilter, FilterState } from "./filters.types";
+import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
 
 export default function EntriesPage() {
   const currentUser = useCurrentUser();
@@ -35,17 +36,7 @@ export default function EntriesPage() {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   };
 
-  // todo func to convert to sorting
-  const sortingQuery = useMemo(
-    () =>
-      sorting.length > 0
-        ? {
-            id: sorting[0].id,
-            desc: sorting[0].desc,
-          }
-        : undefined,
-    [sorting]
-  );
+  const sortingQuery = useMemo(() => convertSortingToQuery(sorting), [sorting]);
 
   const { data: workEntries } = useOrganizationWorkEntries({
     managerId: currentUser.data?.id ?? "",
@@ -94,6 +85,7 @@ export default function EntriesPage() {
     { columnId: "workPeriod", type: "dateRange", label: "Work Period" },
   ];
   console.log(filters);
+
   return (
     <>
       <SectionHeader title="Entries Page" />
