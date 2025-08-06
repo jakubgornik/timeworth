@@ -15,6 +15,9 @@ import { useEffect, useMemo, useState } from "react";
 import UserDetailsTable from "@/modules/details/user-details-table";
 import { useUserDetailsTableColumns } from "@/modules/dashboard/use-details-table-columns";
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
+import { TableToolbar } from "../entries/table-toolbar";
+import { FilterColumn, FilterState } from "../entries/filters.types";
+import { fetchUserStatusOptions } from "@/loaders/use-user-statuses.loader";
 
 export default function DetailsPage() {
   const currentUser = useCurrentUser();
@@ -24,6 +27,15 @@ export default function DetailsPage() {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [filters, setFilters] = useState<FilterState>({
+    search: "",
+    filters: [],
+  });
+
+  const handleFiltersChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  };
 
   const sortingQuery = useMemo(() => convertSortingToQuery(sorting), [sorting]);
 
@@ -68,11 +80,30 @@ export default function DetailsPage() {
     ]
   );
 
+  const additionalFilters: FilterColumn[] = [
+    {
+      id: "userStatus",
+      type: "select",
+      label: "Status",
+      loader: fetchUserStatusOptions,
+    },
+  ];
+
+  console.log(filters);
+
   return (
     <>
       <SectionHeader title="Details Page" />
       <SectionWrapper className="h-full">
         <Card className="w-full h-full bg-primary">
+          <TableToolbar
+            table={table}
+            onFiltersChange={handleFiltersChange}
+            currentFilters={filters}
+            omitColumnsById={["name", "status"]}
+            enableSearch
+            additionalFilters={additionalFilters}
+          />
           <UserDetailsTable
             table={table}
             renderExpandedRow={renderExpandedRow}

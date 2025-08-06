@@ -5,15 +5,23 @@ import { DateRangeFilter } from "./date-range-filter";
 import { AddFilterDropdown } from "./add-filter-dropdown";
 import { FilterChip } from "./filter-chip";
 import { SearchInput } from "./search-input";
-import { AdditionalFilter, FilterRule, FilterState } from "./filters.types";
-import { isDateRangeColumn, processFilters } from "./filters.utils";
+import {
+  AvailableFilterTypes,
+  AvailableValueTypes,
+  FilterColumn,
+  FilterRule,
+  FilterState,
+} from "./filters.types";
+import { formatColumnLabel, processFilters } from "./filters.utils";
+import { MultiselectFilter } from "./multi-select-filter";
 
 interface DynamicColumnFilterProps<TData> {
   table: Table<TData>;
   onFiltersChange: (filters: FilterState) => void;
   currentFilters: FilterState;
-  additionalFilters?: AdditionalFilter[];
+  additionalFilters?: FilterColumn[];
   enableSearch?: boolean;
+  omitColumnsById: string[];
 }
 
 export function DynamicColumnFilter<TData>({
@@ -22,35 +30,37 @@ export function DynamicColumnFilter<TData>({
   currentFilters,
   additionalFilters = [],
   enableSearch,
+  omitColumnsById,
 }: DynamicColumnFilterProps<TData>) {
   const [filters, setFilters] = useState<FilterRule[]>([]);
 
-  const tableColumns = table
+  // default from table, text type
+  const tableColumns: FilterColumn[] = table
     .getAllColumns()
     .filter((column) => column.getCanFilter() && column.accessorFn)
+    .filter((column) => !omitColumnsById?.includes(column.id))
     .map((column) => ({
       id: column.id,
-      label: column.id.charAt(0).toUpperCase() + column.id.slice(1),
-      type: isDateRangeColumn(column.id)
-        ? ("dateRange" as const)
-        : ("text" as const),
+      label: formatColumnLabel(column.id),
+      type: "text",
     }));
 
   const additionalColumns = additionalFilters.map((filter) => ({
-    id: filter.columnId,
+    id: filter.id,
     label: filter.label,
     type: filter.type,
+    loader: filter.loader,
   }));
 
   const availableColumns = [
     ...tableColumns.filter(
-      (col) => !additionalFilters.some((add) => add.columnId === col.id)
+      (col) => !additionalFilters.some((add) => add.id === col.id)
     ),
     ...additionalColumns,
   ];
 
   const availableColumnsForFilter = availableColumns.filter(
-    (col) => !filters.some((filter) => filter.column === col.id)
+    (col) => !filters.some((filter) => filter.id === col.id)
   );
 
   const applyFilters = (updatedFilters: FilterRule[]) => {
@@ -64,23 +74,23 @@ export function DynamicColumnFilter<TData>({
     });
   };
 
-  const addFilter = (columnId: string, type: "text" | "dateRange" = "text") => {
+  const addFilter = (columnId: string, type: AvailableFilterTypes = "text") => {
     const columnConfig = availableColumns.find((col) => col.id === columnId);
     const label = columnConfig?.label || columnId;
 
     const newFilter: FilterRule = {
-      id: crypto.randomUUID(),
-      column: columnId,
+      id: columnId,
       label: label,
-      value: type === "text" ? "" : undefined,
       type,
+      value: type === "text" ? "" : type === "select" ? [] : undefined,
+      loader: columnConfig?.loader,
     };
-
     const updatedFilters = [...filters, newFilter];
+
     setFilters(updatedFilters);
   };
 
-  const updateFilter = (filterId: string, value?: string | DateRange) => {
+  const updateFilter = (filterId: string, value?: AvailableValueTypes) => {
     const updatedFilters = filters.map((filter) =>
       filter.id === filterId ? { ...filter, value } : filter
     );
@@ -107,6 +117,20 @@ export function DynamicColumnFilter<TData>({
       );
     }
 
+    if (filter.type === "select") {
+      return (
+        <MultiselectFilter
+          key={filter.id}
+          id={filter.id}
+          label={filter.label}
+          value={(filter.value as string[]) || []}
+          loader={filter.loader}
+          onChange={(value) => updateFilter(filter.id, value)}
+          onRemove={() => removeFilter(filter.id)}
+        />
+      );
+    }
+
     return (
       <FilterChip
         label={filter.label}
@@ -127,7 +151,7 @@ export function DynamicColumnFilter<TData>({
         />
       )}
       <AddFilterDropdown
-        columns={availableColumnsForFilter}
+        filterColumns={availableColumnsForFilter}
         onAddFilter={addFilter}
       />
       {filters.map(renderFilter)}

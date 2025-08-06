@@ -9,25 +9,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilterColumn } from "./filters.types";
+import { AvailableFilterTypes, FilterColumn } from "./filters.types";
 
 interface AddFilterDropdownProps {
-  columns: FilterColumn[];
-  onAddFilter: (columnId: string, type?: "text" | "dateRange") => void;
+  filterColumns: FilterColumn[];
+  onAddFilter: (columnId: string, type?: AvailableFilterTypes) => void;
 }
 
 export function AddFilterDropdown({
-  columns,
+  filterColumns,
   onAddFilter,
 }: AddFilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleAddFilter = (columnId: string, type?: "text" | "dateRange") => {
+  const handleAddFilter = (columnId: string, type?: AvailableFilterTypes) => {
     onAddFilter(columnId, type);
     setIsOpen(false);
   };
 
-  const hasAvailableColumns = columns.length > 0;
+  const hasAvailableColumns = filterColumns.length > 0;
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -46,7 +46,7 @@ export function AddFilterDropdown({
         <DropdownMenuLabel>Select Column</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {hasAvailableColumns ? (
-          columns.map((column) => (
+          filterColumns.map((column) => (
             <DropdownMenuItem
               key={column.id}
               onClick={() => handleAddFilter(column.id, column.type)}
@@ -60,6 +60,11 @@ export function AddFilterDropdown({
               {column.type === "text" && (
                 <span className="ml-auto text-xs text-muted-foreground">
                   Text
+                </span>
+              )}
+              {column.type === "select" && (
+                <span className="ml-auto text-xs text-muted-foreground">
+                  Select
                 </span>
               )}
             </DropdownMenuItem>

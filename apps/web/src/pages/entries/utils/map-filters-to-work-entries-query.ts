@@ -28,8 +28,8 @@ export const mapFiltersToOrganizationWorkEntriesQuery = (
           "from" in filter.value &&
           "to" in filter.value
         ) {
-          dto.workEntryStartedAt = filter.value.from;
-          dto.workEntryEndedAt = filter.value.to;
+          dto.workEntryStartedAt = filter.value.from?.toISOString();
+          dto.workEntryEndedAt = filter.value.to?.toISOString();
         }
         break;
     }

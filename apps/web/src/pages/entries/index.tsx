@@ -15,7 +15,7 @@ import { useOrganizationWorkEntries } from "@/hooks/work-entry/use-organization-
 import OrganizationWorkEntriesTable from "@/modules/entries/organization-work-entries-table";
 import { useOrganizationWorkEntriesTableColumns } from "@/modules/entries/use-organization-work-entries-table-columns";
 import { TableToolbar } from "./table-toolbar";
-import { AdditionalFilter, FilterState } from "./filters.types";
+import { FilterColumn, FilterState } from "./filters.types";
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
 import { mapFiltersToOrganizationWorkEntriesQuery } from "./utils/map-filters-to-work-entries-query";
 
@@ -79,10 +79,10 @@ export default function EntriesPage() {
 
   useEffect(() => setExpanded({}), [pagination.pageIndex, pagination.pageSize]);
 
-  const additionalFilters: AdditionalFilter[] = [
-    { columnId: "workPeriod", type: "dateRange", label: "Work Period" },
+  const additionalFilters: FilterColumn[] = [
+    { id: "workPeriod", type: "dateRange", label: "Work Period" },
   ];
-
+  console.log(filters);
   return (
     <>
       <SectionHeader title="Entries Page" />
