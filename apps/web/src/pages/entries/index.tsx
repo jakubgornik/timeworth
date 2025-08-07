@@ -66,6 +66,7 @@ export default function EntriesPage() {
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true,
     manualSorting: true,
+    manualFiltering: true,
     pageCount: workEntries?.totalPages,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
@@ -82,7 +83,9 @@ export default function EntriesPage() {
   const additionalFilters: FilterColumn[] = [
     { id: "workPeriod", type: "dateRange", label: "Work Period" },
   ];
-  console.log(filters);
+
+  console.log("FILTERS", filters);
+
   return (
     <>
       <SectionHeader title="Entries Page" />

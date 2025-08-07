@@ -59,6 +59,7 @@ export default function DetailsPage() {
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true,
     manualSorting: true,
+    manualFiltering: true,
     pageCount: organizationUsers?.totalPages,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
@@ -89,7 +90,7 @@ export default function DetailsPage() {
     },
   ];
 
-  console.log(filters);
+  console.log("FILTERS", filters);
 
   return (
     <>

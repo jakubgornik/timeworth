@@ -14,28 +14,44 @@ const isDateRange = (value: unknown): value is DateRange => {
   );
 };
 
+const isStringArray = (value: unknown): value is string[] => {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
+};
+
 export const formatFilterValue = (
   filter: FilterRule
-): string | DateRange | null => {
-  if (typeof filter.value === "string") {
-    return filter.value;
-  }
+): string | DateRange | string[] | null => {
+  const { value } = filter;
 
-  if (isDateRange(filter.value)) {
-    return filter.value;
-  }
+  if (typeof value === "string") return value;
+  if (isDateRange(value)) return value;
+  if (isStringArray(value)) return value;
 
   return null;
 };
 
+const isValidFilterValue = (value: unknown): boolean => {
+  if (value === undefined || value === "") return false;
+  if (Array.isArray(value)) return value.length > 0;
+  return true;
+};
+
 export const processFilters = (filters: FilterRule[]): FilterDefinition[] => {
   return filters
-    .filter((filter) => filter.value !== undefined && filter.value !== "")
+    .filter(({ value }) => isValidFilterValue(value))
     .map((filter) => {
       const value = formatFilterValue(filter);
-      return value ? { column: filter.id, value, type: filter.type } : null;
+      if (!value) return null;
+
+      return {
+        column: filter.id,
+        value,
+        type: filter.type,
+      };
     })
-    .filter((item): item is NonNullable<typeof item> => item !== null);
+    .filter((item): item is FilterDefinition => item !== null);
 };
 
 export const formatColumnLabel = (columnId: string): string => {
