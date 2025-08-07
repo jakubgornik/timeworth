@@ -4,7 +4,8 @@ import { GetOrganizationUsersQuery } from './queries/get-organization-users/get-
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { GetUserByIdQuery } from './queries/get-user-by-id/get-user-by-id.query';
-import { OrganizationUsersFiltersDto } from './exceptions/organization-users-filters.dto';
+import { GetUserStatusOptionsQuery } from './queries/get-user-status-options/get-user-status-options.query';
+import { OrganizationUsersFiltersDto } from './dto/organization-users-filters.dto';
 
 @Injectable()
 export class UserService {
@@ -33,6 +34,10 @@ export class UserService {
 
   async getUserById(userId: string) {
     return await this.queryBus.execute(new GetUserByIdQuery(userId));
+  }
+
+  async getUserStatusOptions() {
+    return await this.queryBus.execute(new GetUserStatusOptionsQuery());
   }
 
   // These are examples how to work with queries and commands

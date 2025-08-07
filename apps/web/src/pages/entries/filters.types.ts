@@ -5,7 +5,7 @@ export type SelectOption = {
   value: string;
 };
 
-export type loaderType = () => Promise<SelectOption[]>;
+export type loaderType = () => Promise<SelectOption[] | undefined>;
 
 export type AvailableFilterTypes = "text" | "dateRange" | "select";
 

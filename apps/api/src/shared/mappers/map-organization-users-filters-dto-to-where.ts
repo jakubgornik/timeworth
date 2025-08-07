@@ -1,5 +1,5 @@
 import { Prisma } from '@packages/db';
-import { OrganizationUsersFiltersDto } from 'src/modules/user/exceptions/organization-users-filters.dto';
+import { OrganizationUsersFiltersDto } from 'src/modules/user/dto/organization-users-filters.dto';
 
 export const mapOrganizationUsersFiltersDtoToWhere = (
   filters: OrganizationUsersFiltersDto,

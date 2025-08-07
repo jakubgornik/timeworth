@@ -5,7 +5,7 @@ import {
 } from '@packages/types';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
-import { OrganizationUsersFiltersDto } from '../../exceptions/organization-users-filters.dto';
+import { OrganizationUsersFiltersDto } from '../../dto/organization-users-filters.dto';
 
 export class GetOrganizationUsersQuery extends Query<
   IPaginatedResponseDto<IUserDto>

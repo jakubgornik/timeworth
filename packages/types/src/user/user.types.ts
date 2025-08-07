@@ -40,3 +40,8 @@ export interface IUserCredentialsDto {
   email: string;
   password: string;
 }
+
+export interface UserStatusOption {
+  label: string;
+  value: UserStatusType;
+}

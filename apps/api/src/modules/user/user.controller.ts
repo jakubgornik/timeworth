@@ -15,7 +15,7 @@ import { UserService } from './user.service';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
-import { OrganizationUsersFiltersDto } from './exceptions/organization-users-filters.dto';
+import { OrganizationUsersFiltersDto } from './dto/organization-users-filters.dto';
 
 export interface RequestWithUser extends Request {
   user: {
@@ -27,7 +27,7 @@ export interface RequestWithUser extends Request {
 export class UserController {
   constructor(
     private readonly authService: AuthService,
-    private readonly service: UserService,
+    private readonly userService: UserService,
   ) {}
 
   @Delete(':id')
@@ -46,7 +46,7 @@ export class UserController {
   async getMe(@Req() req: RequestWithUser) {
     const userId = req.user.userId;
 
-    return await this.service.getUserById(userId);
+    return await this.userService.getUserById(userId);
   }
 
   @Get('organization-users')
@@ -58,13 +58,19 @@ export class UserController {
     @Query() paginationDto: PaginationDto,
     @Query() sortDto: SortDto,
   ) {
-    return await this.service.getOrganizationUsers(
+    return await this.userService.getOrganizationUsers(
       managerId,
       search,
       paginationDto,
       sortDto,
       filtersDto,
     );
+  }
+
+  @Get('user-status-options')
+  @AuthEndpoint()
+  async getUserStatusOptions() {
+    return await this.userService.getUserStatusOptions();
   }
 
   // These are examples how to work with queries and commands

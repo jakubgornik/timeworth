@@ -24,7 +24,7 @@ interface MultiselectFilterProps {
   id: string;
   label: string;
   value: string[];
-  loader?: () => Promise<SelectOption[]>;
+  loader?: () => Promise<SelectOption[] | undefined>;
   onChange: (value: string[]) => void;
   onRemove: () => void;
   placeholder?: string;
@@ -43,7 +43,13 @@ export function MultiselectFilter({
 
   useEffect(() => {
     if (loader) {
-      loader().then(setOptions).catch(console.error);
+      loader()
+        .then((result) => {
+          if (result) {
+            setOptions(result);
+          }
+        })
+        .catch(console.error);
     }
   }, [loader]);
 
