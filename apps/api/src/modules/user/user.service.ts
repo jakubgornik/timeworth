@@ -4,6 +4,7 @@ import { GetOrganizationUsersQuery } from './queries/get-organization-users/get-
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { GetUserByIdQuery } from './queries/get-user-by-id/get-user-by-id.query';
+import { OrganizationUsersFiltersDto } from './exceptions/organization-users-filters.dto';
 
 @Injectable()
 export class UserService {
@@ -14,11 +15,19 @@ export class UserService {
 
   async getOrganizationUsers(
     managerId: string,
+    search: string,
     paginationDto: PaginationDto,
     sortDto: SortDto,
+    filtersDto: OrganizationUsersFiltersDto,
   ) {
     return await this.queryBus.execute(
-      new GetOrganizationUsersQuery(managerId, paginationDto, sortDto),
+      new GetOrganizationUsersQuery(
+        managerId,
+        search,
+        paginationDto,
+        sortDto,
+        filtersDto,
+      ),
     );
   }
 

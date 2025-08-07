@@ -1,4 +1,5 @@
-import { IPaginatedQueryDto } from "../utils";
+import { UserStatusType } from "../user";
+import { IPaginatedQueryDto, ISearchDto } from "../utils";
 
 export interface IOrganizationDto {
   id: string;
@@ -25,7 +26,14 @@ export interface ICreateOrganizationDto {
   address?: string;
 }
 
-export interface IPaginatedOrganizationUsersQueryDto
-  extends IPaginatedQueryDto {
-  managerId: string;
+export interface IOrganizationUsersFiltersDto {
+  email?: string;
+  userStatus?: UserStatusType[];
 }
+
+export type IPaginatedOrganizationUsersQueryDto =
+  Partial<IOrganizationUsersFiltersDto> &
+    ISearchDto &
+    IPaginatedQueryDto & {
+      managerId: string;
+    };

@@ -15,6 +15,7 @@ import { UserService } from './user.service';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
+import { OrganizationUsersFiltersDto } from './exceptions/organization-users-filters.dto';
 
 export interface RequestWithUser extends Request {
   user: {
@@ -52,13 +53,17 @@ export class UserController {
   @AuthEndpoint()
   async getOrganizationUsers(
     @Query('managerId') managerId: string,
+    @Query('search') search: string,
+    @Query() filtersDto: OrganizationUsersFiltersDto,
     @Query() paginationDto: PaginationDto,
     @Query() sortDto: SortDto,
   ) {
     return await this.service.getOrganizationUsers(
       managerId,
+      search,
       paginationDto,
       sortDto,
+      filtersDto,
     );
   }
 

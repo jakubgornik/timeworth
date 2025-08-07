@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PrismaService } from '@packages/db';
+import { Prisma, PrismaService } from '@packages/db';
 import { GetOrganizationUsersQuery } from './get-organization-users.query';
 import {
   IPaginatedResponseDto,
@@ -7,6 +7,7 @@ import {
 } from '@packages/types';
 import { mapUsersSortDtoToOrderBy } from 'src/shared/mappers/map-users-sort-dto-to-order-by';
 import { ManagerNotFoundException } from 'src/modules/work-entry/exceptions/manager.exception';
+import { mapOrganizationUsersFiltersDtoToWhere } from 'src/shared/mappers/map-organization-users-filters-dto-to-where';
 
 @QueryHandler(GetOrganizationUsersQuery)
 export class GetOrganizationUsersHandler
@@ -26,6 +27,8 @@ export class GetOrganizationUsersHandler
       managerId,
       paginationDto: { page, pageSize },
       sortDto,
+      filtersDto,
+      search,
     } = organizationUsersQueryDto;
 
     if (!managerId) {
@@ -33,16 +36,23 @@ export class GetOrganizationUsersHandler
     }
 
     const orderBy = mapUsersSortDtoToOrderBy(sortDto);
+    const filtersWhere = mapOrganizationUsersFiltersDtoToWhere(
+      filtersDto,
+      search,
+    );
+
+    const where: Prisma.UserWhereInput = {
+      role: 'EMPLOYEE',
+      organization: {
+        managerId,
+      },
+      ...filtersWhere,
+    };
 
     const [users, totalCount] = await Promise.all([
       this.prisma.user.findMany({
         orderBy,
-        where: {
-          role: 'EMPLOYEE',
-          organization: {
-            managerId,
-          },
-        },
+        where,
         include: {
           organization: true,
         },
@@ -50,12 +60,7 @@ export class GetOrganizationUsersHandler
         take: pageSize,
       }),
       this.prisma.user.count({
-        where: {
-          organization: {
-            managerId,
-          },
-          role: 'EMPLOYEE',
-        },
+        where,
       }),
     ]);
 

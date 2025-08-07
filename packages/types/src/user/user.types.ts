@@ -6,9 +6,9 @@ export const UserRole = {
 } as const;
 
 export const UserStatus = {
-  AVAILABLE: "AVAILABLE",
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
+  AVAILABLE: "AVAILABLE",
   ASSIGNED: "ASSIGNED",
   ON_LEAVE: "ON_LEAVE",
   SUSPENDED: "SUSPENDED",

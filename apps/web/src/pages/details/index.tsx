@@ -18,6 +18,7 @@ import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-qu
 import { TableToolbar } from "../entries/table-toolbar";
 import { FilterColumn, FilterState } from "../entries/filters.types";
 import { fetchUserStatusOptions } from "@/loaders/use-user-statuses.loader";
+import { mapFiltersToOrganizationUsersQuery } from "./utils/map-filters-to-organization-users-query";
 
 export default function DetailsPage() {
   const currentUser = useCurrentUser();
@@ -38,12 +39,18 @@ export default function DetailsPage() {
   };
 
   const sortingQuery = useMemo(() => convertSortingToQuery(sorting), [sorting]);
+  const filtersQuery = useMemo(
+    () => mapFiltersToOrganizationUsersQuery(filters),
+    [filters]
+  );
 
   const { data: organizationUsers } = useOrganizationUsers({
     managerId: currentUser.data?.id ?? "",
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     ...sortingQuery,
+    ...filtersQuery,
+    search: filters.search,
   });
 
   const data = useMemo(() => {
@@ -71,15 +78,7 @@ export default function DetailsPage() {
     },
   });
 
-  useEffect(
-    () => setExpanded({}),
-    [
-      organizationUsers?.data,
-      pagination.pageIndex,
-      pagination.pageSize,
-      sorting,
-    ]
-  );
+  useEffect(() => setExpanded({}), [pagination.pageIndex, pagination.pageSize]);
 
   const additionalFilters: FilterColumn[] = [
     {
@@ -89,8 +88,6 @@ export default function DetailsPage() {
       loader: fetchUserStatusOptions,
     },
   ];
-
-  console.log("FILTERS", filters);
 
   return (
     <>

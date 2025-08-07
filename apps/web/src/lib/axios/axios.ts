@@ -5,6 +5,7 @@ import type {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
+import qs from "qs";
 
 interface QueuedRequestCallbacks {
   resolve: (value: AxiosResponse) => void;
@@ -20,6 +21,9 @@ const api = axios.create({
   baseURL: "http://localhost:3000/",
   withCredentials: true,
   timeout: 10000, // 10 second timeout
+  paramsSerializer: {
+    serialize: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
+  },
 });
 
 const processQueuedRequests = (

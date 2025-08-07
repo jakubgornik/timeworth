@@ -84,8 +84,6 @@ export default function EntriesPage() {
     { id: "workPeriod", type: "dateRange", label: "Work Period" },
   ];
 
-  console.log("FILTERS", filters);
-
   return (
     <>
       <SectionHeader title="Entries Page" />
