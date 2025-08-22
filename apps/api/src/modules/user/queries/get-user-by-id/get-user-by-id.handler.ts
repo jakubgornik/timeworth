@@ -10,8 +10,8 @@ export class GetUserByIdHandler
 {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(uerByIdQueryDto: GetUserByIdQuery) {
-    const { userId } = uerByIdQueryDto;
+  async execute(userByIdQueryDto: GetUserByIdQuery) {
+    const { userId } = userByIdQueryDto;
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

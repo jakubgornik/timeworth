@@ -49,7 +49,7 @@ export class UserController {
     return await this.userService.getUserById(userId);
   }
 
-  @Get('organization-users')
+  @Get()
   @AuthEndpoint()
   async getOrganizationUsers(
     @Query('managerId') managerId: string,
@@ -73,15 +73,11 @@ export class UserController {
     return await this.userService.getUserStatusOptions();
   }
 
-  // These are examples how to work with queries and commands
-  // @Get()
-  // async getUsers() {
-  //   return await this.service.getUsers();
-  // }
-
-  // @Delete(':id')
-  // async deleteUser(@Param('id') id: string) {
-  //   return await this.service.deleteUser(id);
-  // }
-  //
+  @Get('listed-organization-users')
+  @AuthEndpoint()
+  async getListedOrganizationUsers(
+    @Query('organizationId') organizationId: string,
+  ) {
+    return await this.userService.getListedOrganizationUsers(organizationId);
+  }
 }
