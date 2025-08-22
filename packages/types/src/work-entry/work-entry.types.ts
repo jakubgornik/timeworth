@@ -62,3 +62,21 @@ export type IPaginatedOrganizationWorkEntriesQueryDto =
     IPaginatedQueryDto & {
       managerId: string;
     };
+
+type WorkEntryFilterType =
+  | { type: "dateRange"; from: Date; to: Date }
+  | { type: "year"; year: number };
+
+export interface IGetFilteredWorkEntriesDto {
+  managerId: string;
+  selectedUserId?: string;
+  filter: WorkEntryFilterType;
+}
+
+export interface IWorkEntryDtoWithUser extends IWorkEntryDto {
+  user: {
+    id: string;
+    email: string;
+    name: string | null;
+  };
+}

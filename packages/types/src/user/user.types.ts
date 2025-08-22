@@ -45,3 +45,7 @@ export interface UserStatusOption {
   label: string;
   value: UserStatusType;
 }
+
+export type SelectedUser = Pick<IUserDto, "id" | "name"> & {
+  name: string;
+};
