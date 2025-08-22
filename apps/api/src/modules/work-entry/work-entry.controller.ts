@@ -14,6 +14,7 @@ import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
+import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-organization-work-entries.dto';
 
 @Controller('work-entry')
 export class WorkEntryController {
@@ -53,5 +54,14 @@ export class WorkEntryController {
       sortDto,
       filtersDto,
     );
+  }
+
+  @Get('filtered')
+  @AuthEndpoint()
+  async getFilteredWorkEntries(
+    @Query('managerId') managerId: string,
+    @Query() dto: GetFilteredOrganizationWorkEntriesDto,
+  ) {
+    return await this.workEntryService.getFilteredWorkEntries(dto, managerId);
   }
 }

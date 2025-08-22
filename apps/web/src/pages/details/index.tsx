@@ -17,7 +17,7 @@ import { useUserDetailsTableColumns } from "@/modules/dashboard/use-details-tabl
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
 import { TableToolbar } from "../entries/table-toolbar";
 import { FilterColumn, FilterState } from "../entries/filters.types";
-import { fetchUserStatusOptions } from "@/loaders/use-user-statuses.loader";
+import { userStatusesLoader } from "@/loaders/user-statuses.loader";
 import { mapFiltersToOrganizationUsersQuery } from "./utils/map-filters-to-organization-users-query";
 
 export default function DetailsPage() {
@@ -85,7 +85,7 @@ export default function DetailsPage() {
       id: "userStatus",
       type: "select",
       label: "Status",
-      loader: fetchUserStatusOptions,
+      loader: userStatusesLoader,
     },
   ];
 

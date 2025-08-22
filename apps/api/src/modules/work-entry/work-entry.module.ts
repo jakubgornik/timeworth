@@ -7,12 +7,14 @@ import { PrismaModule } from '@packages/db';
 import { DeleteWorkEntryHandler } from './commands/delete-work-entry/delete-work-entry.handler';
 import { GetWorkEntriesHandler } from './query/get-work-entries/get-work-entries.handler';
 import { GetOrganizationWorkEntriesHandler } from './query/get-organization-work-entries/get-organization-work-entries.handler';
+import { GetFilteredOrganizationWorkEntriesHandler } from './query/get-filtered-organization-work-entries/get-filtered-organization-work-entries.handler';
 
 const services = [WorkEntryService];
 const commandHandlers = [
   CreateWorkEntryHandler,
   DeleteWorkEntryHandler,
   GetOrganizationWorkEntriesHandler,
+  GetFilteredOrganizationWorkEntriesHandler,
 ];
 const queryHandlers = [GetWorkEntriesHandler];
 

@@ -9,6 +9,8 @@ import { SortDto } from 'src/shared/dto/sort.dto';
 import { GetOrganizationWorkEntriesQuery } from './query/get-organization-work-entries/get-organization-work-entries.query';
 import { GetWorkEntriesQuery } from './query/get-work-entries/get-work-entries.query';
 import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
+import { GetFilteredOrganizationWorkEntriesQuery } from './query/get-filtered-organization-work-entries/get-filtered-organization-work-entries.query';
+import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-organization-work-entries.dto';
 
 @Injectable()
 export class WorkEntryService {
@@ -44,6 +46,15 @@ export class WorkEntryService {
         sortDto,
         filtersDto,
       ),
+    );
+  }
+
+  async getFilteredWorkEntries(
+    dto: GetFilteredOrganizationWorkEntriesDto,
+    managerId: string,
+  ) {
+    return await this.queryBus.execute(
+      new GetFilteredOrganizationWorkEntriesQuery(dto, managerId),
     );
   }
 }
