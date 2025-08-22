@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { useIsUserManager } from "@/hooks/user/use-is-user-manager";
 import OnboardingContent from "@/modules/dashboard/onboarding-content";
 import WorkEntriesTimetable from "@/modules/dashboard/work-entries-timetable";
+import ManagerDashboard from "@/modules/dashboard/manager-dashboard";
 
 export default function DashboardPage() {
   const currentUser = useCurrentUser();
@@ -23,7 +24,7 @@ export default function DashboardPage() {
     }
 
     if (isManager) {
-      return null; //TODO: Render manager dashboard content, statistics etc.
+      return <ManagerDashboard />;
     }
 
     return <WorkEntriesTimetable />;
