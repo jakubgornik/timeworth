@@ -12,13 +12,10 @@ export const useOrganizationUsers = (
   return useQuery({
     queryKey: ["managedUsers", query],
     queryFn: async () => {
-      const res = await api.get<IPaginatedResponseDto<IUserDto>>(
-        "user/organization-users",
-        {
-          params: query,
-          withCredentials: true,
-        }
-      );
+      const res = await api.get<IPaginatedResponseDto<IUserDto>>("user", {
+        params: query,
+        withCredentials: true,
+      });
 
       return res.data;
     },

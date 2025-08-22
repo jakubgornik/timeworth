@@ -6,6 +6,7 @@ import { SortDto } from 'src/shared/dto/sort.dto';
 import { GetUserByIdQuery } from './queries/get-user-by-id/get-user-by-id.query';
 import { GetUserStatusOptionsQuery } from './queries/get-user-status-options/get-user-status-options.query';
 import { OrganizationUsersFiltersDto } from './dto/organization-users-filters.dto';
+import { GetListedOrganizationUsersQuery } from './queries/get-listed-organization-users/get-listed-organization-users.query';
 
 @Injectable()
 export class UserService {
@@ -40,17 +41,9 @@ export class UserService {
     return await this.queryBus.execute(new GetUserStatusOptionsQuery());
   }
 
-  // These are examples how to work with queries and commands
-
-  // async getUsers() {
-  //   return await this.queryBus.execute<GetUsersQuery, UserDto[]>(
-  //     new GetUsersQuery(),
-  //   );
-  // }
-
-  // async deleteUser(id: string) {
-  //   return await this.commandBus.execute<DeleteUserCommand, void>(
-  //     new DeleteUserCommand(id),
-  //   );
-  // }
+  async getListedOrganizationUsers(organizationId: string) {
+    return await this.queryBus.execute(
+      new GetListedOrganizationUsersQuery(organizationId),
+    );
+  }
 }

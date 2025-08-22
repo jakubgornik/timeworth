@@ -1,7 +1,7 @@
 import { SelectOption } from "@/pages/entries/filters.types";
 import api from "@/lib/axios/axios";
 
-export const fetchUserStatusOptions = async (): Promise<
+export const userStatusesLoader = async (): Promise<
   SelectOption[] | undefined
 > => {
   try {
