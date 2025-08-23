@@ -14,6 +14,7 @@ import {
 } from "./filters.types";
 import { formatColumnLabel, processFilters } from "./filters.utils";
 import { MultiselectFilter } from "./multi-select-filter";
+import { Button } from "@/components/ui/button";
 
 interface DynamicColumnFilterProps<TData> {
   table: Table<TData>;
@@ -21,7 +22,8 @@ interface DynamicColumnFilterProps<TData> {
   currentFilters: FilterState;
   additionalFilters?: FilterColumn[];
   enableSearch?: boolean;
-  omitColumnsById: string[];
+  omitColumnsById?: string[];
+  exportFn?: () => void;
 }
 
 export function DynamicColumnFilter<TData>({
@@ -31,6 +33,7 @@ export function DynamicColumnFilter<TData>({
   additionalFilters = [],
   enableSearch,
   omitColumnsById,
+  exportFn,
 }: DynamicColumnFilterProps<TData>) {
   const [filters, setFilters] = useState<FilterRule[]>([]);
 
@@ -143,7 +146,16 @@ export function DynamicColumnFilter<TData>({
   };
 
   return (
-    <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex items-center gap-3 flex-wrap pl-6">
+      {exportFn && (
+        <Button
+          onClick={exportFn}
+          variant="outline"
+          className="text-muted-foreground h-10"
+        >
+          Export
+        </Button>
+      )}
       {enableSearch && (
         <SearchInput
           onSearchChange={onFiltersChange}

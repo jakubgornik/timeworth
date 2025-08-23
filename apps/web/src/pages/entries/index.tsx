@@ -18,6 +18,7 @@ import { TableToolbar } from "./table-toolbar";
 import { FilterColumn, FilterState } from "./filters.types";
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
 import { mapFiltersToOrganizationWorkEntriesQuery } from "./utils/map-filters-to-work-entries-query";
+import { useExportWorkEntries } from "@/hooks/work-entry/use-export-work-entries";
 
 export default function EntriesPage() {
   const currentUser = useCurrentUser();
@@ -84,12 +85,19 @@ export default function EntriesPage() {
     { id: "workPeriod", type: "dateRange", label: "Work Period" },
   ];
 
+  const { mutate: exportWorkEntries } = useExportWorkEntries();
+
+  const handleExportWorkEntries = () => {
+    exportWorkEntries(filtersQuery);
+  };
+
   return (
     <>
       <SectionHeader title="Entries Page" />
       <SectionWrapper className="h-full">
         <Card className="w-full h-full bg-primary">
           <TableToolbar
+            exportFn={handleExportWorkEntries}
             table={table}
             onFiltersChange={handleFiltersChange}
             currentFilters={filters}

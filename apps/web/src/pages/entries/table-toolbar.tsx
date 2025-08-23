@@ -9,6 +9,7 @@ interface TableToolbarProps<TData> {
   additionalFilters?: FilterColumn[];
   enableSearch?: boolean;
   omitColumnsById?: string[];
+  exportFn?: () => void;
 }
 
 export function TableToolbar<TData>({
@@ -17,19 +18,18 @@ export function TableToolbar<TData>({
   currentFilters,
   additionalFilters,
   enableSearch,
-  omitColumnsById = [],
+  omitColumnsById,
+  exportFn,
 }: TableToolbarProps<TData>) {
   return (
-    <div className="flex items-center justify-between gap-4 px-6">
-      <DynamicColumnFilter
-        table={table}
-        onFiltersChange={onFiltersChange}
-        currentFilters={currentFilters}
-        additionalFilters={additionalFilters}
-        enableSearch={enableSearch}
-        omitColumnsById={omitColumnsById}
-      />
-      {/* TODO add column visibility */}
-    </div>
+    <DynamicColumnFilter
+      table={table}
+      onFiltersChange={onFiltersChange}
+      currentFilters={currentFilters}
+      additionalFilters={additionalFilters}
+      enableSearch={enableSearch}
+      omitColumnsById={omitColumnsById}
+      exportFn={exportFn}
+    />
   );
 }
