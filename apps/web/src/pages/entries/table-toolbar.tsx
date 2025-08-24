@@ -10,6 +10,7 @@ interface TableToolbarProps<TData> {
   enableSearch?: boolean;
   omitColumnsById?: string[];
   exportFn?: () => void;
+  downloadTemplateFn?: () => void;
 }
 
 export function TableToolbar<TData>({
@@ -20,6 +21,7 @@ export function TableToolbar<TData>({
   enableSearch,
   omitColumnsById,
   exportFn,
+  downloadTemplateFn,
 }: TableToolbarProps<TData>) {
   return (
     <DynamicColumnFilter
@@ -30,6 +32,7 @@ export function TableToolbar<TData>({
       enableSearch={enableSearch}
       omitColumnsById={omitColumnsById}
       exportFn={exportFn}
+      downloadTemplateFn={downloadTemplateFn}
     />
   );
 }

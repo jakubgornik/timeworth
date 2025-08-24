@@ -24,6 +24,7 @@ interface DynamicColumnFilterProps<TData> {
   enableSearch?: boolean;
   omitColumnsById?: string[];
   exportFn?: () => void;
+  downloadTemplateFn?: () => void;
 }
 
 export function DynamicColumnFilter<TData>({
@@ -34,6 +35,7 @@ export function DynamicColumnFilter<TData>({
   enableSearch,
   omitColumnsById,
   exportFn,
+  downloadTemplateFn,
 }: DynamicColumnFilterProps<TData>) {
   const [filters, setFilters] = useState<FilterRule[]>([]);
 
@@ -147,6 +149,7 @@ export function DynamicColumnFilter<TData>({
 
   return (
     <div className="flex items-center gap-3 flex-wrap pl-6">
+      {/* TODO dropdown */}
       {exportFn && (
         <Button
           onClick={exportFn}
@@ -154,6 +157,15 @@ export function DynamicColumnFilter<TData>({
           className="text-muted-foreground h-10"
         >
           Export
+        </Button>
+      )}
+      {downloadTemplateFn && (
+        <Button
+          onClick={downloadTemplateFn}
+          variant="outline"
+          className="text-muted-foreground h-10"
+        >
+          Download Template
         </Button>
       )}
       {enableSearch && (

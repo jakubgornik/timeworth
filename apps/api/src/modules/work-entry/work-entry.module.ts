@@ -8,15 +8,17 @@ import { DeleteWorkEntryHandler } from './commands/delete-work-entry/delete-work
 import { GetWorkEntriesHandler } from './query/get-work-entries/get-work-entries.handler';
 import { GetOrganizationWorkEntriesHandler } from './query/get-organization-work-entries/get-organization-work-entries.handler';
 import { GetFilteredOrganizationWorkEntriesHandler } from './query/get-filtered-organization-work-entries/get-filtered-organization-work-entries.handler';
+import { ExportService } from '../export.service';
+import { GetExportedWorkEntriesHandler } from './query/get-exported-work-entries/get-exported-work-entries.handler';
 
-const services = [WorkEntryService];
-const commandHandlers = [
-  CreateWorkEntryHandler,
-  DeleteWorkEntryHandler,
+const services = [WorkEntryService, ExportService];
+const commandHandlers = [CreateWorkEntryHandler, DeleteWorkEntryHandler];
+const queryHandlers = [
+  GetWorkEntriesHandler,
   GetOrganizationWorkEntriesHandler,
   GetFilteredOrganizationWorkEntriesHandler,
+  GetExportedWorkEntriesHandler,
 ];
-const queryHandlers = [GetWorkEntriesHandler];
 
 @Module({
   controllers: [WorkEntryController],

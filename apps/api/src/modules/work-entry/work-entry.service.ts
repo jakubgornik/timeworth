@@ -11,12 +11,16 @@ import { GetWorkEntriesQuery } from './query/get-work-entries/get-work-entries.q
 import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
 import { GetFilteredOrganizationWorkEntriesQuery } from './query/get-filtered-organization-work-entries/get-filtered-organization-work-entries.query';
 import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-organization-work-entries.dto';
+import { ExportService } from '../export.service';
+import { WORK_ENTRY_EXPORT_CONFIG } from './utils/work-entry-export-config';
+import { GetExportedWorkEntriesQuery } from './query/get-exported-work-entries/get-exported-work-entries.query';
 
 @Injectable()
 export class WorkEntryService {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly exportService: ExportService,
   ) {}
 
   async getWorkEntries(dto: GetWorkEntriesQueryDto) {
@@ -55,6 +59,19 @@ export class WorkEntryService {
   ) {
     return await this.queryBus.execute(
       new GetFilteredOrganizationWorkEntriesQuery(dto, managerId),
+    );
+  }
+
+  async exportWorkEntries(
+    filters: OrganizationWorkEntriesFiltersDto,
+  ): Promise<Buffer> {
+    const workEntries = await this.queryBus.execute(
+      new GetExportedWorkEntriesQuery(filters),
+    );
+
+    return this.exportService.exportToExcel(
+      workEntries,
+      WORK_ENTRY_EXPORT_CONFIG,
     );
   }
 }
