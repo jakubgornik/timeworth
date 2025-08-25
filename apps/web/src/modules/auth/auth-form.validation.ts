@@ -64,4 +64,4 @@ export const authenticationSchema = z
     }
   });
 
-export type AuthenticationFormSchema = z.infer<typeof authenticationSchema>;
+export type AuthenticationForm = z.infer<typeof authenticationSchema>;

@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, ImportIcon } from "lucide-react";
+import { useState } from "react";
+import { FileUploadDialog } from "./dialogs/file-upload-dialog/file-upload-dialog";
 
 interface TimetableHeaderProps {
   weekRange: string;
@@ -12,6 +14,8 @@ export function TimetableHeader({
   onNavigateWeek,
   onAddEvent,
 }: TimetableHeaderProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="bg-accent text-secondary p-3 sm:p-4 rounded-t-lg border-b ">
       <div className="flex items-center justify-between max-w-full">
@@ -25,7 +29,7 @@ export function TimetableHeader({
               <ChevronLeft className="w-4 h-4" />
             </Button>
 
-            <span className="text-sm sm:text-md md:text-lg font-medium px-1 sm:px-2 text-secondary text-center min-w-0 truncate">
+            <span className="sm:text-sm md:text-base font-medium px-1 sm:px-2 text-secondary text-center min-w-0 truncate">
               {weekRange}
             </span>
 
@@ -35,10 +39,31 @@ export function TimetableHeader({
           </div>
         </div>
 
-        <Button onClick={onAddEvent} size="sm" className="ml-0.5">
-          <Plus className="w-4 h-4 sm:mr-2" />
-          <span className="hidden sm:inline">Add Event</span>
+        <Button
+          onClick={() => setIsModalOpen(true)}
+          size="sm"
+          className="flex items-center ml-1.5"
+        >
+          <span className="hidden sm:inline">Import</span>
+
+          <ImportIcon className="w-4 h-4" />
         </Button>
+        <Button
+          onClick={onAddEvent}
+          size="sm"
+          className="flex items-center ml-1.5"
+        >
+          <span className="hidden sm:inline">Add</span>
+          <Plus className="w-4 h-4" />
+        </Button>
+        <FileUploadDialog
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onFileSubmit={(file) => {
+            // TODO: Implement file upload logic
+            console.log("Selected file:", file);
+          }}
+        />
       </div>
     </div>
   );

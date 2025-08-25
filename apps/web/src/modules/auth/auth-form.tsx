@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import SubmitFormButton from "@/components/submit-form-button";
 import {
-  AuthenticationFormSchema,
+  AuthenticationForm,
   authenticationSchema,
 } from "./auth-form.validation";
 import AuthPasswordFieldInput from "./auth-password-input";
@@ -21,7 +21,7 @@ export default function AuthForm({ variant }: AuthFormProps) {
   const { mutate: register } = useRegister();
   const { mutate: login } = useLogin();
 
-  const form = useForm<AuthenticationFormSchema>({
+  const form = useForm<AuthenticationForm>({
     resolver: zodResolver(authenticationSchema),
     defaultValues: {
       email: "",
@@ -30,7 +30,7 @@ export default function AuthForm({ variant }: AuthFormProps) {
     mode: "onChange",
   });
 
-  const onSubmit = (data: AuthenticationFormSchema) => {
+  const onSubmit = (data: AuthenticationForm) => {
     setIsSubmitting(true);
 
     if (variant === "login") {
