@@ -19,7 +19,6 @@ import { FilterColumn, FilterState } from "./filters.types";
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
 import { mapFiltersToOrganizationWorkEntriesQuery } from "./utils/map-filters-to-work-entries-query";
 import { useExportWorkEntries } from "@/hooks/work-entry/use-export-work-entries";
-import { useDownloadWorkEntriesTemplate } from "@/hooks/work-entry/use-download-import-work-entries-template";
 
 export default function EntriesPage() {
   const currentUser = useCurrentUser();
@@ -88,9 +87,6 @@ export default function EntriesPage() {
 
   const { mutate: exportWorkEntries } = useExportWorkEntries();
 
-  const { mutate: downloadWorkEntriesImportTemplate } =
-    useDownloadWorkEntriesTemplate();
-
   return (
     <>
       <SectionHeader title="Entries Page" />
@@ -98,7 +94,6 @@ export default function EntriesPage() {
         <Card className="w-full h-full bg-primary">
           <TableToolbar
             exportFn={() => exportWorkEntries(filtersQuery)}
-            downloadTemplateFn={() => downloadWorkEntriesImportTemplate()}
             table={table}
             onFiltersChange={handleFiltersChange}
             currentFilters={filters}

@@ -10,17 +10,17 @@ import {
 } from "@/lib/animations/animation-variants";
 import { Button } from "@/components/ui/button";
 import { useLogin } from "@/hooks/auth/login/use-login";
-import { AuthenticationFormSchema } from "../auth-form.validation";
+import { AuthenticationForm } from "../auth-form.validation";
 
 export function LoginFormCard() {
   const { mutate: login } = useLogin();
 
-  const demoAccountdata: AuthenticationFormSchema = {
+  const demoAccountdata: AuthenticationForm = {
     email: "test@test.com",
     password: "Testpassword123",
   };
 
-  const demoManagerAccountdata: AuthenticationFormSchema = {
+  const demoManagerAccountdata: AuthenticationForm = {
     email: "manager@demo.com",
     password: "Managerpassword123",
   };

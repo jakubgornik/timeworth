@@ -17,9 +17,7 @@ export function useCreateWorkEntry() {
     },
     onSuccess: () => {
       showSuccess("Successfully created work entry");
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === "workEntries",
-      });
+      queryClient.invalidateQueries({ queryKey: ["workEntries"] });
     },
   });
 }
