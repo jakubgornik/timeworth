@@ -10,9 +10,15 @@ import { GetOrganizationWorkEntriesHandler } from './query/get-organization-work
 import { GetFilteredOrganizationWorkEntriesHandler } from './query/get-filtered-organization-work-entries/get-filtered-organization-work-entries.handler';
 import { ExportService } from '../export.service';
 import { GetExportedWorkEntriesHandler } from './query/get-exported-work-entries/get-exported-work-entries.handler';
+import { ImportWorkEntriesService } from './import-work-entries.service';
+import { ImportWorkEntriesHandler } from './commands/import-work-entry/import-work-entry.handler';
 
-const services = [WorkEntryService, ExportService];
-const commandHandlers = [CreateWorkEntryHandler, DeleteWorkEntryHandler];
+const services = [WorkEntryService, ExportService, ImportWorkEntriesService];
+const commandHandlers = [
+  CreateWorkEntryHandler,
+  DeleteWorkEntryHandler,
+  ImportWorkEntriesHandler,
+];
 const queryHandlers = [
   GetWorkEntriesHandler,
   GetOrganizationWorkEntriesHandler,

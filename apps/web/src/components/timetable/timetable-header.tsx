@@ -1,7 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Plus, ImportIcon } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  ImportIcon,
+  ArrowUpFromLine,
+} from "lucide-react";
 import { useState } from "react";
 import { FileUploadDialog } from "./dialogs/file-upload-dialog/file-upload-dialog";
+import { useUploadWorkEntries } from "@/hooks/work-entry/use-upload-work-entries";
+import { useDownloadWorkEntriesTemplate } from "@/hooks/work-entry/use-download-import-work-entries-template";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface TimetableHeaderProps {
   weekRange: string;
@@ -15,6 +29,11 @@ export function TimetableHeader({
   onAddEvent,
 }: TimetableHeaderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { mutate: importWorkEntries } = useUploadWorkEntries();
+
+  const { mutate: downloadWorkEntriesImportTemplate } =
+    useDownloadWorkEntriesTemplate();
 
   return (
     <div className="bg-accent text-secondary p-3 sm:p-4 rounded-t-lg border-b ">
@@ -38,30 +57,62 @@ export function TimetableHeader({
             </Button>
           </div>
         </div>
-
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          size="sm"
-          className="flex items-center ml-1.5"
-        >
-          <span className="hidden sm:inline">Import</span>
-
-          <ImportIcon className="w-4 h-4" />
-        </Button>
-        <Button
-          onClick={onAddEvent}
-          size="sm"
-          className="flex items-center ml-1.5"
-        >
-          <span className="hidden sm:inline">Add</span>
-          <Plus className="w-4 h-4" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={onAddEvent}
+                size="sm"
+                className="flex items-center ml-1.5"
+              >
+                <span className="hidden xl:inline">Add</span>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Add work entry</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                size="sm"
+                className="flex items-center ml-1.5"
+              >
+                <span className="hidden xl:inline">Import</span>
+                <ArrowUpFromLine className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Import work entries</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => downloadWorkEntriesImportTemplate()}
+                size="sm"
+                className="flex items-center ml-1.5"
+              >
+                <span className="hidden xl:inline">Download template</span>
+                <ImportIcon className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Download import template</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <FileUploadDialog
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onFileSubmit={(file) => {
-            // TODO: Implement file upload logic
-            console.log("Selected file:", file);
+            importWorkEntries(file);
           }}
         />
       </div>

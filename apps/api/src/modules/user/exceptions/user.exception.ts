@@ -8,3 +8,15 @@ export class UserNotFoundException extends CustomException {
     super(UserNotFoundException.BODY, UserNotFoundException.STATUS);
   }
 }
+
+export class UserIsMissingOrganizationException extends CustomException {
+  static readonly BODY = 'User is missing organization';
+  static readonly STATUS = 451;
+
+  constructor() {
+    super(
+      UserIsMissingOrganizationException.BODY,
+      UserIsMissingOrganizationException.STATUS,
+    );
+  }
+}

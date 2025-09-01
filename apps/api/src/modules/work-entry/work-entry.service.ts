@@ -14,6 +14,8 @@ import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-
 import { ExportService } from '../export.service';
 import { WORK_ENTRY_EXPORT_CONFIG } from './utils/work-entry-export-config';
 import { GetExportedWorkEntriesQuery } from './query/get-exported-work-entries/get-exported-work-entries.query';
+import { ImportWorkEntriesService } from './import-work-entries.service';
+import { ImportWorkEntriesCommand } from './commands/import-work-entry/import-work-entry.command';
 
 @Injectable()
 export class WorkEntryService {
@@ -21,6 +23,7 @@ export class WorkEntryService {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly exportService: ExportService,
+    private readonly importWorkEntriesService: ImportWorkEntriesService,
   ) {}
 
   async getWorkEntries(dto: GetWorkEntriesQueryDto) {
@@ -72,6 +75,15 @@ export class WorkEntryService {
     return this.exportService.exportToExcel(
       workEntries,
       WORK_ENTRY_EXPORT_CONFIG,
+    );
+  }
+
+  async importWorkEntries(file: Express.Multer.File, userId: string) {
+    const workEntries =
+      await this.importWorkEntriesService.parseWorkEntriesFile(file, userId);
+
+    return await this.commandBus.execute(
+      new ImportWorkEntriesCommand(workEntries),
     );
   }
 }

@@ -6,7 +6,10 @@ import {
   Param,
   Post,
   Query,
+  Req,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { WorkEntryService } from './work-entry.service';
@@ -18,6 +21,9 @@ import { SortDto } from 'src/shared/dto/sort.dto';
 import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
 import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-organization-work-entries.dto';
 import { join } from 'path';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { RequestWithUser } from '../user/user.controller';
+import { ImportWorkEntriesFileNotFoundException } from './exceptions/import-work-entries.exception';
 
 @Controller('work-entry')
 export class WorkEntryController {
@@ -92,5 +98,20 @@ export class WorkEntryController {
       'import-work-entries-template.xlsx',
     );
     return res.download(filePath, 'import-work-entries-template.xlsx');
+  }
+
+  @Post('import')
+  @AuthEndpoint()
+  @UseInterceptors(FileInterceptor('file'))
+  async importWorkEntries(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: RequestWithUser,
+  ) {
+    if (!file) {
+      throw new ImportWorkEntriesFileNotFoundException();
+    }
+    const userId = req.user.userId;
+
+    return await this.workEntryService.importWorkEntries(file, userId);
   }
 }
