@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/sidebar";
 import {
   Home as HomeIcon,
-  Settings as SettingsIcon,
   LogOut as LogOutIcon,
   SidebarIcon,
   Indent,
@@ -43,11 +42,6 @@ const items = [
     url: ROUTES.ENTRIES,
     icon: LayoutList,
     isManagerRoute: true,
-  },
-  {
-    title: "Settings",
-    url: ROUTES.SETTINGS,
-    icon: SettingsIcon,
   },
 ];
 
