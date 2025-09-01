@@ -4,7 +4,7 @@ import { useNotification } from "../use-notification";
 
 export function useUploadWorkEntries() {
   const queryClient = useQueryClient();
-  const { showSuccess } = useNotification();
+  const { showSuccess, showError } = useNotification();
 
   return useMutation({
     mutationFn: async (file: File) => {
@@ -20,6 +20,9 @@ export function useUploadWorkEntries() {
     onSuccess: () => {
       showSuccess("Successfully imported work entries");
       queryClient.invalidateQueries({ queryKey: ["workEntries"] });
+    },
+    onError: () => {
+      showError("Failed to import work entries");
     },
   });
 }

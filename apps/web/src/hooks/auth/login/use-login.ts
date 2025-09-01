@@ -7,9 +7,12 @@ import {
 } from "@packages/types";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/routes/routes";
+import { useNotification } from "@/hooks/use-notification";
 
 export function useLogin() {
   const navigate = useNavigate();
+
+  const { showError, showSuccess } = useNotification();
 
   return useMutation<ILoginResponseDto, AxiosError, ILoginDto>({
     mutationFn: async (data: ILoginDto) => {
@@ -17,7 +20,11 @@ export function useLogin() {
       return res.data;
     },
     onSuccess: () => {
+      showSuccess("Successfully logged in");
       navigate(ROUTES.DASHBOARD, { replace: true });
+    },
+    onError: () => {
+      showError("Login failed");
     },
   });
 }

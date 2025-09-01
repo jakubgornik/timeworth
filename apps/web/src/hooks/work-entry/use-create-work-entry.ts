@@ -5,7 +5,7 @@ import { useNotification } from "../use-notification";
 
 export function useCreateWorkEntry() {
   const queryClient = useQueryClient();
-  const { showSuccess } = useNotification();
+  const { showSuccess, showError } = useNotification();
 
   return useMutation({
     mutationFn: async (data: ICreateWorkEntryDto) => {
@@ -18,6 +18,9 @@ export function useCreateWorkEntry() {
     onSuccess: () => {
       showSuccess("Successfully created work entry");
       queryClient.invalidateQueries({ queryKey: ["workEntries"] });
+    },
+    onError: () => {
+      showError("Failed to create work entry");
     },
   });
 }

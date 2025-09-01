@@ -51,32 +51,14 @@ export function LoginFormCard() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  login(demoAccountdata, {
-                    onSuccess: () => {
-                      // todo add notification
-                    },
-                    onError: () => {
-                      // todo add notification
-                    },
-                  })
-                }
+                onClick={() => login(demoAccountdata)}
               >
                 Sign in as new user
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  login(demoManagerAccountdata, {
-                    onSuccess: () => {
-                      // todo add notification
-                    },
-                    onError: () => {
-                      // todo add notification
-                    },
-                  })
-                }
+                onClick={() => login(demoManagerAccountdata)}
               >
                 Sign in as existing manager
               </Button>
