@@ -3,6 +3,7 @@ import { PrismaService } from '@packages/db';
 import { IWorkEntryToEventDto } from '@packages/types';
 import { GetWorkEntriesQuery } from './get-work-entries.query';
 import { mapWorkEntryToEvent } from '../../utils/map-work-entry-to-event';
+import { UserNotFoundException } from '../../../user/exceptions/user.exception';
 
 @QueryHandler(GetWorkEntriesQuery)
 export class GetWorkEntriesHandler
@@ -24,7 +25,7 @@ export class GetWorkEntriesHandler
     } = query;
 
     if (!userId) {
-      throw new Error('Missing user');
+      throw new UserNotFoundException();
     }
 
     const workEntries = await this.prisma.workEntry.findMany({
