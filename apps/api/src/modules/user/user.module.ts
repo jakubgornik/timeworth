@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '@packages/db';
-import { DeleteUserHandler } from './commands/delete-user/delete-user.handler';
 import { AuthModule } from '../auth/auth.module';
 import { GetOrganizationUsersHandler } from './queries/get-organization-users/get-organization-users.handler';
 import { GetUserByIdHandler } from './queries/get-user-by-id/get-user-by-id.handler';
@@ -19,7 +18,7 @@ const queryHandlers = [
   GetListedOrganizationUsersHandler,
 ];
 
-const commandHandlers = [DeleteUserHandler];
+const commandHandlers = [];
 
 @Module({
   controllers: [UserController],
