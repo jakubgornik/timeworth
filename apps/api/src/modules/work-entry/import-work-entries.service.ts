@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { CreateWorkEntryDto } from './dto/create-work-entry.dto';
 import { ImportWorkEntryValidator } from './utils/import-work-entries.validator';
-import { ImportWorkEntriesEmptyFileException } from './exceptions/import-work-entries.exception';
+import { ImportWorkEntriesEmptyFileException } from './exceptions/work-entry.exceptions';
 
 @Injectable()
 export class ImportWorkEntriesService {

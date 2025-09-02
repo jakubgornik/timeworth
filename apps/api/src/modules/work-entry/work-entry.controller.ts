@@ -23,7 +23,7 @@ import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-
 import { join } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RequestWithUser } from '../user/user.controller';
-import { ImportWorkEntriesFileNotFoundException } from './exceptions/import-work-entries.exception';
+import { ImportWorkEntriesFileNotFoundException } from './exceptions/work-entry.exceptions';
 
 @Controller('work-entry')
 export class WorkEntryController {

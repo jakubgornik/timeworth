@@ -23,3 +23,24 @@ export class ImportWorkEntriesFileNotFoundException extends CustomException {
     );
   }
 }
+
+export class ManagerNotFoundException extends CustomException {
+  static readonly BODY = 'Manager not found';
+  static readonly STATUS = 452;
+
+  constructor() {
+    super(ManagerNotFoundException.BODY, ManagerNotFoundException.STATUS);
+  }
+}
+
+export class WorkEntryStartedAtBeforeEndedAt extends CustomException {
+  static readonly BODY = 'Work entry startedAt must be before endedAt';
+  static readonly STATUS = 452;
+
+  constructor() {
+    super(
+      WorkEntryStartedAtBeforeEndedAt.BODY,
+      WorkEntryStartedAtBeforeEndedAt.STATUS,
+    );
+  }
+}

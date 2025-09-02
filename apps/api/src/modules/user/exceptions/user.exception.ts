@@ -20,3 +20,12 @@ export class UserIsMissingOrganizationException extends CustomException {
     );
   }
 }
+
+export class ManagerNotFoundException extends CustomException {
+  static readonly BODY = 'Manager not found';
+  static readonly STATUS = 452;
+
+  constructor() {
+    super(ManagerNotFoundException.BODY, ManagerNotFoundException.STATUS);
+  }
+}

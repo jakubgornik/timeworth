@@ -1,9 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Prisma, PrismaService } from '@packages/db';
 import { IWorkEntryDtoWithUser } from '@packages/types';
-import { ManagerNotFoundException } from '../../exceptions/manager.exception';
 import { GetFilteredOrganizationWorkEntriesQuery } from './get-filtered-organization-work-entries.query';
 import { mapFilteredWorkEntriesDtoToWhere } from 'src/shared/mappers/map-filtered-organization-work-entries-to-where';
+import { ManagerNotFoundException } from '../../exceptions/work-entry.exceptions';
 
 @QueryHandler(GetFilteredOrganizationWorkEntriesQuery)
 export class GetFilteredOrganizationWorkEntriesHandler

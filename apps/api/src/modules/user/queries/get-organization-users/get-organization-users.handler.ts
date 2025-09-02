@@ -6,8 +6,8 @@ import {
   ICurrentUserDto as IUserDto,
 } from '@packages/types';
 import { mapUsersSortDtoToOrderBy } from 'src/shared/mappers/map-users-sort-dto-to-order-by';
-import { ManagerNotFoundException } from 'src/modules/work-entry/exceptions/manager.exception';
 import { mapOrganizationUsersFiltersDtoToWhere } from 'src/shared/mappers/map-organization-users-filters-dto-to-where';
+import { ManagerNotFoundException } from '../../exceptions/user.exception';
 
 @QueryHandler(GetOrganizationUsersQuery)
 export class GetOrganizationUsersHandler

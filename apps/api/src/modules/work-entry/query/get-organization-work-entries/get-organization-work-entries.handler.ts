@@ -3,8 +3,8 @@ import { Prisma, PrismaService } from '@packages/db';
 import { IPaginatedResponseDto, IWorkEntryDto } from '@packages/types';
 import { GetOrganizationWorkEntriesQuery } from './get-organization-work-entries.query';
 import { mapOrganizationWorkEntriesSortDtoToOrderBy } from 'src/shared/mappers/map-organization-work-entries-sort-dto-to-order-by';
-import { ManagerNotFoundException } from '../../exceptions/manager.exception';
 import { mapOrganizationWorkEntriesFiltersDtoToWhere } from 'src/shared/mappers/map-organization-work-entries-filters-dto-to-where';
+import { ManagerNotFoundException } from '../../exceptions/work-entry.exceptions';
 
 @QueryHandler(GetOrganizationWorkEntriesQuery)
 export class GetOrganizationWorkEntriesHandler

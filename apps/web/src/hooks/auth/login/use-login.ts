@@ -21,10 +21,12 @@ export function useLogin() {
     },
     onSuccess: () => {
       navigate(ROUTES.DASHBOARD, { replace: true });
-      showSuccess("Successfully logged in");
     },
     onError: () => {
       showError("Login failed");
+    },
+    onSettled: () => {
+      showSuccess("Successfully logged in");
     },
   });
 }
