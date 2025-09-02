@@ -20,8 +20,8 @@ export function useLogin() {
       return res.data;
     },
     onSuccess: () => {
-      showSuccess("Successfully logged in");
       navigate(ROUTES.DASHBOARD, { replace: true });
+      showSuccess("Successfully logged in");
     },
     onError: () => {
       showError("Login failed");

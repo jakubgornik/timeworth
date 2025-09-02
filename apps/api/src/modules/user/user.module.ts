@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { CqrsModule } from '@nestjs/cqrs';
-import { GetUsersQueryHandler } from './queries/get-users/get-users.handler';
 import { PrismaModule } from '@packages/db';
 import { DeleteUserHandler } from './commands/delete-user/delete-user.handler';
 import { AuthModule } from '../auth/auth.module';
@@ -14,7 +13,6 @@ import { GetListedOrganizationUsersHandler } from './queries/get-listed-organiza
 const services = [UserService];
 
 const queryHandlers = [
-  GetUsersQueryHandler,
   GetOrganizationUsersHandler,
   GetUserByIdHandler,
   GetUserStatusOptionsHandler,
