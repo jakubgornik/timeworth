@@ -5,8 +5,8 @@ import {
   IPaginatedResponseDto,
   ICurrentUserDto as IUserDto,
 } from '@packages/types';
-import { mapUsersSortDtoToOrderBy } from 'src/shared/mappers/map-users-sort-dto-to-order-by';
-import { mapOrganizationUsersFiltersDtoToWhere } from 'src/shared/mappers/map-organization-users-filters-dto-to-where';
+import { mapUsersSortDtoToOrderBy } from '../../../../shared/mappers/map-users-sort-dto-to-order-by';
+import { mapOrganizationUsersFiltersDtoToWhere } from '../../../../shared/mappers/map-organization-users-filters-dto-to-where';
 import { ManagerNotFoundException } from '../../exceptions/user.exception';
 
 @QueryHandler(GetOrganizationUsersQuery)
