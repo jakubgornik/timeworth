@@ -1,6 +1,6 @@
 import { Prisma, PrismaService } from '@packages/db';
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { mapOrganizationWorkEntriesFiltersDtoToWhere } from 'src/shared/mappers/map-organization-work-entries-filters-dto-to-where';
+import { mapOrganizationWorkEntriesFiltersDtoToWhere } from '../../../../shared/mappers/map-organization-work-entries-filters-dto-to-where';
 import { GetExportedWorkEntriesQuery } from './get-exported-work-entries.query';
 import { IWorkEntryDto } from '@packages/types';
 
