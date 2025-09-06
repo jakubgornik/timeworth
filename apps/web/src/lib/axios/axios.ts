@@ -7,38 +7,42 @@ import type {
 } from "axios";
 import qs from "qs";
 
-interface QueuedRequestCallbacks {
+interface QueuedRequest {
   resolve: (value: AxiosResponse) => void;
   reject: (error: AxiosError) => void;
+  originalRequest: InternalAxiosRequestConfig;
 }
 
-let queuedRequestCallbacks: QueuedRequestCallbacks[] = [];
+let queuedRequests: QueuedRequest[] = [];
 let ongoingRefreshRequest: Promise<AxiosResponse> | null = null;
 let isTokenRefreshing = false;
 let hasLoggedOut = false;
 
+const MAX_RETRIES = 1;
+
 const api = axios.create({
   baseURL: "http://localhost:3000/",
   withCredentials: true,
-  timeout: 10000, // 10 second timeout
+  timeout: 10000,
   paramsSerializer: {
     serialize: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
   },
 });
 
-const processQueuedRequests = (
-  error: AxiosError | null,
-  response: AxiosResponse | null = null
-) => {
-  queuedRequestCallbacks.forEach(({ resolve, reject }) => {
+const processQueuedRequests = async (error: AxiosError | null) => {
+  for (const { resolve, reject, originalRequest } of queuedRequests) {
     if (error) {
       reject(error);
-    } else if (response) {
-      resolve(response);
+    } else {
+      try {
+        const response = await api(originalRequest);
+        resolve(response);
+      } catch (err) {
+        reject(err as AxiosError);
+      }
     }
-  });
-
-  queuedRequestCallbacks = [];
+  }
+  queuedRequests = [];
 };
 
 const logoutAndRedirect = async () => {
@@ -54,9 +58,7 @@ const logoutAndRedirect = async () => {
 
 const refreshToken = async (): Promise<AxiosResponse> => {
   if (isTokenRefreshing && ongoingRefreshRequest) {
-    return new Promise<AxiosResponse>((resolve, reject) => {
-      queuedRequestCallbacks.push({ resolve, reject });
-    });
+    return ongoingRefreshRequest;
   }
 
   isTokenRefreshing = true;
@@ -64,13 +66,13 @@ const refreshToken = async (): Promise<AxiosResponse> => {
   ongoingRefreshRequest = api
     .post("/auth/refresh")
     .then((response) => {
-      processQueuedRequests(null, response);
+      processQueuedRequests(null);
       return response;
     })
     .catch(async (error: AxiosError) => {
-      processQueuedRequests(error, null);
+      processQueuedRequests(error);
       await logoutAndRedirect();
-      throw new Error("Token refresh failed");
+      throw error;
     })
     .finally(() => {
       isTokenRefreshing = false;
@@ -85,29 +87,37 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
+      _retryCount?: number;
     };
 
     if (originalRequest?.url?.includes("/auth/")) {
       return Promise.reject(error);
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      if (isTokenRefreshing) {
-        return new Promise<AxiosResponse>((resolve, reject) => {
-          queuedRequestCallbacks.push({
-            resolve: (response) => resolve(response),
-            reject: (err) => reject(err),
-          });
-        });
+    if (error.response?.status === 401) {
+      originalRequest._retryCount = originalRequest._retryCount || 0;
+
+      if (originalRequest._retryCount >= MAX_RETRIES) {
+        await logoutAndRedirect();
+        return Promise.reject(error);
       }
 
-      originalRequest._retry = true;
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
+        originalRequest._retryCount += 1;
 
-      try {
-        await refreshToken();
-        return api(originalRequest);
-      } catch (refreshError) {
-        return Promise.reject(refreshError);
+        if (isTokenRefreshing) {
+          return new Promise<AxiosResponse>((resolve, reject) => {
+            queuedRequests.push({ resolve, reject, originalRequest });
+          });
+        }
+
+        try {
+          await refreshToken();
+          return api(originalRequest);
+        } catch (refreshError) {
+          return Promise.reject(refreshError);
+        }
       }
     }
 
@@ -117,7 +127,7 @@ api.interceptors.response.use(
 
 export const resetLogoutState = () => {
   hasLoggedOut = false;
-  queuedRequestCallbacks = [];
+  queuedRequests = [];
 };
 
 export default api;
