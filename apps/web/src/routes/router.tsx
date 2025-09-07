@@ -6,15 +6,19 @@ import SignupPage from "@/pages/signup";
 import { ProtectedRoute } from "./protected-route";
 import { ManagerRouteGuard } from "./manager-route";
 import { lazyWrap } from "./router.utils";
+import HomePage from "@/pages";
 
 export const router = createBrowserRouter([
+  {
+    path: ROUTES.HOME,
+    element: <HomePage />,
+  },
   {
     path: ROUTES.LOGIN,
     element: <LoginPage />,
   },
   {
-    // Temporary signup on home route
-    path: ROUTES.HOME,
+    path: ROUTES.SIGN_UP,
     element: <SignupPage />,
   },
   {
