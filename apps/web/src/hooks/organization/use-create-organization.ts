@@ -1,10 +1,9 @@
 import api from "@/lib/axios/axios";
 import { ICreateOrganizationDto } from "@packages/types";
-import { useMutation } from "@tanstack/react-query";
-import { useNotification } from "../use-notification";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useCreateOrganization() {
-  const { showSuccess, showError } = useNotification();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: ICreateOrganizationDto) => {
@@ -14,10 +13,7 @@ export function useCreateOrganization() {
       return res.data;
     },
     onSuccess: () => {
-      showSuccess("Successfully created organization");
-    },
-    onError: () => {
-      showError("Failed to create organization");
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
 }
