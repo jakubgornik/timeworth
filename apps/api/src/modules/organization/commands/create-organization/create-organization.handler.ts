@@ -3,7 +3,10 @@ import { PrismaService, UserRole } from '@packages/db';
 import { CreateOrganizationCommand } from './create-organization.command';
 import { randomBytes } from 'crypto';
 import { Prisma } from '@packages/db';
-import { SingleOrganizationLimitFoundException } from '../../exceptions/organization.exception';
+import {
+  OrganizationNameAlreadyExistsException,
+  SingleOrganizationLimitFoundException,
+} from '../../exceptions/organization.exception';
 
 @CommandHandler(CreateOrganizationCommand)
 export class CreateOrganizationHandler
@@ -50,6 +53,19 @@ export class CreateOrganizationHandler
 
       if (user?.organizationId) {
         throw new SingleOrganizationLimitFoundException();
+      }
+
+      const existingOrganization = await tx.organization.findFirst({
+        where: {
+          name: {
+            equals: dto.name,
+            mode: 'insensitive',
+          },
+        },
+      });
+
+      if (existingOrganization) {
+        throw new OrganizationNameAlreadyExistsException();
       }
 
       const organization = await tx.organization.create({

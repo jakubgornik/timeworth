@@ -34,6 +34,9 @@ const createOrganizationErrorMap: Record<number, { message: string }> = {
   461: {
     message: "You can only be a member of one organization.",
   },
+  462: {
+    message: "Organization with this name already exist.",
+  },
 };
 
 export function CreateOrganizationDialog() {
