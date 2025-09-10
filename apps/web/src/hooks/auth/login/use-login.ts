@@ -12,7 +12,7 @@ import { useNotification } from "@/hooks/use-notification";
 export function useLogin() {
   const navigate = useNavigate();
 
-  const { showError, showSuccess } = useNotification();
+  const { showError } = useNotification();
 
   return useMutation<ILoginResponseDto, AxiosError, ILoginDto>({
     mutationFn: async (data: ILoginDto) => {
@@ -24,9 +24,6 @@ export function useLogin() {
     },
     onError: () => {
       showError("Login failed");
-    },
-    onSettled: () => {
-      showSuccess("Successfully logged in");
     },
   });
 }

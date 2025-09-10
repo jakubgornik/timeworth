@@ -17,6 +17,7 @@ import {
   SidebarIcon,
   Indent,
   LayoutList,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
@@ -41,6 +42,12 @@ const items = [
     title: "Entries",
     url: ROUTES.ENTRIES,
     icon: LayoutList,
+    isManagerRoute: true,
+  },
+  {
+    title: "Settings",
+    url: ROUTES.SETTINGS,
+    icon: Settings,
     isManagerRoute: true,
   },
 ];

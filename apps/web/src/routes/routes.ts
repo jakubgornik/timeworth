@@ -5,4 +5,5 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   DETAILS: "/details",
   ENTRIES: "/entries",
+  SETTINGS: "/settings",
 } as const;
