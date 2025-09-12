@@ -6,7 +6,7 @@ import { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(public readonly configService: ConfigService) {
     super({
       jwtFromRequest: (req: Request) => {
         if (!req.cookies) return null;
