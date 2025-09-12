@@ -15,10 +15,10 @@ import { useEffect, useMemo, useState } from "react";
 import UserDetailsTable from "@/modules/details/user-details-table";
 import { useUserDetailsTableColumns } from "@/modules/dashboard/use-details-table-columns";
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
-import { TableToolbar } from "../entries/table-toolbar";
-import { FilterColumn, FilterState } from "../entries/filters.types";
 import { userStatusesLoader } from "@/loaders/user-statuses.loader";
 import { mapFiltersToOrganizationUsersQuery } from "./utils/map-filters-to-organization-users-query";
+import { FilterColumn, FilterState } from "@/modules/filters/filters.types";
+import { TableToolbar } from "@/modules/filters/table-toolbar";
 
 export default function DetailsPage() {
   const currentUser = useCurrentUser();

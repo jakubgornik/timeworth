@@ -14,11 +14,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useOrganizationWorkEntries } from "@/hooks/work-entry/use-organization-work-entries";
 import OrganizationWorkEntriesTable from "@/modules/entries/organization-work-entries-table";
 import { useOrganizationWorkEntriesTableColumns } from "@/modules/entries/use-organization-work-entries-table-columns";
-import { TableToolbar } from "./table-toolbar";
-import { FilterColumn, FilterState } from "./filters.types";
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
 import { mapFiltersToOrganizationWorkEntriesQuery } from "./utils/map-filters-to-work-entries-query";
 import { useExportWorkEntries } from "@/hooks/work-entry/use-export-work-entries";
+import { FilterColumn, FilterState } from "@/modules/filters/filters.types";
+import { TableToolbar } from "@/modules/filters/table-toolbar";
 
 export default function EntriesPage() {
   const currentUser = useCurrentUser();
