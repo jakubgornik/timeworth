@@ -27,8 +27,7 @@ export function LoginFormCard() {
   };
 
   const isProd = import.meta.env.VITE_NODE_ENV === "production";
-  console.log(import.meta.env.VITE_NODE_ENV);
-  console.log(isProd);
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <motion.div
