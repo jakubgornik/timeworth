@@ -21,6 +21,4 @@ function Label({
   );
 }
 
-// TODO: customzie
-
 export { Label };

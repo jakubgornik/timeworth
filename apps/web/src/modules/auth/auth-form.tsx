@@ -40,7 +40,6 @@ export default function AuthForm({ variant }: AuthFormProps) {
           setIsSubmitting(false);
         },
         onError: () => {
-          // todo add notification
           setIsSubmitting(false);
         },
       });
@@ -51,7 +50,6 @@ export default function AuthForm({ variant }: AuthFormProps) {
           setIsSubmitting(false);
         },
         onError: () => {
-          // todo add notification
           setIsSubmitting(false);
         },
       });

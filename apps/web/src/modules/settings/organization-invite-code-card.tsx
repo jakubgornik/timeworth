@@ -41,7 +41,7 @@ export const OrganizationInviteCodeCard = ({
         </Button>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="flex gap-1 mt-3">
+        <div className="flex gap-1">
           {Array.from(inviteCode || "").map((char, index) => (
             <CodeCharacter key={index} char={char} index={index} />
           ))}

@@ -81,8 +81,6 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-// TODO: customzie
-
 export {
   Card,
   CardHeader,

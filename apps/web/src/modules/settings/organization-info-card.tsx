@@ -24,7 +24,7 @@ export const OrganizationInfoCard = ({
 }: OrganizationInfoCardProps) => {
   return (
     <Card className="md:col-span-2 bg-background border-muted-foreground/20 p-0">
-      <CardHeader className="flex items-center justify-between p-4">
+      <CardHeader className="flex items-center justify-between px-4 pt-4">
         <CardTitle className="text-sm font-semibold">Organization</CardTitle>
         <div className="flex items-center gap-2">
           {editing ? (

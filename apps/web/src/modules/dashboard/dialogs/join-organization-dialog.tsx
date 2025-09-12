@@ -103,7 +103,8 @@ export function JoinOrganizationDialog() {
         <DialogHeader>
           <DialogTitle>Join Organization</DialogTitle>
           <DialogDescription>
-            Enter the organization code to join an existing organization.
+            Enter the organization code to join an existing organization. Ask
+            organization manager for the code.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
