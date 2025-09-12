@@ -21,7 +21,7 @@ let hasLoggedOut = false;
 const MAX_RETRIES = 1;
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
   timeout: 10000,
   paramsSerializer: {

@@ -15,16 +15,20 @@ import { AuthenticationForm } from "../auth-form.validation";
 export function LoginFormCard() {
   const { mutate: login } = useLogin();
 
-  const demoAccountdata: AuthenticationForm = {
-    email: "test@test.com",
-    password: "Testpassword123",
+  // Development and testing
+  const demoAccountData: AuthenticationForm = {
+    email: import.meta.env.VITE_DEMO_USER_EMAIL,
+    password: import.meta.env.VITE_DEMO_USER_PASSWORD,
   };
 
-  const demoManagerAccountdata: AuthenticationForm = {
-    email: "manager@demo.com",
-    password: "Managerpassword123",
+  const demoManagerAccountData: AuthenticationForm = {
+    email: import.meta.env.VITE_DEMO_MANAGER_EMAIL,
+    password: import.meta.env.VITE_DEMO_MANAGER_PASSWORD,
   };
 
+  const isProd = import.meta.env.VITE_NODE_ENV === "production";
+  console.log(import.meta.env.VITE_NODE_ENV);
+  console.log(isProd);
   return (
     <div className="flex items-center justify-center min-h-screen">
       <motion.div
@@ -43,27 +47,29 @@ export function LoginFormCard() {
           animate="visible"
           variants={demoCardVariants}
         >
-          <Card className="py-3 mx-auto flex flex-column gap-1 items-center justify-center shadow-xl backdrop-blur-sm  border-0">
-            <span className="text-sm text-center font-medium">
-              Use demo account
-            </span>
-            <div className="py-2 flex flex-row w-full justify-around">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => login(demoAccountdata)}
-              >
-                Sign in as new user
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => login(demoManagerAccountdata)}
-              >
-                Sign in as existing manager
-              </Button>
-            </div>
-          </Card>
+          {!isProd && (
+            <Card className="py-3 mx-auto flex flex-column gap-1 items-center justify-center shadow-xl backdrop-blur-sm  border-0">
+              <span className="text-sm text-center font-medium">
+                Use demo account
+              </span>
+              <div className="py-2 flex flex-row w-full justify-around">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => login(demoAccountData)}
+                >
+                  Sign in as new user
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => login(demoManagerAccountData)}
+                >
+                  Sign in as existing manager
+                </Button>
+              </div>
+            </Card>
+          )}
         </motion.div>
       </motion.div>
     </div>
