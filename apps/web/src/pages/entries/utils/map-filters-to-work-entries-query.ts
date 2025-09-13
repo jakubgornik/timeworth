@@ -1,5 +1,5 @@
+import { FilterState } from "@/modules/filters/filters.types";
 import { IOrganizationWorkEntriesFiltersDto } from "@packages/types";
-import { FilterState } from "../filters.types";
 
 export const mapFiltersToOrganizationWorkEntriesQuery = (
   filters: FilterState

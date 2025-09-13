@@ -37,6 +37,10 @@ async function createUserWithSupabase(email: string, password: string) {
 }
 
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Do not run seeds in production");
+  }
+
   console.log("Creating test demo user...");
   const testUserId = await createUserWithSupabase(
     demoAccount.email,

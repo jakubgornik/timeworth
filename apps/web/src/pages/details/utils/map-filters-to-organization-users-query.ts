@@ -1,4 +1,4 @@
-import { FilterState } from "@/pages/entries/filters.types";
+import { FilterState } from "@/modules/filters/filters.types";
 import { IOrganizationUsersFiltersDto, UserStatusType } from "@packages/types";
 
 export const mapFiltersToOrganizationUsersQuery = (
