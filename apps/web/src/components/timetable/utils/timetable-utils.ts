@@ -1,5 +1,6 @@
 import { TimePeriod, TimetableConfig } from "../timetable.types";
 import { startOfWeek, addDays, startOfDay, endOfDay } from "date-fns";
+import { format, toZonedTime, fromZonedTime } from "date-fns-tz";
 
 export const generateTimeSlots = (
   startHour = 6,
@@ -201,3 +202,17 @@ export const getDateRangeFromDates = (dates: Date[]): TimePeriod => {
 
   return { from, to };
 };
+
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+export function formatEventTimeToLocal(eventDate: string, time: string) {
+  const utcDate = new Date(`${eventDate}T${time}:00Z`);
+  const zoned = toZonedTime(utcDate, userTimeZone);
+  return format(zoned, "HH:mm");
+}
+
+export function convertLocalTimeSlotToUtc(date: string, timeSlot: string) {
+  const localDate = new Date(`${date}T${timeSlot}:00`);
+  const utcDate = fromZonedTime(localDate, userTimeZone);
+  return utcDate.toISOString();
+}

@@ -1,4 +1,5 @@
-import { format, differenceInMinutes } from 'date-fns';
+import { differenceInMinutes } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 
 export function mapWorkEntryToEvent(entry: {
   id: string;
@@ -21,10 +22,11 @@ export function mapWorkEntryToEvent(entry: {
     id: entry.id,
     title: entry.title,
     description: entry.description ?? '',
-    date: format(startedAt, 'yyyy-MM-dd'),
-    day: format(startedAt, 'EEEE'),
-    startTime: format(startedAt, 'HH:mm'),
-    endTime: format(endedAt, 'HH:mm'),
+    date: formatInTimeZone(startedAt, 'UTC', 'yyyy-MM-dd'),
+    day: formatInTimeZone(startedAt, 'UTC', 'EEEE'),
+    startTime: formatInTimeZone(startedAt, 'UTC', 'HH:mm'),
+    endTime: formatInTimeZone(endedAt, 'UTC', 'HH:mm'),
+
     duration: durationUnits,
   };
 }

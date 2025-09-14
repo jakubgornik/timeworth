@@ -3,7 +3,10 @@ import {
   TimePeriod,
   TimetableCallbacks,
 } from "@/components/timetable/timetable.types";
-import { combineDateAndTime } from "@/components/timetable/utils/timetable-utils";
+import {
+  combineDateAndTime,
+  formatEventTimeToLocal,
+} from "@/components/timetable/utils/timetable-utils";
 import { useState } from "react";
 import { useCreateWorkEntry } from "@/hooks/work-entry/use-create-work-entry";
 import { useCurrentUser } from "@/hooks/user/use-current-user";
@@ -38,9 +41,16 @@ export default function WorkEntriesTimetable() {
     },
   };
 
+  const localizedWorkEntries =
+    workEntries?.map((ev) => ({
+      ...ev,
+      startTime: formatEventTimeToLocal(ev.date, ev.startTime),
+      endTime: formatEventTimeToLocal(ev.date, ev.endTime),
+    })) ?? [];
+
   return (
     <Timetable
-      events={workEntries || []}
+      events={localizedWorkEntries}
       callbacks={callbacks}
       loading={isLoading}
       config={{
