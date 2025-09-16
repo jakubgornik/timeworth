@@ -49,7 +49,8 @@ export function CreateOrganizationDialog() {
     resolver: zodResolver(createOrganizationSchema),
     mode: "onChange",
     defaultValues: {
-      name: "",
+      managerName: "",
+      organizationName: "",
       industry: "",
       address: "",
       size: "",
@@ -90,7 +91,8 @@ export function CreateOrganizationDialog() {
     setOpen(isOpen);
   };
 
-  const errorName = form.formState.errors.name?.message;
+  const errorOrganizationName = form.formState.errors.organizationName?.message;
+  const errorManagerName = form.formState.errors.organizationName?.message;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -111,16 +113,33 @@ export function CreateOrganizationDialog() {
           >
             <FormField
               control={form.control}
-              name="name"
+              name="managerName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name *</FormLabel>
+                  <FormLabel>Manager name *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Manager name" {...field} />
+                  </FormControl>
+                  <AnimatePresence>
+                    {errorManagerName && (
+                      <FormInputError message={String(errorManagerName)} />
+                    )}
+                  </AnimatePresence>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="organizationName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Organization name *</FormLabel>
                   <FormControl>
                     <Input placeholder="Organization name" {...field} />
                   </FormControl>
                   <AnimatePresence>
-                    {errorName && (
-                      <FormInputError message={String(errorName)} />
+                    {errorOrganizationName && (
+                      <FormInputError message={String(errorOrganizationName)} />
                     )}
                   </AnimatePresence>
                 </FormItem>

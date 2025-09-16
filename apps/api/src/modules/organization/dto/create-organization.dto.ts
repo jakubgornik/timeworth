@@ -6,7 +6,12 @@ export class CreateOrganizationDto implements ICreateOrganizationDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  name: string;
+  managerName: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  organizationName: string;
 
   @ApiProperty()
   @IsString()

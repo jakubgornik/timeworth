@@ -7,6 +7,7 @@ import {
   OrganizationNameAlreadyExistsException,
   SingleOrganizationLimitFoundException,
 } from '../../exceptions/organization.exception';
+import { CreateOrganizationDto } from '../../dto/create-organization.dto';
 
 @CommandHandler(CreateOrganizationCommand)
 export class CreateOrganizationHandler
@@ -43,7 +44,7 @@ export class CreateOrganizationHandler
   }
 
   private async createOrganizationWithManager(
-    dto: any,
+    dto: CreateOrganizationDto,
     inviteCode: string,
   ): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
@@ -58,7 +59,7 @@ export class CreateOrganizationHandler
       const existingOrganization = await tx.organization.findFirst({
         where: {
           name: {
-            equals: dto.name,
+            equals: dto.organizationName,
             mode: 'insensitive',
           },
         },
@@ -70,14 +71,22 @@ export class CreateOrganizationHandler
 
       const organization = await tx.organization.create({
         data: {
-          ...dto,
+          managerId: dto.managerId,
+          name: dto.organizationName,
+          industry: dto.industry,
+          size: dto.size,
+          address: dto.address,
           inviteCode,
         },
       });
 
       await tx.user.update({
         where: { id: dto.managerId },
-        data: { organizationId: organization.id, role: UserRole.MANAGER },
+        data: {
+          organizationId: organization.id,
+          role: UserRole.MANAGER,
+          name: dto.managerName,
+        },
       });
     });
   }
