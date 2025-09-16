@@ -33,6 +33,7 @@ describe('JoinOrganizationHandler', () => {
     const command = new JoinOrganizationCommand({
       userId: 'user-1',
       inviteCode: 'INVALID',
+      name: 'John Doe',
     });
 
     await expect(handler.execute(command)).rejects.toThrow(
@@ -52,6 +53,7 @@ describe('JoinOrganizationHandler', () => {
     const command = new JoinOrganizationCommand({
       userId: 'user-1',
       inviteCode: 'INVITE123',
+      name: 'John Doe',
     });
 
     await expect(handler.execute(command)).rejects.toThrow(
@@ -77,6 +79,7 @@ describe('JoinOrganizationHandler', () => {
     const command = new JoinOrganizationCommand({
       userId: 'user-1',
       inviteCode: 'INVITE123',
+      name: 'John Doe',
     });
 
     await expect(handler.execute(command)).rejects.toThrow(
@@ -86,7 +89,7 @@ describe('JoinOrganizationHandler', () => {
     expect(prisma.user.update).not.toHaveBeenCalled();
   });
 
-  it('should update user with organizationId and role if valid', async () => {
+  it('should update user with organizationId, role, and name if valid', async () => {
     prisma.organization.findUnique.mockResolvedValue({ id: 'org-1' });
     prisma.user.findUnique.mockResolvedValue({
       id: 'user-1',
@@ -97,13 +100,18 @@ describe('JoinOrganizationHandler', () => {
     const command = new JoinOrganizationCommand({
       userId: 'user-1',
       inviteCode: 'INVITE123',
+      name: 'John Doe',
     });
 
     await handler.execute(command);
 
     expect(prisma.user.update).toHaveBeenCalledWith({
       where: { id: 'user-1' },
-      data: { organizationId: 'org-1', role: 'EMPLOYEE' },
+      data: {
+        organizationId: 'org-1',
+        role: 'EMPLOYEE',
+        name: 'John Doe',
+      },
     });
   });
 });
