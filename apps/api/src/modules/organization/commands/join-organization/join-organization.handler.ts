@@ -12,7 +12,7 @@ export class JoinOrganizationHandler
   async execute({
     joinOrganizationDto,
   }: JoinOrganizationCommand): Promise<void> {
-    const { userId, inviteCode } = joinOrganizationDto;
+    const { userId, inviteCode, name } = joinOrganizationDto;
 
     const organization = await this.prisma.organization.findUnique({
       where: {
@@ -50,6 +50,7 @@ export class JoinOrganizationHandler
       data: {
         organizationId: organization.id,
         role: 'EMPLOYEE',
+        name,
       },
     });
   }

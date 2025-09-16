@@ -10,4 +10,8 @@ export class JoinOrganizationDto implements IJoinOrganizationDto {
   @ApiProperty()
   @IsString()
   inviteCode: string;
+
+  @ApiProperty()
+  @IsString()
+  name: string;
 }

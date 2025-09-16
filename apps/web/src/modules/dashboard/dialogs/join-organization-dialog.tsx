@@ -34,6 +34,7 @@ import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useNotification } from "@/hooks/use-notification";
 import { AxiosError } from "axios";
 import { useQueryClient } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
 
 const joinOrganizationErrorMap: Record<number, { message: string }> = {
   404: {
@@ -61,6 +62,7 @@ export function JoinOrganizationDialog() {
     const payload = {
       inviteCode: data.inviteCode,
       userId: currentUser.data!.id,
+      name: data.name,
     };
 
     joinOrganization(payload, {
@@ -93,6 +95,7 @@ export function JoinOrganizationDialog() {
   };
 
   const errorCode = form.formState.errors.inviteCode?.message;
+  const errorName = form.formState.errors.name?.message;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -111,25 +114,40 @@ export function JoinOrganizationDialog() {
           <form onSubmit={form.handleSubmit(handleJoin)} className="space-y-4">
             <FormField
               control={form.control}
-              name="inviteCode"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Organization Code</FormLabel>
+                  <FormLabel>Name *</FormLabel>
                   <FormControl>
-                    <div className="flex justify-center">
-                      <InputOTP maxLength={8} {...field}>
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                          <InputOTPSlot index={6} />
-                          <InputOTPSlot index={7} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </div>
+                    <Input placeholder="Provide user name" {...field} />
+                  </FormControl>
+                  <AnimatePresence>
+                    {errorName && (
+                      <FormInputError message={String(errorName)} />
+                    )}
+                  </AnimatePresence>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="inviteCode"
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel>Organization Code *</FormLabel>
+                  <FormControl>
+                    <InputOTP maxLength={8} {...field}>
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} className="w-12 h-10" />
+                        <InputOTPSlot index={1} className="w-12 h-10" />
+                        <InputOTPSlot index={2} className="w-12 h-10" />
+                        <InputOTPSlot index={3} className="w-12 h-10" />
+                        <InputOTPSlot index={4} className="w-12 h-10" />
+                        <InputOTPSlot index={5} className="w-12 h-10" />
+                        <InputOTPSlot index={6} className="w-12 h-10" />
+                        <InputOTPSlot index={7} className="w-12 h-10" />
+                      </InputOTPGroup>
+                    </InputOTP>
                   </FormControl>
                   <AnimatePresence>
                     {errorCode && (

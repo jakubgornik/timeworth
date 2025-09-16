@@ -16,6 +16,7 @@ export interface IOrganizationDto {
 export interface IJoinOrganizationDto {
   userId: string;
   inviteCode: string;
+  name: string;
 }
 
 export interface ICreateOrganizationDto {
