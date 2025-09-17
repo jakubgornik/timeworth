@@ -16,11 +16,11 @@ export default function HeroContent() {
         </h1>
 
         <p className="text-lg text-secondary mb-12 leading-relaxed max-w-2xl mx-auto">
-          Transform how you manage your time and boost your productivity with
-          Timeworth
+          Timeworth helps you boost productivity, and achieve your goals with
+          ease.
         </p>
         <Link to={ROUTES.LOGIN}>
-          <Button variant="outline"> Get Started with Timeworth</Button>
+          <Button variant="secondary"> Get Started with Timeworth</Button>
         </Link>
       </div>
     </main>

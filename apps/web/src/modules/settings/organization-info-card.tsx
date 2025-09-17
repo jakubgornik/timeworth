@@ -1,32 +1,18 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Edit, Save } from "lucide-react";
 import { InfoRow } from "./info-row";
+import { IOrganizationDto } from "@packages/types";
 
 interface OrganizationInfoCardProps {
-  data: {
-    inviteCode: string;
-    managerId: string;
-    industry: string;
-    size: string;
-    address: string;
-  };
-  editing: boolean;
-  onEditToggle: (editing: boolean) => void;
-  onSave: () => void;
+  data?: IOrganizationDto;
 }
 
-export const OrganizationInfoCard = ({
-  data,
-  editing,
-  onEditToggle,
-  onSave,
-}: OrganizationInfoCardProps) => {
+export const OrganizationInfoCard = ({ data }: OrganizationInfoCardProps) => {
   return (
     <Card className="md:col-span-2 bg-background border-muted-foreground/20 p-0">
       <CardHeader className="flex items-center justify-between px-4 pt-4">
         <CardTitle className="text-sm font-semibold">Organization</CardTitle>
-        <div className="flex items-center gap-2">
+        {/* TODO - editing */}
+        {/* <div className="flex items-center gap-2">
           {editing ? (
             <>
               <Button
@@ -49,14 +35,13 @@ export const OrganizationInfoCard = ({
               <Edit className="w-4 h-4 mr-2" /> Edit
             </Button>
           )}
-        </div>
+        </div> */}
       </CardHeader>
       <CardContent className="p-0">
         <div className="divide-y divide-muted-foreground/10">
-          <InfoRow label="Manager ID" value={data.managerId} />
-          <InfoRow label="Industry" value={data.industry} />
-          <InfoRow label="Size" value={data.size} />
-          <InfoRow label="Address" value={data.address} />
+          <InfoRow label="Industry" value={data?.industry ?? undefined} />
+          <InfoRow label="Size" value={data?.size ?? undefined} />
+          <InfoRow label="Address" value={data?.address ?? undefined} />
         </div>
       </CardContent>
     </Card>

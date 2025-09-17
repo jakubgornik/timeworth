@@ -19,14 +19,16 @@ const CodeCharacter = ({ char, index }: CodeCharacterProps) => {
 };
 
 interface InviteCodeCardProps {
-  inviteCode: string;
-  onCopy: () => void;
+  inviteCode?: string;
 }
 
 export const OrganizationInviteCodeCard = ({
   inviteCode,
-  onCopy,
 }: InviteCodeCardProps) => {
+  const copyInviteCode = () => {
+    navigator.clipboard.writeText(inviteCode || "");
+  };
+
   return (
     <Card className="md:col-span-1 bg-background border-muted-foreground/20 p-4">
       <CardHeader className="flex items-center justify-between p-0">
@@ -34,7 +36,7 @@ export const OrganizationInviteCodeCard = ({
         <Button
           size="sm"
           variant="outline"
-          onClick={onCopy}
+          onClick={copyInviteCode}
           aria-label="Copy invite code"
         >
           <Copy className="w-4 h-4 mr-2" /> Copy

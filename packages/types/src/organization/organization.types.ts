@@ -8,9 +8,9 @@ export interface IOrganizationDto {
   updatedAt: string;
   inviteCode: string;
   managerId: string;
-  industry?: string;
-  size?: string;
-  address?: string;
+  industry?: string | null;
+  size?: string | null;
+  address?: string | null;
 }
 
 export interface IJoinOrganizationDto {

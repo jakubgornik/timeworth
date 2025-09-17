@@ -1,6 +1,6 @@
 interface InfoRowProps {
   label: string;
-  value: string;
+  value?: string;
 }
 
 export const InfoRow = ({ label, value }: InfoRowProps) => (
