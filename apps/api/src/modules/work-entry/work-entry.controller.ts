@@ -92,11 +92,13 @@ export class WorkEntryController {
   @AuthEndpoint()
   downloadWorkEntriesImportTemplate(@Res() res: Response) {
     const filePath = join(
-      process.cwd(),
+      __dirname,
+      '..',
       'public',
       'templates',
       'import-work-entries-template.xlsx',
     );
+
     return res.download(filePath, 'import-work-entries-template.xlsx');
   }
 

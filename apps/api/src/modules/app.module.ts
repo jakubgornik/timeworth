@@ -10,8 +10,6 @@ import { AuthModule } from './auth/auth.module';
 import { OrganizationModule } from './organization/organization.module';
 import { WorkEntryModule } from './work-entry/work-entry.module';
 import * as path from 'path';
-import { join } from 'path';
-import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -20,10 +18,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: path.resolve(__dirname, '../../.env'),
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-      serveRoot: '/public',
     }),
     SupabaseModule,
     AuthModule,

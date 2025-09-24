@@ -7,7 +7,7 @@
     "assets": [
       {
         "include": "../public/**/*",
-        "outDir": "./dist/public"
+        "outDir": "dist/public"
       }
     ]
   }
