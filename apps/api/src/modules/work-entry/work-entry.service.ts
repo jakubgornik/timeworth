@@ -78,9 +78,17 @@ export class WorkEntryService {
     );
   }
 
-  async importWorkEntries(file: Express.Multer.File, userId: string) {
+  async importWorkEntries(
+    file: Express.Multer.File,
+    userId: string,
+    timezone: string,
+  ) {
     const workEntries =
-      await this.importWorkEntriesService.parseWorkEntriesFile(file, userId);
+      await this.importWorkEntriesService.parseWorkEntriesFile(
+        file,
+        userId,
+        timezone,
+      );
 
     return await this.commandBus.execute(
       new ImportWorkEntriesCommand(workEntries),

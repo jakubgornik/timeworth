@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { CreateWorkEntryDto } from './dto/create-work-entry.dto';
 import { ImportWorkEntryValidator } from './utils/import-work-entries.validator';
+import { fromZonedTime } from 'date-fns-tz';
 import { ImportWorkEntriesEmptyFileException } from './exceptions/work-entry.exceptions';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class ImportWorkEntriesService {
   async parseWorkEntriesFile(
     file: Express.Multer.File,
     userId: string,
+    userTimezone: string,
   ): Promise<CreateWorkEntryDto[]> {
     try {
       const workbook = XLSX.read(file.buffer, {
@@ -35,10 +37,13 @@ export class ImportWorkEntriesService {
         const { title, description, startedAt, endedAt } =
           ImportWorkEntryValidator.validate(row, rowIndex);
 
+        const startedAtUtc = fromZonedTime(startedAt, userTimezone);
+        const endedAtUtc = fromZonedTime(endedAt, userTimezone);
+
         return {
           title,
-          startedAt,
-          endedAt,
+          startedAt: startedAtUtc,
+          endedAt: endedAtUtc,
           description,
           userId,
           organizationId: '', // temporary solution, organization id is added in handler

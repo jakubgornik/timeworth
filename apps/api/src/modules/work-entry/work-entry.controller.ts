@@ -111,7 +111,12 @@ export class WorkEntryController {
       throw new ImportWorkEntriesFileNotFoundException();
     }
     const userId = req.user.userId;
+    const timezone = req.body.timezone;
 
-    return await this.workEntryService.importWorkEntries(file, userId);
+    return await this.workEntryService.importWorkEntries(
+      file,
+      userId,
+      timezone,
+    );
   }
 }

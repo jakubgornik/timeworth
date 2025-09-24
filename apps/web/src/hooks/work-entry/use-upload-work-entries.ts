@@ -8,10 +8,13 @@ export function useUploadWorkEntries() {
 
   return useMutation({
     mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append("file", file);
+      const data = new FormData();
+      data.append("file", file);
 
-      const res = await api.post("/work-entry/import", formData, {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      data.append("timezone", timezone);
+      const res = await api.post("/work-entry/import", data, {
         withCredentials: true,
       });
 
