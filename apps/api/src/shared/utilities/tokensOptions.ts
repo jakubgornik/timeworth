@@ -6,11 +6,13 @@ export const COOKIE_OPTIONS = {
     secure: isProd,
     sameSite: (isProd ? 'none' : 'lax') as 'lax' | 'strict' | 'none',
     maxAge: 1000 * 60 * 60 * 2, // 2 hours
+    path: '/',
   },
   refreshToken: {
     httpOnly: true,
     secure: isProd,
     sameSite: (isProd ? 'none' : 'lax') as 'lax' | 'strict' | 'none',
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    path: '/',
   },
 };
