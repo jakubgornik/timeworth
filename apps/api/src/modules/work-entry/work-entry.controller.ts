@@ -24,7 +24,6 @@ import { join } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RequestWithUser } from '../user/user.controller';
 import { ImportWorkEntriesFileNotFoundException } from './exceptions/work-entry.exceptions';
-import * as fs from 'fs';
 
 @Controller('work-entry')
 export class WorkEntryController {
@@ -100,14 +99,6 @@ export class WorkEntryController {
       'templates',
       'import-work-entries-template.xlsx',
     );
-
-    // DEBUG
-    console.log('process.cwd():', process.cwd());
-    console.log('__dirname:', __dirname);
-    console.log('Resolved file path:', filePath);
-
-    const exists = fs.existsSync(filePath);
-    console.log('File exists?', exists);
 
     return res.download(filePath, 'import-work-entries-template.xlsx');
   }
