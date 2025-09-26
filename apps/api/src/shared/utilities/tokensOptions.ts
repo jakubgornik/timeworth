@@ -4,15 +4,17 @@ export const COOKIE_OPTIONS = {
   accessToken: {
     httpOnly: true,
     secure: isProd,
-    sameSite: (isProd ? 'none' : 'lax') as 'lax' | 'strict' | 'none',
+    sameSite: 'lax',
     maxAge: 1000 * 60 * 60 * 2, // 2 hours
     path: '/',
+    domain: '.timeworth.site',
   },
   refreshToken: {
     httpOnly: true,
     secure: isProd,
-    sameSite: (isProd ? 'none' : 'lax') as 'lax' | 'strict' | 'none',
+    sameSite: 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     path: '/',
+    domain: '.timeworth.site',
   },
 };
