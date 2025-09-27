@@ -10,9 +10,9 @@ import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { randomBytes } from 'crypto';
-import { hashToken } from 'src/shared/utilities/hashToken';
+import { hashToken } from 'src/shared/utilities/hash-token';
 import { Request } from 'express';
-import { COOKIE_OPTIONS } from 'src/shared/utilities/tokensOptions';
+import { COOKIE_OPTIONS } from 'src/shared/utilities/tokens-options';
 
 @Injectable()
 export class AuthService {
@@ -131,9 +131,12 @@ export class AuthService {
         data: { revoked: true },
       });
     }
-
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    res.clearCookie('access_token', {
+      ...COOKIE_OPTIONS.accessToken,
+    });
+    res.clearCookie('refresh_token', {
+      ...COOKIE_OPTIONS.refreshToken,
+    });
 
     return { message: 'Logged out successfully' };
   }
