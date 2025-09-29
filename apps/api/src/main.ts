@@ -21,16 +21,28 @@ async function bootstrap() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", 'https:'],
-          styleSrc: ["'self'", 'https:'],
-          imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: ["'self'", 'https://api.timeworth.site'],
-          fontSrc: ["'self'", 'https:'],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:'],
+          connectSrc: ["'self'"],
+          fontSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          mediaSrc: ["'self'"],
+          frameSrc: ["'none'"],
+          upgradeInsecureRequests: [],
+          blockAllMixedContent: [],
         },
       },
-      frameguard: { action: 'sameorigin' },
-      referrerPolicy: { policy: 'no-referrer' },
+      frameguard: {
+        action: 'deny',
+      },
+      referrerPolicy: {
+        policy: 'strict-origin-when-cross-origin',
+      },
       noSniff: true,
+      crossOriginEmbedderPolicy: true,
+      crossOriginOpenerPolicy: { policy: 'same-origin' },
+      crossOriginResourcePolicy: { policy: 'same-origin' },
     }),
   );
 
