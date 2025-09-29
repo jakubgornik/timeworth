@@ -3,6 +3,7 @@ import { AppModule } from './modules/app.module';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import * as Sentry from '@sentry/nestjs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -50,6 +51,14 @@ async function bootstrap() {
     origin: process.env.CORS_ORIGIN,
     credentials: true,
   });
+
+  if (process.env.NODE_ENV === 'production') {
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      environment: process.env.NODE_ENV,
+      tracesSampleRate: 0.7,
+    });
+  }
 
   await app.listen(process.env.PORT ?? 3000);
 }
