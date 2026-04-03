@@ -20,14 +20,18 @@ import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
 import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-organization-work-entries.dto';
-import { join } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RequestWithUser } from '../user/user.controller';
 import { ImportWorkEntriesFileNotFoundException } from './exceptions/work-entry.exceptions';
+import { StorageService } from '../storage.service';
+import { WORK_ENTRY_TEMPLATE_PATH } from './utils/template.path';
 
 @Controller('work-entry')
 export class WorkEntryController {
-  constructor(private readonly workEntryService: WorkEntryService) {}
+  constructor(
+    private readonly workEntryService: WorkEntryService,
+    private readonly storageService: StorageService,
+  ) {}
 
   @Get()
   @AuthEndpoint()
@@ -90,17 +94,11 @@ export class WorkEntryController {
 
   @Get('import-template')
   @AuthEndpoint()
-  downloadWorkEntriesImportTemplate(@Res() res: Response) {
-    const filePath = join(
-      __dirname,
-      '..',
-      '..',
-      'public',
-      'templates',
-      'import-work-entries-template.xlsx',
+  async downloadWorkEntriesImportTemplate() {
+    const downloadUrl = await this.storageService.getSignedUrl(
+      WORK_ENTRY_TEMPLATE_PATH,
     );
-
-    return res.download(filePath, 'import-work-entries-template.xlsx');
+    return { url: downloadUrl };
   }
 
   @Post('import')

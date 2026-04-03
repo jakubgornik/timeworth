@@ -12,8 +12,14 @@ import { ExportService } from '../export.service';
 import { GetExportedWorkEntriesHandler } from './query/get-exported-work-entries/get-exported-work-entries.handler';
 import { ImportWorkEntriesService } from './import-work-entries.service';
 import { ImportWorkEntriesHandler } from './commands/import-work-entry/import-work-entry.handler';
+import { StorageService } from '../storage.service';
 
-const services = [WorkEntryService, ExportService, ImportWorkEntriesService];
+const services = [
+  WorkEntryService,
+  ExportService,
+  ImportWorkEntriesService,
+  StorageService,
+];
 const commandHandlers = [
   CreateWorkEntryHandler,
   DeleteWorkEntryHandler,
