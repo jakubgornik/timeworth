@@ -7,7 +7,6 @@ import {
   ArrowUpFromLine,
 } from "lucide-react";
 import { useState } from "react";
-import { FileUploadDialog } from "./dialogs/file-upload-dialog/file-upload-dialog";
 import { useUploadWorkEntries } from "@/hooks/work-entry/use-upload-work-entries";
 import { useDownloadWorkEntriesTemplate } from "@/hooks/work-entry/use-download-import-work-entries-template";
 import {
@@ -16,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { WorkEntryUploadDialog } from "./dialogs/work-entry-upload-dialog";
 
 interface TimetableHeaderProps {
   weekRange: string;
@@ -108,7 +108,7 @@ export function TimetableHeader({
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <FileUploadDialog
+        <WorkEntryUploadDialog
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onFileSubmit={(file) => {
