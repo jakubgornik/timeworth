@@ -8,17 +8,23 @@ export class ImportWorkEntryValidator {
     const {
       Title: title,
       Description: description,
-      'Start Date': startedAt,
-      'End Date': endedAt,
+      'Start Date': rawStartedAt,
+      'End Date': rawEndedAt,
     } = row;
 
-    // TODO: consider custom excpetions, mapping
-
-    if (!title || !startedAt || !endedAt) {
+    if (!title || !rawStartedAt || !rawEndedAt) {
       throw new BadRequestException(`Missing required fields at row ${rowNum}`);
     }
 
-    if (!(startedAt instanceof Date) || !(endedAt instanceof Date)) {
+    const startedAt =
+      rawStartedAt instanceof Date
+        ? rawStartedAt
+        : new Date(rawStartedAt as string);
+
+    const endedAt =
+      rawEndedAt instanceof Date ? rawEndedAt : new Date(rawEndedAt as string);
+
+    if (isNaN(startedAt.getTime()) || isNaN(endedAt.getTime())) {
       throw new BadRequestException(`Invalid datetime format at row ${rowNum}`);
     }
 
