@@ -27,7 +27,7 @@ export function getDropzoneStyles(
 
   const stateStyles: Record<DropzoneState, string> = {
     idle: "border-border",
-    active: "border-secondary/60 bg-accent/50 scale-[1.01]",
+    active: "border-secondary/60 bg-accent/50",
     reject: "border-destructive/60 bg-destructive/5",
     success: "border-secondary/50 bg-accent/30",
     error: "border-destructive/60 bg-destructive/5",

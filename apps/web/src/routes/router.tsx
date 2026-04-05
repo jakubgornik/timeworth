@@ -7,6 +7,7 @@ import { ProtectedRoute } from "./protected-route";
 import { ManagerRouteGuard } from "./manager-route";
 import { lazyWrap } from "./router.utils";
 import HomePage from "@/pages";
+import { EmployeeRouteGuard } from "./employee-route";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
           {
             path: ROUTES.DASHBOARD,
             lazy: lazyWrap(() => import("@/pages/dashboard")),
+          },
+          {
+            path: ROUTES.STORAGE,
+            lazy: lazyWrap(() => import("@/pages/storage"), EmployeeRouteGuard),
           },
           {
             path: ROUTES.DETAILS,

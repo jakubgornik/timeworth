@@ -25,6 +25,7 @@ import { useLogout } from "@/hooks/auth/logout/use-logout";
 import clsx from "clsx";
 import { ROUTES } from "@/routes/routes";
 import { useIsUserManager } from "@/hooks/user/use-is-user-manager";
+import { useIsUserEmployee } from "@/hooks/user/use-is-user-employee";
 
 const items = [
   {
@@ -50,6 +51,12 @@ const items = [
     icon: Settings,
     isManagerRoute: true,
   },
+  {
+    title: "Storage",
+    url: ROUTES.STORAGE,
+    icon: Settings,
+    isEmployeeRoute: true,
+  },
 ];
 
 export function AppSidebar() {
@@ -57,6 +64,7 @@ export function AppSidebar() {
   const { state, open, setOpen, isMobile, setOpenMobile } = useSidebar();
 
   const isManager = useIsUserManager();
+  const isEmployee = useIsUserEmployee();
 
   const handleLogout = () => {
     logout();
@@ -81,7 +89,7 @@ export function AppSidebar() {
             <SidebarGroupLabel
               className={clsx(
                 "border-b flex items-center w-full",
-                isMobile ? "justify-center" : "justify-between pl-2 "
+                isMobile ? "justify-center" : "justify-between pl-2 ",
               )}
             >
               {!isMobile && (
@@ -106,7 +114,11 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items
-                .filter((item) => !item.isManagerRoute || isManager)
+                .filter((item) => {
+                  if (item.isManagerRoute && !isManager) return false;
+                  if (item.isEmployeeRoute && !isEmployee) return false;
+                  return true;
+                })
                 .map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton

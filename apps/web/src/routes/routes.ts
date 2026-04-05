@@ -6,4 +6,5 @@ export const ROUTES = {
   DETAILS: "/details",
   ENTRIES: "/entries",
   SETTINGS: "/settings",
+  STORAGE: "/storage",
 } as const;

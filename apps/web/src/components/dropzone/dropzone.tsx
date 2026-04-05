@@ -97,17 +97,18 @@ export function Dropzone({
             </p>
           )}
         </div>
-        {state === "idle" && (
-          <Button
-            variant="outline"
-            size="sm"
-            type="button"
-            onClick={handleBrowse}
-            className="border-border bg-accent text-foreground hover:bg-muted"
-          >
-            Browse Files
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          size="sm"
+          type="button"
+          onClick={handleBrowse}
+          className={cn(
+            "border-border bg-accent text-foreground hover:bg-muted transition-opacity",
+            state !== "idle" ? "opacity-0 pointer-events-none" : "opacity-100",
+          )}
+        >
+          Browse Files
+        </Button>
       </div>
       {errorMessage && (
         <div className="flex items-center gap-2 rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2">
