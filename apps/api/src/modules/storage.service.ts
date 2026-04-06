@@ -29,6 +29,8 @@ export class StorageService {
         ),
       },
       forcePathStyle: true,
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
     });
     this.bucket = this.configService.getOrThrow(
       'SUPABASE_STORAGE_DEFAULT_BUCKET',
