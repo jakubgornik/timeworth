@@ -108,8 +108,10 @@ export class StorageService {
         Key: this.encodeKey(key),
         ContentType: contentType,
       });
+
       return await getSignedUrl(this.s3Client, command, {
         expiresIn: expiresInSeconds,
+        signableHeaders: new Set(['content-type']),
       });
     } catch (error) {
       this.logger.error(
