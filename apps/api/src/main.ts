@@ -25,7 +25,11 @@ async function bootstrap() {
           scriptSrc: ["'self'"],
           styleSrc: ["'self'"],
           imgSrc: ["'self'", 'data:'],
-          connectSrc: ["'self'"],
+          connectSrc: [
+            "'self'",
+            'https://tvkopeytneyrbkpazvuq.storage.supabase.co',
+            'https://o4510104628559872.ingest.de.sentry.io',
+          ],
           fontSrc: ["'self'"],
           objectSrc: ["'none'"],
           mediaSrc: ["'self'"],
