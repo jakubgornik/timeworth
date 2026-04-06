@@ -11,6 +11,7 @@ import { OrganizationModule } from './organization/organization.module';
 import { WorkEntryModule } from './work-entry/work-entry.module';
 import * as path from 'path';
 import { SentryModule, SentryGlobalFilter } from '@sentry/nestjs/setup';
+import { PersonalStorageModule } from './personal-storage/personal-storage.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SentryModule, SentryGlobalFilter } from '@sentry/nestjs/setup';
     AuthModule,
     OrganizationModule,
     WorkEntryModule,
+    PersonalStorageModule,
   ],
   controllers: [AppController],
   providers: [
