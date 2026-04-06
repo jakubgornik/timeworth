@@ -95,7 +95,7 @@ export class WorkEntryController {
   @Get('import-template')
   @AuthEndpoint()
   async downloadWorkEntriesImportTemplate() {
-    const downloadUrl = await this.storageService.getSignedUrl(
+    const downloadUrl = await this.storageService.getPresignedDownloadUrl(
       WORK_ENTRY_TEMPLATE_PATH,
     );
     return { url: downloadUrl };

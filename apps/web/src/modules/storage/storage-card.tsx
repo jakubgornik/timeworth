@@ -16,7 +16,7 @@ interface DropzoneCardProps {
   onFilesAdded: (files: File[]) => void;
 }
 
-export function DropzoneCard({ onFilesAdded }: DropzoneCardProps) {
+export function StorageCard({ onFilesAdded }: DropzoneCardProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleDrop = useCallback(
