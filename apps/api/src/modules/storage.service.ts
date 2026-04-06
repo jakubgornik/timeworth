@@ -70,9 +70,9 @@ export class StorageService {
     }
   }
 
-  async getSignedUrl(
+  async getPresignedDownloadUrl(
     key: string,
-    expiresInSeconds = 3600,
+    expiresInSeconds = 900,
     bucket = this.bucket,
   ): Promise<string> {
     try {
@@ -84,8 +84,39 @@ export class StorageService {
         expiresIn: expiresInSeconds,
       });
     } catch (error) {
-      this.logger.error(`Failed to generate URL for ${key}`, error.stack);
-      throw new InternalServerErrorException('Failed to generate secure link');
+      this.logger.error(
+        `Failed to generate download URL for ${key}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to generate secure download link',
+      );
+    }
+  }
+
+  async getPresignedUploadUrl(
+    key: string,
+    contentType: string,
+    expiresInSeconds = 900,
+    bucket = this.bucket,
+  ): Promise<string> {
+    try {
+      const command = new PutObjectCommand({
+        Bucket: bucket,
+        Key: this.encodeKey(key),
+        ContentType: contentType,
+      });
+      return await getSignedUrl(this.s3Client, command, {
+        expiresIn: expiresInSeconds,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to generate upload URL for ${key}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to generate secure upload link',
+      );
     }
   }
 
