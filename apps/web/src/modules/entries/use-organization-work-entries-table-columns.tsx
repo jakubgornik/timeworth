@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { IWorkEntryDto } from "@packages/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Clock, FileText } from "lucide-react";
+import { format, isValid, parseISO } from "date-fns";
 
 export function useOrganizationWorkEntriesTableColumns() {
   const columns: ColumnDef<IWorkEntryDto>[] = useMemo(
@@ -69,23 +70,22 @@ export function useOrganizationWorkEntriesTableColumns() {
         },
       },
     ],
-    []
+    [],
   );
 
   const formatDateTime = (dateInput: string | Date) => {
-    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    const date = dateInput instanceof Date ? dateInput : parseISO(dateInput);
+
+    if (!isValid(date)) {
+      return {
+        date: "Invalid date",
+        time: "Invalid time",
+      };
+    }
+
     return {
-      date: date.toLocaleDateString("en-US", {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }),
-      time: date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
+      date: format(date, "EEE, MMM d, yyyy"),
+      time: format(date, "hh:mm a"),
     };
   };
 
