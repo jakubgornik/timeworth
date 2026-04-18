@@ -1,9 +1,19 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
 import api from "@/lib/axios/axios";
 import axios from "axios";
-import { IFileMetadataDto, IConfirmUploadDto } from "@packages/types";
+import {
+  IFileMetadataDto,
+  IConfirmUploadDto,
+  IPaginatedResponseDto,
+  IStorageFileDto,
+  IPaginatedStorageFileQueryDto,
+} from "@packages/types";
 
-//  consider moving to utils
 const mapFilesToMetadata = (files: File[]): IFileMetadataDto[] => {
   return files.map((file) => ({
     name: file.name,
@@ -12,15 +22,21 @@ const mapFilesToMetadata = (files: File[]): IFileMetadataDto[] => {
   }));
 };
 
-const useGetEmployeeFiles = () => {
+const useGetStorage = (query: IPaginatedStorageFileQueryDto) => {
   return useQuery({
-    queryKey: ["employee-files"],
+    queryKey: ["employee-files", query],
     queryFn: async () => {
-      const response = await api.get("/personal-storage", {
-        withCredentials: true,
-      });
-      return response.data;
+      const res = await api.get<IPaginatedResponseDto<IStorageFileDto>>(
+        "/personal-storage",
+        {
+          params: query,
+          withCredentials: true,
+        },
+      );
+
+      return res.data;
     },
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -58,4 +74,4 @@ const useUploadEmployeeFiles = () => {
   });
 };
 
-export { useGetEmployeeFiles, useUploadEmployeeFiles };
+export { useGetStorage, useUploadEmployeeFiles };
