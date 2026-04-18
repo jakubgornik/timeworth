@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { PersonalStorageService } from './personal-storage.service';
 import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
 import { RequestWithUser } from '../user/user.controller';
 import { ConfirmUploadDto, FileMetadataDto } from './dto/personal-storage.dto';
+import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { SortDto } from 'src/shared/dto/sort.dto';
 
 @Controller('personal-storage')
 export class PersonalStorageController {
@@ -12,10 +14,17 @@ export class PersonalStorageController {
 
   @Get()
   @AuthEndpoint()
-  async getEmployeeFiles(@Req() req: RequestWithUser) {
-    return await this.personalStorageService.getEmployeeFiles(req.user.userId);
+  async getStorage(
+    @Req() req: RequestWithUser,
+    @Query() paginationDto: PaginationDto,
+    @Query() sortDto: SortDto,
+  ) {
+    return await this.personalStorageService.getStorage(
+      req.user.userId,
+      paginationDto,
+      sortDto,
+    );
   }
-
   @Post('presigned-urls')
   @AuthEndpoint()
   async getUploadUrls(

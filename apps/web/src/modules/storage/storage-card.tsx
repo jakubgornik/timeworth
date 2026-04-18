@@ -36,7 +36,7 @@ export function StorageCard({ onFilesAdded }: DropzoneCardProps) {
   );
 
   return (
-    <Card className="border-none bg-accent">
+    <Card className="border-none bg-accent mx-5">
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
           <HardDrive className="h-4 w-4 text-secondary" />
