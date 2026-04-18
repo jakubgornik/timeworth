@@ -13,7 +13,7 @@ import { useMemo } from "react";
 
 type UseStorageColumnsProps = {
   onDelete: (id: string) => void;
-  onDownload: (file: IStorageFileDto) => void;
+  onDownload: (id: string) => void;
 };
 
 const formatFileSize = (bytes: number): string => {
@@ -99,7 +99,7 @@ export const useStorageColumns = ({
               variant="primary"
               size="icon"
               className="h-7 w-7 text-muted-foreground hover:text-secondary hover:bg-accent/60 transition-colors"
-              onClick={() => onDownload(row.original)}
+              onClick={() => onDownload(row.original.id)}
             >
               <Download className="h-3.5 w-3.5" />
             </Button>

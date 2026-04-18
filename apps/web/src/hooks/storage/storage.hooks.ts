@@ -12,6 +12,7 @@ import {
   IPaginatedResponseDto,
   IStorageFileDto,
   IPaginatedStorageFileQueryDto,
+  IGetFileDownloadUrlDto,
 } from "@packages/types";
 
 const mapFilesToMetadata = (files: File[]): IFileMetadataDto[] => {
@@ -22,7 +23,7 @@ const mapFilesToMetadata = (files: File[]): IFileMetadataDto[] => {
   }));
 };
 
-const useGetStorage = (query: IPaginatedStorageFileQueryDto) => {
+const useGetStorageFile = (query: IPaginatedStorageFileQueryDto) => {
   return useQuery({
     queryKey: ["employee-files", query],
     queryFn: async () => {
@@ -40,7 +41,7 @@ const useGetStorage = (query: IPaginatedStorageFileQueryDto) => {
   });
 };
 
-const useUploadEmployeeFiles = () => {
+const useUploadStorageFile = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -74,4 +75,48 @@ const useUploadEmployeeFiles = () => {
   });
 };
 
-export { useGetStorage, useUploadEmployeeFiles };
+const useDeleteStorageFile = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete(`/personal-storage/${id}`, {
+        withCredentials: true,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employee-files"] });
+    },
+  });
+};
+
+const useDownloadStorageFile = () => {
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.get<IGetFileDownloadUrlDto>(
+        `/personal-storage/${id}/download`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      const link = document.createElement("a");
+      link.href = data.url;
+      link.target = "_blank";
+      link.download = "";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      return data;
+    },
+  });
+};
+
+export {
+  useGetStorageFile,
+  useUploadStorageFile,
+  useDeleteStorageFile,
+  useDownloadStorageFile,
+};

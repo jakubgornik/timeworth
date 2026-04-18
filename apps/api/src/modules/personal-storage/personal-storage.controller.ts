@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { PersonalStorageService } from './personal-storage.service';
 import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
 import { RequestWithUser } from '../user/user.controller';
@@ -25,6 +34,7 @@ export class PersonalStorageController {
       sortDto,
     );
   }
+
   @Post('presigned-urls')
   @AuthEndpoint()
   async getUploadUrls(
@@ -46,6 +56,21 @@ export class PersonalStorageController {
     return await this.personalStorageService.confirmUpload(
       req.user.userId,
       body.fileId,
+    );
+  }
+
+  @Delete(':id')
+  @AuthEndpoint()
+  async deleteFile(@Req() req: RequestWithUser, @Param('id') id: string) {
+    return await this.personalStorageService.deleteFile(req.user.userId, id);
+  }
+
+  @Get(':id/download')
+  @AuthEndpoint()
+  async getDownloadUrl(@Req() req: RequestWithUser, @Param('id') id: string) {
+    return await this.personalStorageService.getDownloadUrl(
+      req.user.userId,
+      id,
     );
   }
 }

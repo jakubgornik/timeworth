@@ -6,6 +6,8 @@ import { GenerateUploadPresignedUrlsCommand } from './command/generate-upload-pr
 import { ConfirmUploadCommand } from './command/confirm-upload/confirm-upload.command';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { DeleteFileCommand } from './command/delete-file/delete-file.command';
+import { GetFileDownloadUrlQuery } from './query/download-file/download-file.query';
 
 @Injectable()
 export class PersonalStorageService {
@@ -34,5 +36,13 @@ export class PersonalStorageService {
     return await this.commandBus.execute(
       new ConfirmUploadCommand(userId, fileId),
     );
+  }
+
+  async deleteFile(userId: string, id: string) {
+    return await this.commandBus.execute(new DeleteFileCommand(userId, id));
+  }
+
+  async getDownloadUrl(userId: string, id: string) {
+    return await this.queryBus.execute(new GetFileDownloadUrlQuery(userId, id));
   }
 }

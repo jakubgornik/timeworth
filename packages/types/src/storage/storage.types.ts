@@ -29,3 +29,7 @@ export interface IGetStorageFileDto {
 }
 
 export type IPaginatedStorageFileQueryDto = IPaginatedQueryDto; // todo add filters
+
+export interface IGetFileDownloadUrlDto {
+  url: string;
+}

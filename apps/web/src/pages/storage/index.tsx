@@ -2,8 +2,10 @@ import SectionHeader from "@/components/section-header";
 import SectionWrapper from "@/components/section-wrapper";
 import { Card } from "@/components/ui/card";
 import {
-  useGetStorage,
-  useUploadEmployeeFiles,
+  useDeleteStorageFile,
+  useDownloadStorageFile,
+  useGetStorageFile,
+  useUploadStorageFile,
 } from "@/hooks/storage/storage.hooks";
 import { convertSortingToQuery } from "@/lib/utils/convert-sorting-to-sorting-query";
 import { StorageCard } from "@/modules/storage/storage-card";
@@ -24,7 +26,16 @@ export default function StoragePage() {
     pageSize: 10,
   });
 
-  const { mutate: uploadFiles } = useUploadEmployeeFiles();
+  const { mutate: uploadFiles } = useUploadStorageFile();
+  const { mutate: deleteFile } = useDeleteStorageFile();
+  const { mutate: downloadFile } = useDownloadStorageFile();
+
+  const sortingQuery = useMemo(() => convertSortingToQuery(sorting), [sorting]);
+  const { data: storageFiles } = useGetStorageFile({
+    page: pagination.pageIndex + 1,
+    pageSize: pagination.pageSize,
+    ...sortingQuery,
+  });
 
   const handleFilesAdded = useCallback(
     (files: File[]) => {
@@ -33,21 +44,13 @@ export default function StoragePage() {
     [uploadFiles],
   );
 
-  const sortingQuery = useMemo(() => convertSortingToQuery(sorting), [sorting]);
-
-  const { data: storageFiles } = useGetStorage({
-    page: pagination.pageIndex + 1,
-    pageSize: pagination.pageSize,
-    ...sortingQuery,
-  });
-
   const data = useMemo(() => {
     return storageFiles?.data ?? [];
   }, [storageFiles?.data]);
-  console.log(data);
+
   const columns = useStorageColumns({
-    onDelete: () => {}, //todo
-    onDownload: () => {},
+    onDelete: (id: string) => deleteFile(id),
+    onDownload: (id: string) => downloadFile(id),
   });
 
   const table = useReactTable({

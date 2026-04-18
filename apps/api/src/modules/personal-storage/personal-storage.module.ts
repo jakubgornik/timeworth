@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Delete, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaService } from '@packages/db';
 import { StorageService } from '../storage.service';
@@ -7,12 +7,16 @@ import { PersonalStorageService } from './personal-storage.service';
 import { ConfirmUploadHandler } from './command/confirm-upload/confirm-upload.handler';
 import { GenerateUploadPresignedUrlsHandler } from './command/generate-upload-presigned-urls/generate-upload-presigned-urls.handler';
 import { GetEmployeeFilesHandler } from './query/get-employee-files/get-employee-files.handler';
+import { DeleteFileHandler } from './command/delete-file/delete-file.handler';
+import { GetFileDownloadUrlHandler } from './query/download-file/download-file.handler';
 
 const services = [PersonalStorageService, StorageService, PrismaService];
 
 const commandHandlers = [
   ConfirmUploadHandler,
   GenerateUploadPresignedUrlsHandler,
+  DeleteFileHandler,
+  GetFileDownloadUrlHandler,
 ];
 const queryHandlers = [GetEmployeeFilesHandler];
 
