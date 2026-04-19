@@ -1,14 +1,14 @@
-# Timeworth — Work Time Management Platform
+# Timeworth - Work Time Management Platform
 
 [![Frontend](https://img.shields.io/badge/Frontend-React%20%2B%20TypeScript-61DAFB?logo=react)](#)
-[![API](https://img.shields.io/badge/API-Node.js%20%2F%20NestJS-339933?logo=node.js)](#)
+[![Backend](https://img.shields.io/badge/Backend-NestJS-E0234E?style=flat&logo=nestjs&logoColor=white)](#)
 [![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1?logo=postgresql)](#)
-[![Platform](https://img.shields.io/badge/Platform-Supabase-3ECF8E?logo=supabase&logoColor=white)](#)
 [![ORM](https://img.shields.io/badge/ORM-Prisma-2D3748?logo=prisma)](#)
+[![UI](https://img.shields.io/badge/UI-TailwindCSS%20%2B%20shadcn%2Fui-38B2AC?logo=tailwindcss&logoColor=white)](#)
+[![Deploy](https://img.shields.io/badge/Deploy-Frontend%20Vercel%20%7C%20Backend%20Render-black)](#)
+[![Platform](https://img.shields.io/badge/Platform-Supabase-3ECF8E?logo=supabase&logoColor=white)](#)
 [![Storage](https://img.shields.io/badge/Storage-AWS%20S3-FF9900?logo=amazonaws&logoColor=white)](#)
 [![Tests](https://img.shields.io/badge/Tests-Unit%20%7C%20E2E-success)](#)
-[![Deploy](https://img.shields.io/badge/Deploy-Frontend%20Vercel%20%7C%20API%20Render-black)](#)
-[![UI](https://img.shields.io/badge/UI-TailwindCSS%20%2B%20shadcn%2Fui-38B2AC?logo=tailwindcss&logoColor=white)](#)
 
 Full-stack application for managing work time, attendance, and reporting.  
 Built with a dedicated API, secure JWT authentication (with refresh token rotation), testing, optimized data flows, Amazon S3 file storage, and deep Supabase integration.
@@ -40,4 +40,4 @@ https://www.timeworth.site
 - **ORM:** Prisma
 - **Storage:** Amazon S3
 - **Auth:** JWT, refresh tokens, secure HTTP-only cookies
-- **Deployment:** Frontend on Vercel, API on Render
+- **Deployment:** Frontend on Vercel, Backend on Render
