@@ -8,8 +8,9 @@
 [![Storage](https://img.shields.io/badge/Storage-AWS%20S3-FF9900?logo=amazonaws&logoColor=white)](#)
 [![Tests](https://img.shields.io/badge/Tests-Unit%20%7C%20E2E-success)](#)
 [![Deploy](https://img.shields.io/badge/Deploy-Frontend%20Vercel%20%7C%20API%20Render-black)](#)
+[![UI](https://img.shields.io/badge/UI-TailwindCSS%20%2B%20shadcn%2Fui-38B2AC?logo=tailwindcss&logoColor=white)](#)
 
-A production-oriented full-stack application for managing work time, attendance, and reporting.  
+Full-stack application for managing work time, attendance, and reporting.  
 Built with a dedicated API, secure JWT authentication (with refresh token rotation), testing, optimized data flows, Amazon S3 file storage, and deep Supabase integration.
 
 ## Live Demo
