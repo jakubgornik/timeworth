@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import { useGetFilteredWorkEntries } from "@/hooks/work-entry/use-filtered-organization-work-entries";
-import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { WorkEntriesChartCard } from "./work-entries-chart-card";
 import { DatePickerWithRange } from "../../date-picker-with-range";
 import { UserSelector } from "../../user-selector";
@@ -14,14 +13,12 @@ export function WorkEntriesChartTab() {
     undefined
   );
 
-  const { data: currentUser } = useCurrentUser();
   const { data, isLoading } = useGetFilteredWorkEntries({
     filter: {
       type: "dateRange",
       from: dateRange.from,
       to: dateRange.to,
     },
-    managerId: currentUser?.id ?? "",
     selectedUserId,
   });
   const chartData = useMemo(() => data || [], [data]);

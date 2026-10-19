@@ -16,6 +16,11 @@ import { WORK_ENTRY_EXPORT_CONFIG } from './utils/work-entry-export-config';
 import { GetExportedWorkEntriesQuery } from './query/get-exported-work-entries/get-exported-work-entries.query';
 import { ImportWorkEntriesService } from './import-work-entries.service';
 import { ImportWorkEntriesCommand } from './commands/import-work-entry/import-work-entry.command';
+import { AuthenticatedUser } from '../../shared/auth/authenticated-user';
+import {
+  requireOrganization,
+  requireManagerOrganization,
+} from '../../shared/auth/authorization';
 
 @Injectable()
 export class WorkEntryService {
@@ -26,20 +31,30 @@ export class WorkEntryService {
     private readonly importWorkEntriesService: ImportWorkEntriesService,
   ) {}
 
-  async getWorkEntries(dto: GetWorkEntriesQueryDto) {
-    return await this.queryBus.execute(new GetWorkEntriesQuery(dto));
+  async getWorkEntries(dto: GetWorkEntriesQueryDto, user: AuthenticatedUser) {
+    return await this.queryBus.execute(
+      new GetWorkEntriesQuery(dto, user.userId, requireOrganization(user)),
+    );
   }
 
-  async createWorkEntry(dto: CreateWorkEntryDto) {
-    return await this.commandBus.execute(new CreateWorkEntryCommand(dto));
+  async createWorkEntry(dto: CreateWorkEntryDto, user: AuthenticatedUser) {
+    return await this.commandBus.execute(
+      new CreateWorkEntryCommand({
+        ...dto,
+        userId: user.userId,
+        organizationId: requireOrganization(user),
+      }),
+    );
   }
 
-  async deleteWorkEntry(id: string) {
-    return await this.commandBus.execute(new DeleteWorkEntryCommand(id));
+  async deleteWorkEntry(id: string, user: AuthenticatedUser) {
+    return await this.commandBus.execute(
+      new DeleteWorkEntryCommand(id, user.userId, requireOrganization(user)),
+    );
   }
 
   async getOrganizationWorkEntries(
-    managerId: string,
+    user: AuthenticatedUser,
     search: string,
     paginationDto: PaginationDto,
     sortDto: SortDto,
@@ -47,7 +62,7 @@ export class WorkEntryService {
   ) {
     return await this.queryBus.execute(
       new GetOrganizationWorkEntriesQuery(
-        managerId,
+        requireManagerOrganization(user),
         search,
         paginationDto,
         sortDto,
@@ -58,18 +73,25 @@ export class WorkEntryService {
 
   async getFilteredWorkEntries(
     dto: GetFilteredOrganizationWorkEntriesDto,
-    managerId: string,
+    user: AuthenticatedUser,
   ) {
     return await this.queryBus.execute(
-      new GetFilteredOrganizationWorkEntriesQuery(dto, managerId),
+      new GetFilteredOrganizationWorkEntriesQuery(
+        dto,
+        requireManagerOrganization(user),
+      ),
     );
   }
 
   async exportWorkEntries(
     filters: OrganizationWorkEntriesFiltersDto,
+    user: AuthenticatedUser,
   ): Promise<Buffer> {
     const workEntries = await this.queryBus.execute(
-      new GetExportedWorkEntriesQuery(filters),
+      new GetExportedWorkEntriesQuery(
+        filters,
+        requireManagerOrganization(user),
+      ),
     );
 
     return this.exportService.exportToExcel(

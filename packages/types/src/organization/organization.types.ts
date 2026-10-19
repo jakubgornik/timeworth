@@ -14,7 +14,6 @@ export interface IOrganizationDto {
 }
 
 export interface IJoinOrganizationDto {
-  userId: string;
   inviteCode: string;
   name: string;
 }
@@ -22,7 +21,6 @@ export interface IJoinOrganizationDto {
 export interface ICreateOrganizationDto {
   managerName: string;
   organizationName: string;
-  managerId: string;
   industry?: string;
   size?: string;
   address?: string;
@@ -34,8 +32,4 @@ export interface IOrganizationUsersFiltersDto {
 }
 
 export type IPaginatedOrganizationUsersQueryDto =
-  Partial<IOrganizationUsersFiltersDto> &
-    ISearchDto &
-    IPaginatedQueryDto & {
-      managerId: string;
-    };
+  Partial<IOrganizationUsersFiltersDto> & ISearchDto & IPaginatedQueryDto;

@@ -21,6 +21,8 @@ const mockUsers = [
     organization: {
       id: 'org1',
       name: 'Org 1',
+      managerId: 'manager-1',
+      inviteCode: 'SECRET',
       createdAt: new Date('2025-01-01T00:00:00Z'),
       updatedAt: new Date('2025-01-02T00:00:00Z'),
       industry: null,
@@ -70,7 +72,7 @@ describe('GetOrganizationUsersHandler', () => {
     );
   });
 
-  it('should throw ManagerNotFoundException if managerId is missing', async () => {
+  it('should throw ManagerNotFoundException if organizationId is missing', async () => {
     const query = new GetOrganizationUsersQuery(
       '',
       '',
@@ -86,9 +88,9 @@ describe('GetOrganizationUsersHandler', () => {
   });
 
   it('should return paginated users with transformed dates and organization', async () => {
-    const managerId = 'manager-1';
+    const organizationId = 'org1';
     const query = new GetOrganizationUsersQuery(
-      managerId,
+      organizationId,
       'search-term',
       { page: 1, pageSize: 2 },
       { id: 'id', desc: false },
@@ -104,9 +106,21 @@ describe('GetOrganizationUsersHandler', () => {
       orderBy: { id: 'asc' },
       where: {
         role: 'EMPLOYEE',
-        organization: { managerId },
+        organizationId,
+        AND: {},
       },
-      include: { organization: true },
+      include: {
+        organization: {
+          select: {
+            id: true,
+            name: true,
+            managerId: true,
+            industry: true,
+            size: true,
+            address: true,
+          },
+        },
+      },
       skip: 0,
       take: 2,
     });
@@ -114,7 +128,8 @@ describe('GetOrganizationUsersHandler', () => {
     expect(prisma.user.count).toHaveBeenCalledWith({
       where: {
         role: 'EMPLOYEE',
-        organization: { managerId },
+        organizationId,
+        AND: {},
       },
     });
 
@@ -125,9 +140,9 @@ describe('GetOrganizationUsersHandler', () => {
           createdAt: '2025-01-01T00:00:00.000Z',
           updatedAt: '2025-01-02T00:00:00.000Z',
           organization: {
-            ...mockUsers[0].organization,
-            createdAt: '2025-01-01T00:00:00.000Z',
-            updatedAt: '2025-01-02T00:00:00.000Z',
+            id: 'org1',
+            name: 'Org 1',
+            managerId: 'manager-1',
             industry: undefined,
             size: undefined,
             address: undefined,

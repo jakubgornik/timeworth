@@ -1,23 +1,22 @@
 import api from "@/lib/axios/axios";
 import { SelectedUser } from "@packages/types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useCurrentUser } from "./use-current-user";
 
-export const useListedOrganizationUsers = (query: {
-  organizationId: string;
-}) => {
+export const useListedOrganizationUsers = () => {
+  const { data: currentUser } = useCurrentUser();
   return useQuery({
-    queryKey: ["listedOrganizationUsers", query],
+    queryKey: ["listedOrganizationUsers", currentUser?.id],
     queryFn: async () => {
       const res = await api.get<SelectedUser[]>(
         "user/listed-organization-users",
         {
-          params: query,
           withCredentials: true,
         }
       );
       return res.data;
     },
-    enabled: !!query.organizationId,
+    enabled: currentUser?.role === "MANAGER",
     placeholderData: keepPreviousData,
   });
 };

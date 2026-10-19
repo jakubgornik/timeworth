@@ -7,7 +7,7 @@ export class GetFilteredOrganizationWorkEntriesQuery extends Query<
 > {
   constructor(
     public readonly dto: GetFilteredOrganizationWorkEntriesDto,
-    public readonly managerId: string,
+    public readonly organizationId: string,
   ) {
     super();
   }

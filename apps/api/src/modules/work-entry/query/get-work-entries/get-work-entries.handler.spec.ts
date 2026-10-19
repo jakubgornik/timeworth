@@ -37,10 +37,11 @@ describe('GetWorkEntriesHandler', () => {
   });
 
   it('should throw error if userId is missing', async () => {
-    const query = new GetWorkEntriesQuery({
-      userId: undefined as any,
-      currentWeek: { from: new Date(), to: new Date() },
-    });
+    const query = new GetWorkEntriesQuery(
+      { currentWeek: { from: new Date(), to: new Date() } },
+      '',
+      'org-123',
+    );
 
     await expect(handler.execute(query)).rejects.toThrow(UserNotFoundException);
     expect(prisma.workEntry.findMany).not.toHaveBeenCalled();
@@ -63,10 +64,11 @@ describe('GetWorkEntriesHandler', () => {
       return mockMappedEntries.find((e) => e.id.includes(entry.id));
     });
 
-    const query = new GetWorkEntriesQuery({
-      userId: 'user-123',
-      currentWeek: { from: new Date(), to: new Date() },
-    });
+    const query = new GetWorkEntriesQuery(
+      { currentWeek: { from: new Date(), to: new Date() } },
+      'user-123',
+      'org-123',
+    );
 
     const result = await handler.execute(query);
 
@@ -74,6 +76,7 @@ describe('GetWorkEntriesHandler', () => {
     expect(prisma.workEntry.findMany).toHaveBeenCalledWith({
       where: {
         userId: 'user-123',
+        organizationId: 'org-123',
         startedAt: {
           gte: query.getWorkEntriesQueryDto.currentWeek?.from,
           lte: query.getWorkEntriesQueryDto.currentWeek?.to,
@@ -86,10 +89,11 @@ describe('GetWorkEntriesHandler', () => {
   it('should return empty array if no work entries are found', async () => {
     prisma.workEntry.findMany.mockResolvedValue([]);
 
-    const query = new GetWorkEntriesQuery({
-      userId: 'user-123',
-      currentWeek: { from: new Date(), to: new Date() },
-    });
+    const query = new GetWorkEntriesQuery(
+      { currentWeek: { from: new Date(), to: new Date() } },
+      'user-123',
+      'org-123',
+    );
 
     const result = await handler.execute(query);
 

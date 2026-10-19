@@ -26,6 +26,8 @@ export interface ICreateWorkEntryDto
     | "approved"
     | "hourlyRate"
     | "hoursWorked"
+    | "userId"
+    | "organizationId"
   > {}
 
 interface TimePeriod {
@@ -45,7 +47,6 @@ export interface IWorkEntryToEventDto {
 }
 
 export interface IGetWorkEntriesQueryDto {
-  userId: string;
   currentWeek?: TimePeriod;
 }
 
@@ -57,18 +58,13 @@ export interface IOrganizationWorkEntriesFiltersDto {
 }
 
 export type IPaginatedOrganizationWorkEntriesQueryDto =
-  Partial<IOrganizationWorkEntriesFiltersDto> &
-    ISearchDto &
-    IPaginatedQueryDto & {
-      managerId: string;
-    };
+  Partial<IOrganizationWorkEntriesFiltersDto> & ISearchDto & IPaginatedQueryDto;
 
 type WorkEntryFilterType =
   | { type: "dateRange"; from: Date; to: Date }
   | { type: "year"; year: number };
 
 export interface IGetFilteredWorkEntriesDto {
-  managerId: string;
   selectedUserId?: string;
   filter: WorkEntryFilterType;
 }

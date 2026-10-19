@@ -4,9 +4,9 @@ import {
   IWorkEntryDtoWithUser,
 } from "@packages/types";
 import api from "@/lib/axios/axios";
+import { useCurrentUser } from "@/hooks/user/use-current-user";
 
 interface IFilteredWorkEntriesQueryDto {
-  managerId: string;
   selectedUserId?: string;
   from?: string;
   to?: string;
@@ -16,10 +16,10 @@ interface IFilteredWorkEntriesQueryDto {
 export const useGetFilteredWorkEntries = (
   query: IGetFilteredWorkEntriesDto
 ) => {
-  const { managerId, selectedUserId, filter } = query;
+  const { selectedUserId, filter } = query;
+  const { data: currentUser } = useCurrentUser();
 
   const filteredQuery: IFilteredWorkEntriesQueryDto = {
-    managerId,
     selectedUserId,
   };
 
@@ -34,7 +34,7 @@ export const useGetFilteredWorkEntries = (
   }
 
   return useQuery({
-    queryKey: ["filteredWorkEntries", filteredQuery],
+    queryKey: ["filteredWorkEntries", currentUser?.id, filteredQuery],
     queryFn: async () => {
       const res = await api.get<IWorkEntryDtoWithUser[]>(
         "work-entry/filtered",
@@ -47,7 +47,8 @@ export const useGetFilteredWorkEntries = (
       return res.data;
     },
     enabled:
-      !!managerId && (filter.type === "dateRange" || filter.type === "year"),
+      currentUser?.role === "MANAGER" &&
+      (filter.type === "dateRange" || filter.type === "year"),
     placeholderData: keepPreviousData,
   });
 };

@@ -56,32 +56,32 @@ describe('GetExportedWorkEntriesHandler', () => {
     );
     prisma.workEntry.findMany.mockResolvedValue(mockResults);
 
-    const query = new GetExportedWorkEntriesQuery(filtersDto);
+    const query = new GetExportedWorkEntriesQuery(filtersDto, 'org-1');
     const result = await handler.execute(query);
 
     expect(mapOrganizationWorkEntriesFiltersDtoToWhere).toHaveBeenCalledWith(
       filtersDto,
     );
     expect(prisma.workEntry.findMany).toHaveBeenCalledWith({
-      where,
+      where: { organizationId: 'org-1', AND: where },
       orderBy: { startedAt: 'desc' },
     });
     expect(result).toEqual(mockResults);
   });
 
-  it('should handle empty filtersDto', async () => {
+  it('should retain organization scope with empty filters', async () => {
     const filtersDto = {};
     (mapOrganizationWorkEntriesFiltersDtoToWhere as jest.Mock).mockReturnValue(
       {},
     );
     prisma.workEntry.findMany.mockResolvedValue([]);
 
-    const query = new GetExportedWorkEntriesQuery(filtersDto);
+    const query = new GetExportedWorkEntriesQuery(filtersDto, 'org-1');
     const result = await handler.execute(query);
 
     expect(result).toEqual([]);
     expect(prisma.workEntry.findMany).toHaveBeenCalledWith({
-      where: {},
+      where: { organizationId: 'org-1', AND: {} },
       orderBy: { startedAt: 'desc' },
     });
   });

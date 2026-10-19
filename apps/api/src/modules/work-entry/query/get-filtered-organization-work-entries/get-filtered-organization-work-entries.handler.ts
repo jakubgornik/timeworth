@@ -26,10 +26,10 @@ export class GetFilteredOrganizationWorkEntriesHandler
   ): Promise<IWorkEntryDtoWithUser[]> {
     const {
       dto: { selectedUserId, from, to, year },
-      managerId,
+      organizationId,
     } = query;
 
-    if (!managerId) {
+    if (!organizationId) {
       throw new ManagerNotFoundException();
     }
 
@@ -40,10 +40,8 @@ export class GetFilteredOrganizationWorkEntriesHandler
     });
 
     const where: Prisma.WorkEntryWhereInput = {
-      organization: {
-        managerId,
-      },
-      ...filtersWhere,
+      organizationId,
+      AND: filtersWhere,
     };
 
     if (selectedUserId) {

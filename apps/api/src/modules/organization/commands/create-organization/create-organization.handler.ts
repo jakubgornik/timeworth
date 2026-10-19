@@ -1,13 +1,15 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PrismaService, UserRole } from '@packages/db';
-import { CreateOrganizationCommand } from './create-organization.command';
+import {
+  CreateOrganizationCommand,
+  CreateOrganizationInput,
+} from './create-organization.command';
 import { randomBytes } from 'crypto';
 import { Prisma } from '@packages/db';
 import {
   OrganizationNameAlreadyExistsException,
   SingleOrganizationLimitFoundException,
 } from '../../exceptions/organization.exception';
-import { CreateOrganizationDto } from '../../dto/create-organization.dto';
 
 @CommandHandler(CreateOrganizationCommand)
 export class CreateOrganizationHandler
@@ -44,7 +46,7 @@ export class CreateOrganizationHandler
   }
 
   private async createOrganizationWithManager(
-    dto: CreateOrganizationDto,
+    dto: CreateOrganizationInput,
     inviteCode: string,
   ): Promise<void> {
     await this.prisma.$transaction(async (tx) => {

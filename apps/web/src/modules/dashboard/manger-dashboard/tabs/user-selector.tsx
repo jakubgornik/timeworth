@@ -14,7 +14,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useState } from "react";
 import { useListedOrganizationUsers } from "@/hooks/user/use-listed-organization-users";
 
@@ -29,10 +28,7 @@ export function UserSelector({
 }: UserSelectorProps) {
   const [open, setOpen] = useState(false);
 
-  const { data: currentUser } = useCurrentUser();
-  const { data: users } = useListedOrganizationUsers({
-    organizationId: currentUser!.organization!.id,
-  });
+  const { data: users } = useListedOrganizationUsers();
 
   const selectedUser = users?.find((user) => user.id === selectedUserId);
 

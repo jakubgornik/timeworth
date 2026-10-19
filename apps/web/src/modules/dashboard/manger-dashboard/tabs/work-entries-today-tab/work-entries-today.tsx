@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { startOfDay, endOfDay } from "date-fns";
 import { useMemo } from "react";
-import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useGetFilteredWorkEntries } from "@/hooks/work-entry/use-filtered-organization-work-entries";
 import { mapToActivities } from "./work-entries-today.utils";
 import { WorkEntriesTodaySkeleton } from "./work-entries-today-skeleton";
@@ -18,14 +17,12 @@ export function WorkEntriesTodayTab() {
     []
   );
 
-  const { data: currentUser } = useCurrentUser();
   const { data, isLoading } = useGetFilteredWorkEntries({
     filter: {
       type: "dateRange",
       from: todayRange.from,
       to: todayRange.to,
     },
-    managerId: currentUser?.id ?? "",
   });
 
   const entries = useMemo(() => data || [], [data]);

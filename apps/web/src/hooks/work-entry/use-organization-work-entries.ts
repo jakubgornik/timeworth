@@ -1,3 +1,4 @@
+import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   IPaginatedOrganizationWorkEntriesQueryDto,
@@ -9,8 +10,10 @@ import api from "@/lib/axios/axios";
 export const useOrganizationWorkEntries = (
   query: IPaginatedOrganizationWorkEntriesQueryDto
 ) => {
+  const { data: currentUser } = useCurrentUser();
+
   return useQuery({
-    queryKey: ["organizationWorkEntries", query],
+    queryKey: ["organizationWorkEntries", currentUser?.id, query],
     queryFn: async () => {
       const res = await api.get<IPaginatedResponseDto<IWorkEntryDto>>(
         "work-entry/organization/work-entries",
@@ -22,7 +25,7 @@ export const useOrganizationWorkEntries = (
 
       return res.data;
     },
-    enabled: !!query.managerId && query.page > 0,
+    enabled: currentUser?.role === "MANAGER" && query.page > 0,
     placeholderData: keepPreviousData,
   });
 };

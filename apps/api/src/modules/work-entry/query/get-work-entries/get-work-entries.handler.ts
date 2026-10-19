@@ -21,16 +21,19 @@ export class GetWorkEntriesHandler
     query: GetWorkEntriesQuery,
   ): Promise<IWorkEntryToEventDto[]> {
     const {
-      getWorkEntriesQueryDto: { userId, currentWeek },
+      getWorkEntriesQueryDto: { currentWeek },
+      userId,
+      organizationId,
     } = query;
 
-    if (!userId) {
+    if (!userId || !organizationId) {
       throw new UserNotFoundException();
     }
 
     const workEntries = await this.prisma.workEntry.findMany({
       where: {
         userId,
+        organizationId,
         startedAt: {
           gte: currentWeek?.from,
           lte: currentWeek?.to,

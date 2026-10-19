@@ -30,7 +30,6 @@ import {
   joinOrganizationSchema,
 } from "./validators/join-organization.validation";
 import { useJoinOrganization } from "@/hooks/organization/use-join-organization";
-import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useNotification } from "@/hooks/use-notification";
 import { AxiosError } from "axios";
 import { useQueryClient } from "@tanstack/react-query";
@@ -46,7 +45,6 @@ const joinOrganizationErrorMap: Record<number, { message: string }> = {
 export function JoinOrganizationDialog() {
   const [open, setOpen] = useState(false);
   const { mutate: joinOrganization } = useJoinOrganization();
-  const currentUser = useCurrentUser();
   const { showError, showSuccess } = useNotification();
   const queryClient = useQueryClient();
 
@@ -61,7 +59,6 @@ export function JoinOrganizationDialog() {
   const handleJoin = (data: JoinOrganizationForm) => {
     const payload = {
       inviteCode: data.inviteCode,
-      userId: currentUser.data!.id,
       name: data.name,
     };
 

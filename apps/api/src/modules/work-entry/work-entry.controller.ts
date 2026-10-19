@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Query,
-  Req,
   Res,
   UploadedFile,
   UseInterceptors,
@@ -21,7 +20,8 @@ import { SortDto } from 'src/shared/dto/sort.dto';
 import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
 import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-organization-work-entries.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { RequestWithUser } from '../user/user.controller';
+import { AuthenticatedUser } from '../../shared/auth/authenticated-user';
+import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { ImportWorkEntriesFileNotFoundException } from './exceptions/work-entry.exceptions';
 import { StorageService } from '../storage.service';
 import { WORK_ENTRY_TEMPLATE_PATH } from './utils/template.path';
@@ -35,33 +35,42 @@ export class WorkEntryController {
 
   @Get()
   @AuthEndpoint()
-  async getWorkEntries(@Query() dto: GetWorkEntriesQueryDto) {
-    return await this.workEntryService.getWorkEntries(dto);
+  async getWorkEntries(
+    @Query() dto: GetWorkEntriesQueryDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return await this.workEntryService.getWorkEntries(dto, user);
   }
 
   @Post()
   @AuthEndpoint()
-  async createWorkEntry(@Body() dto: CreateWorkEntryDto) {
-    return await this.workEntryService.createWorkEntry(dto);
+  async createWorkEntry(
+    @Body() dto: CreateWorkEntryDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return await this.workEntryService.createWorkEntry(dto, user);
   }
 
   @Delete(':id')
   @AuthEndpoint()
-  async deleteWorkEntry(@Param('id') id: string) {
-    return await this.workEntryService.deleteWorkEntry(id);
+  async deleteWorkEntry(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return await this.workEntryService.deleteWorkEntry(id, user);
   }
 
   @Get('organization/work-entries')
   @AuthEndpoint()
   async getOrganizationWorkEntries(
-    @Query('managerId') managerId: string,
+    @CurrentUser() user: AuthenticatedUser,
     @Query('search') search: string,
     @Query() filtersDto: OrganizationWorkEntriesFiltersDto,
     @Query() paginationDto: PaginationDto,
     @Query() sortDto: SortDto,
   ) {
     return await this.workEntryService.getOrganizationWorkEntries(
-      managerId,
+      user,
       search,
       paginationDto,
       sortDto,
@@ -72,19 +81,20 @@ export class WorkEntryController {
   @Get('filtered')
   @AuthEndpoint()
   async getFilteredWorkEntries(
-    @Query('managerId') managerId: string,
+    @CurrentUser() user: AuthenticatedUser,
     @Query() dto: GetFilteredOrganizationWorkEntriesDto,
   ) {
-    return await this.workEntryService.getFilteredWorkEntries(dto, managerId);
+    return await this.workEntryService.getFilteredWorkEntries(dto, user);
   }
 
   @Post('export')
   @AuthEndpoint()
   async exportWorkEntries(
     @Body() filters: OrganizationWorkEntriesFiltersDto,
+    @CurrentUser() user: AuthenticatedUser,
     @Res() res: Response,
   ) {
-    const buffer = await this.workEntryService.exportWorkEntries(filters);
+    const buffer = await this.workEntryService.exportWorkEntries(filters, user);
     res.set({
       'Content-Type':
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -106,13 +116,13 @@ export class WorkEntryController {
   @UseInterceptors(FileInterceptor('file'))
   async importWorkEntries(
     @UploadedFile() file: Express.Multer.File,
-    @Req() req: RequestWithUser,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body('timezone') timezone: string,
   ) {
     if (!file) {
       throw new ImportWorkEntriesFileNotFoundException();
     }
-    const userId = req.user.userId;
-    const timezone = req.body.timezone;
+    const userId = user.userId;
 
     return await this.workEntryService.importWorkEntries(
       file,

@@ -12,7 +12,6 @@ import {
   useWeeksLayout,
 } from "./work-entries-heatmap.utils";
 
-import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useGetFilteredWorkEntries } from "@/hooks/work-entry/use-filtered-organization-work-entries";
 import { WorkEntriesHeatmapLegend } from "./work-entries-heatmap-legend";
 import { WorkEntriesStatisticsGrid } from "./work-entries-heatmap-statistics-grid";
@@ -26,13 +25,11 @@ export function WorkEntriesHeatmapTab() {
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined
   );
-  const { data: currentUser } = useCurrentUser();
   const { data, isLoading } = useGetFilteredWorkEntries({
     filter: {
       type: "year",
       year: selectedYear,
     },
-    managerId: currentUser?.id ?? "",
     selectedUserId,
   });
   const heatmapData: IWorkEntryDto[] = useMemo(() => data || [], [data]);

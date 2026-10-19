@@ -5,6 +5,8 @@ import { JoinOrganizationDto } from './dto/join-organization.dto';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { CreateOrganizationCommand } from './commands/create-organization/create-organization.command';
 import { GetOrganizationQuery } from './query/get-organization/get-organization.query';
+import { AuthenticatedUser } from '../../shared/auth/authenticated-user';
+import { requireManagerOrganization } from '../../shared/auth/authorization';
 
 @Injectable()
 export class OrganizationService {
@@ -13,21 +15,24 @@ export class OrganizationService {
     private readonly queryBus: QueryBus,
   ) {}
 
-  async getOrganization(managerId: string) {
+  async getOrganization(user: AuthenticatedUser) {
     return await this.queryBus.execute<GetOrganizationQuery>(
-      new GetOrganizationQuery(managerId),
+      new GetOrganizationQuery(requireManagerOrganization(user)),
     );
   }
 
-  async joinOrganization(dto: JoinOrganizationDto) {
+  async joinOrganization(dto: JoinOrganizationDto, user: AuthenticatedUser) {
     return await this.commandBus.execute<JoinOrganizationCommand, void>(
-      new JoinOrganizationCommand(dto),
+      new JoinOrganizationCommand({ ...dto, userId: user.userId }),
     );
   }
 
-  async createOrganization(dto: CreateOrganizationDto) {
+  async createOrganization(
+    dto: CreateOrganizationDto,
+    user: AuthenticatedUser,
+  ) {
     return await this.commandBus.execute<CreateOrganizationCommand, void>(
-      new CreateOrganizationCommand(dto),
+      new CreateOrganizationCommand({ ...dto, managerId: user.userId }),
     );
   }
 }

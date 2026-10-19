@@ -24,14 +24,14 @@ export class GetOrganizationUsersHandler
     organizationUsersQueryDto: GetOrganizationUsersQuery,
   ): Promise<IPaginatedResponseDto<IUserDto>> {
     const {
-      managerId,
+      organizationId,
       paginationDto: { page, pageSize },
       sortDto,
       filtersDto,
       search,
     } = organizationUsersQueryDto;
 
-    if (!managerId) {
+    if (!organizationId) {
       throw new ManagerNotFoundException();
     }
 
@@ -43,10 +43,8 @@ export class GetOrganizationUsersHandler
 
     const where: Prisma.UserWhereInput = {
       role: 'EMPLOYEE',
-      organization: {
-        managerId,
-      },
-      ...filtersWhere,
+      organizationId,
+      AND: filtersWhere,
     };
 
     const [users, totalCount] = await Promise.all([
@@ -54,7 +52,16 @@ export class GetOrganizationUsersHandler
         orderBy,
         where,
         include: {
-          organization: true,
+          organization: {
+            select: {
+              id: true,
+              name: true,
+              managerId: true,
+              industry: true,
+              size: true,
+              address: true,
+            },
+          },
         },
         skip: (page - 1) * pageSize,
         take: pageSize,
@@ -71,9 +78,9 @@ export class GetOrganizationUsersHandler
         updatedAt: user.updatedAt.toISOString(),
         organization: user.organization
           ? {
-              ...user.organization,
-              createdAt: user.organization.createdAt.toISOString(),
-              updatedAt: user.organization.updatedAt.toISOString(),
+              id: user.organization.id,
+              name: user.organization.name,
+              managerId: user.organization.managerId,
               industry: user.organization.industry ?? undefined,
               size: user.organization.size ?? undefined,
               address: user.organization.address ?? undefined,

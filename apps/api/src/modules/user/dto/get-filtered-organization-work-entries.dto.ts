@@ -6,9 +6,6 @@ import {
 } from 'class-validator';
 
 export class GetFilteredOrganizationWorkEntriesDto {
-  @IsString()
-  managerId: string;
-
   @IsOptional()
   @IsString()
   selectedUserId?: string;

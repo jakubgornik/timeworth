@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import * as XLSX from 'xlsx';
-import { CreateWorkEntryDto } from './dto/create-work-entry.dto';
+import { CreateWorkEntryInput } from './commands/create-work-entry/create-work-entry.command';
 import { ImportWorkEntryValidator } from './utils/import-work-entries.validator';
 import { fromZonedTime } from 'date-fns-tz';
 import { ImportWorkEntriesEmptyFileException } from './exceptions/work-entry.exceptions';
@@ -11,7 +11,7 @@ export class ImportWorkEntriesService {
     file: Express.Multer.File,
     userId: string,
     userTimezone: string,
-  ): Promise<CreateWorkEntryDto[]> {
+  ): Promise<CreateWorkEntryInput[]> {
     try {
       const workbook = XLSX.read(file.buffer, {
         type: 'buffer',
@@ -47,7 +47,7 @@ export class ImportWorkEntriesService {
           description,
           userId,
           organizationId: '', // temporary solution, organization id is added in handler
-        } satisfies CreateWorkEntryDto;
+        } satisfies CreateWorkEntryInput;
       });
     } catch (error) {
       throw new BadRequestException(`Failed to parse file: ${error.message}`);

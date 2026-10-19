@@ -6,11 +6,11 @@ import {
   Param,
   Post,
   Query,
-  Req,
 } from '@nestjs/common';
 import { PersonalStorageService } from './personal-storage.service';
 import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
-import { RequestWithUser } from '../user/user.controller';
+import { AuthenticatedUser } from '../../shared/auth/authenticated-user';
+import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { ConfirmUploadDto, FileMetadataDto } from './dto/personal-storage.dto';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
@@ -24,12 +24,12 @@ export class PersonalStorageController {
   @Get()
   @AuthEndpoint()
   async getStorage(
-    @Req() req: RequestWithUser,
+    @CurrentUser() user: AuthenticatedUser,
     @Query() paginationDto: PaginationDto,
     @Query() sortDto: SortDto,
   ) {
     return await this.personalStorageService.getStorage(
-      req.user.userId,
+      user.userId,
       paginationDto,
       sortDto,
     );
@@ -38,11 +38,11 @@ export class PersonalStorageController {
   @Post('presigned-urls')
   @AuthEndpoint()
   async getUploadUrls(
-    @Req() req: RequestWithUser,
+    @CurrentUser() user: AuthenticatedUser,
     @Body() files: FileMetadataDto[],
   ) {
     return await this.personalStorageService.generateUploadPresignedUrls(
-      req.user.userId,
+      user.userId,
       files,
     );
   }
@@ -50,27 +50,30 @@ export class PersonalStorageController {
   @Post('confirm-upload')
   @AuthEndpoint()
   async confirmUpload(
-    @Req() req: RequestWithUser,
+    @CurrentUser() user: AuthenticatedUser,
     @Body() body: ConfirmUploadDto,
   ) {
     return await this.personalStorageService.confirmUpload(
-      req.user.userId,
+      user.userId,
       body.fileId,
     );
   }
 
   @Delete(':id')
   @AuthEndpoint()
-  async deleteFile(@Req() req: RequestWithUser, @Param('id') id: string) {
-    return await this.personalStorageService.deleteFile(req.user.userId, id);
+  async deleteFile(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') id: string,
+  ) {
+    return await this.personalStorageService.deleteFile(user.userId, id);
   }
 
   @Get(':id/download')
   @AuthEndpoint()
-  async getDownloadUrl(@Req() req: RequestWithUser, @Param('id') id: string) {
-    return await this.personalStorageService.getDownloadUrl(
-      req.user.userId,
-      id,
-    );
+  async getDownloadUrl(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') id: string,
+  ) {
+    return await this.personalStorageService.getDownloadUrl(user.userId, id);
   }
 }

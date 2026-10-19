@@ -26,14 +26,14 @@ export class GetOrganizationWorkEntriesHandler
     query: GetOrganizationWorkEntriesQuery,
   ): Promise<IPaginatedResponseDto<IWorkEntryDto>> {
     const {
-      managerId,
+      organizationId,
       paginationDto: { page, pageSize },
       sortDto,
       filtersDto,
       search,
     } = query;
 
-    if (!managerId) {
+    if (!organizationId) {
       throw new ManagerNotFoundException();
     }
 
@@ -44,10 +44,8 @@ export class GetOrganizationWorkEntriesHandler
     );
 
     const where: Prisma.WorkEntryWhereInput = {
-      organization: {
-        managerId,
-      },
-      ...filtersWhere,
+      organizationId,
+      AND: filtersWhere,
     };
 
     const [workEntries, totalCount] = await Promise.all([
@@ -59,9 +57,7 @@ export class GetOrganizationWorkEntriesHandler
       }),
       this.prisma.workEntry.count({
         where: {
-          organization: {
-            managerId,
-          },
+          organizationId,
         },
       }),
     ]);

@@ -1,27 +1,14 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  Query,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { RegisterUserDto } from '../auth/dto/auth.dto';
-import { Request } from 'express';
+import { AuthenticatedUser } from '../../shared/auth/authenticated-user';
+import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { UserService } from './user.service';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
 import { OrganizationUsersFiltersDto } from './dto/organization-users-filters.dto';
 
-export interface RequestWithUser extends Request {
-  user: {
-    userId: string;
-    email: string;
-  };
-}
 @Controller('user')
 export class UserController {
   constructor(
@@ -31,8 +18,8 @@ export class UserController {
 
   @Delete('me')
   @AuthEndpoint()
-  async deleteUser(@Req() req: RequestWithUser) {
-    return this.authService.deleteUser(req.user.userId);
+  async deleteUser(@CurrentUser() user: AuthenticatedUser) {
+    return this.authService.deleteUser(user.userId);
   }
 
   @Post('register')
@@ -43,8 +30,8 @@ export class UserController {
 
   @Get('me')
   @AuthEndpoint()
-  async getMe(@Req() req: RequestWithUser) {
-    const userId = req.user.userId;
+  async getMe(@CurrentUser() user: AuthenticatedUser) {
+    const userId = user.userId;
 
     return await this.userService.getUserById(userId);
   }
@@ -52,14 +39,14 @@ export class UserController {
   @Get()
   @AuthEndpoint()
   async getOrganizationUsers(
-    @Query('managerId') managerId: string,
+    @CurrentUser() user: AuthenticatedUser,
     @Query('search') search: string,
     @Query() filtersDto: OrganizationUsersFiltersDto,
     @Query() paginationDto: PaginationDto,
     @Query() sortDto: SortDto,
   ) {
     return await this.userService.getOrganizationUsers(
-      managerId,
+      user,
       search,
       paginationDto,
       sortDto,
@@ -75,9 +62,7 @@ export class UserController {
 
   @Get('listed-organization-users')
   @AuthEndpoint()
-  async getListedOrganizationUsers(
-    @Query('organizationId') organizationId: string,
-  ) {
-    return await this.userService.getListedOrganizationUsers(organizationId);
+  async getListedOrganizationUsers(@CurrentUser() user: AuthenticatedUser) {
+    return await this.userService.getListedOrganizationUsers(user);
   }
 }

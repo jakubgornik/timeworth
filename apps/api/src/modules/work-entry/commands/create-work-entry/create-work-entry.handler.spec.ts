@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@packages/db';
 import { CreateWorkEntryHandler } from './create-work-entry.handler';
-import { CreateWorkEntryCommand } from './create-work-entry.command';
-import { CreateWorkEntryDto } from '../../dto/create-work-entry.dto';
+import {
+  CreateWorkEntryCommand,
+  CreateWorkEntryInput,
+} from './create-work-entry.command';
 import { WorkEntryStartedAtBeforeEndedAt } from '../../exceptions/work-entry.exceptions';
 
 describe('CreateWorkEntryHandler', () => {
@@ -30,7 +32,7 @@ describe('CreateWorkEntryHandler', () => {
   });
 
   it('should create a work entry with correct hoursWorked', async () => {
-    const dto: CreateWorkEntryDto = {
+    const dto: CreateWorkEntryInput = {
       title: 'Test Work',
       startedAt: new Date('2025-01-01T08:00:00Z'),
       endedAt: new Date('2025-01-01T12:00:00Z'),
@@ -59,7 +61,7 @@ describe('CreateWorkEntryHandler', () => {
   });
 
   it('should throw error if started at is before ended at', async () => {
-    const dto: CreateWorkEntryDto = {
+    const dto: CreateWorkEntryInput = {
       title: 'Test Work',
       startedAt: new Date('2025-01-01T12:00:00Z'),
       endedAt: new Date('2025-01-01T08:00:00Z'),

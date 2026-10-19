@@ -3,7 +3,10 @@ import { OrganizationWorkEntriesFiltersDto } from '../../dto/organization-work-e
 import { IWorkEntryDto } from '@packages/types';
 
 export class GetExportedWorkEntriesQuery extends Query<IWorkEntryDto[]> {
-  constructor(public readonly filtersDto: OrganizationWorkEntriesFiltersDto) {
+  constructor(
+    public readonly filtersDto: OrganizationWorkEntriesFiltersDto,
+    public readonly organizationId: string,
+  ) {
     super();
   }
 }

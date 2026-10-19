@@ -11,7 +11,7 @@ export class GetOrganizationUsersQuery extends Query<
   IPaginatedResponseDto<IUserDto>
 > {
   constructor(
-    public readonly managerId: string,
+    public readonly organizationId: string,
     public readonly search: string,
     public readonly paginationDto: PaginationDto,
     public readonly sortDto: SortDto,

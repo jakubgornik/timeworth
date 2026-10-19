@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@packages/db';
 import { ImportWorkEntriesHandler } from './import-work-entry.handler';
 import { ImportWorkEntriesCommand } from './import-work-entry.command';
-import { CreateWorkEntryDto } from '../../dto/create-work-entry.dto';
+import { CreateWorkEntryInput } from '../create-work-entry/create-work-entry.command';
 import { BadRequestException } from '@nestjs/common';
 
 const calcHoursWorked = (startedAt: Date, endedAt: Date) =>
@@ -32,7 +32,7 @@ describe('ImportWorkEntriesHandler', () => {
   });
 
   it('should import multiple work entries with correct hoursWorked', async () => {
-    const dto: CreateWorkEntryDto[] = [
+    const dto: CreateWorkEntryInput[] = [
       {
         title: 'Entry 1',
         startedAt: new Date('2025-01-01T08:00:00Z'),
@@ -77,7 +77,7 @@ describe('ImportWorkEntriesHandler', () => {
   });
 
   it('should throw BadRequestException if user has no organization', async () => {
-    const dto: CreateWorkEntryDto[] = [
+    const dto: CreateWorkEntryInput[] = [
       {
         title: 'Invalid Entry',
         startedAt: new Date('2025-01-01T08:00:00Z'),

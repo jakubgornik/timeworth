@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@packages/db';
 import { ImportWorkEntriesHandler } from './import-work-entry.handler';
 import { ImportWorkEntriesCommand } from './import-work-entry.command';
-import { CreateWorkEntryDto } from '../../dto/create-work-entry.dto';
+import { CreateWorkEntryInput } from '../create-work-entry/create-work-entry.command';
 import { BadRequestException } from '@nestjs/common';
 
 describe('ImportWorkEntriesHandler Integration Test', () => {
@@ -42,7 +42,7 @@ describe('ImportWorkEntriesHandler Integration Test', () => {
   });
 
   it('should successfully bulk import work entries', async () => {
-    const dtos: CreateWorkEntryDto[] = [
+    const dtos: CreateWorkEntryInput[] = [
       {
         title: 'Bulk Import Entry 1',
         startedAt: new Date('2025-01-01T08:00:00Z'),
@@ -79,7 +79,7 @@ describe('ImportWorkEntriesHandler Integration Test', () => {
   });
 
   it('should throw a BadRequestException if a user does not exist', async () => {
-    const dtos: CreateWorkEntryDto[] = [
+    const dtos: CreateWorkEntryInput[] = [
       {
         title: 'Bad Bulk Entry',
         startedAt: new Date('2025-01-01T08:00:00Z'),

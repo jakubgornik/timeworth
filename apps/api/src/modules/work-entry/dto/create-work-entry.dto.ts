@@ -21,12 +21,4 @@ export class CreateWorkEntryDto implements ICreateWorkEntryDto {
   @ApiPropertyOptional()
   @IsString()
   description?: string;
-
-  @ApiProperty()
-  @IsString()
-  userId: string;
-
-  @ApiProperty()
-  @IsString()
-  organizationId: string;
 }

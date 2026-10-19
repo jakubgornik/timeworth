@@ -26,7 +26,6 @@ import {
   createOrganizationSchema,
 } from "./validators/create-organization.validation";
 import { useCreateOrganization } from "@/hooks/organization/use-create-organization";
-import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { AxiosError } from "axios";
 import { useNotification } from "@/hooks/use-notification";
 
@@ -41,7 +40,6 @@ const createOrganizationErrorMap: Record<number, { message: string }> = {
 
 export function CreateOrganizationDialog() {
   const [open, setOpen] = useState(false);
-  const currentUser = useCurrentUser();
   const { mutate: createOrganization } = useCreateOrganization();
   const { showError, showSuccess } = useNotification();
 
@@ -58,11 +56,7 @@ export function CreateOrganizationDialog() {
   });
 
   const handleCreate = (data: CreateOrganizationForm) => {
-    const payload = {
-      ...data,
-      managerId: currentUser.data!.id,
-    };
-    createOrganization(payload, {
+    createOrganization(data, {
       onSuccess: () => {
         showSuccess("Successfully created the organization");
       },

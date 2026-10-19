@@ -1,7 +1,6 @@
 import SectionHeader from "@/components/section-header";
 import SectionWrapper from "@/components/section-wrapper";
 import { Card } from "@/components/ui/card";
-import { useCurrentUser } from "@/hooks/user/use-current-user";
 import { useOrganizationUsers } from "@/hooks/user/use-organization-users";
 import {
   ExpandedState,
@@ -21,7 +20,6 @@ import { FilterColumn, FilterState } from "@/modules/filters/filters.types";
 import { TableToolbar } from "@/modules/filters/table-toolbar";
 
 export default function DetailsPage() {
-  const currentUser = useCurrentUser();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [pagination, setPagination] = useState<PaginationState>({
@@ -45,7 +43,6 @@ export default function DetailsPage() {
   );
 
   const { data: organizationUsers } = useOrganizationUsers({
-    managerId: currentUser.data?.id ?? "",
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     ...sortingQuery,

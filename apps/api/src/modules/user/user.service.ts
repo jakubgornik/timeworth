@@ -7,13 +7,15 @@ import { GetUserByIdQuery } from './queries/get-user-by-id/get-user-by-id.query'
 import { GetUserStatusOptionsQuery } from './queries/get-user-status-options/get-user-status-options.query';
 import { OrganizationUsersFiltersDto } from './dto/organization-users-filters.dto';
 import { GetListedOrganizationUsersQuery } from './queries/get-listed-organization-users/get-listed-organization-users.query';
+import { AuthenticatedUser } from '../../shared/auth/authenticated-user';
+import { requireManagerOrganization } from '../../shared/auth/authorization';
 
 @Injectable()
 export class UserService {
   constructor(private readonly queryBus: QueryBus) {}
 
   async getOrganizationUsers(
-    managerId: string,
+    user: AuthenticatedUser,
     search: string,
     paginationDto: PaginationDto,
     sortDto: SortDto,
@@ -21,7 +23,7 @@ export class UserService {
   ) {
     return await this.queryBus.execute(
       new GetOrganizationUsersQuery(
-        managerId,
+        requireManagerOrganization(user),
         search,
         paginationDto,
         sortDto,
@@ -38,9 +40,9 @@ export class UserService {
     return await this.queryBus.execute(new GetUserStatusOptionsQuery());
   }
 
-  async getListedOrganizationUsers(organizationId: string) {
+  async getListedOrganizationUsers(user: AuthenticatedUser) {
     return await this.queryBus.execute(
-      new GetListedOrganizationUsersQuery(organizationId),
+      new GetListedOrganizationUsersQuery(requireManagerOrganization(user)),
     );
   }
 }

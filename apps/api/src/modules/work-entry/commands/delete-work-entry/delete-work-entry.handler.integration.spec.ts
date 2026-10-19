@@ -40,7 +40,7 @@ describe('DeleteWorkEntryHandler Integration Test', () => {
         await prisma.workEntry.delete({
           where: { id: tempEntryId },
         });
-      } catch (error) {
+      } catch {
         // If the entry was already deleted during the test, we can ignore this error
       }
     }
@@ -62,7 +62,11 @@ describe('DeleteWorkEntryHandler Integration Test', () => {
     });
     tempEntryId = workEntry.id;
 
-    const command = new DeleteWorkEntryCommand(workEntry.id);
+    const command = new DeleteWorkEntryCommand(
+      workEntry.id,
+      testUserId,
+      testOrgId,
+    );
     await handler.execute(command);
 
     const deletedEntry = await prisma.workEntry.findUnique({
@@ -73,7 +77,7 @@ describe('DeleteWorkEntryHandler Integration Test', () => {
   });
 
   it('should throw an error if the work entry ID does not exist', async () => {
-    const command = new DeleteWorkEntryCommand('123');
+    const command = new DeleteWorkEntryCommand('123', testUserId, testOrgId);
 
     await expect(handler.execute(command)).rejects.toThrow();
   });

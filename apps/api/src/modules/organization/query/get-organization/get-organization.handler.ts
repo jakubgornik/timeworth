@@ -12,16 +12,18 @@ export class GetOrganizationHandler
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(dto: GetOrganizationQuery): Promise<IOrganizationDto> {
-    if (!dto.managerId) {
+    if (!dto.organizationId) {
       throw new ManagerNotFoundException();
     }
 
-    return this.getOrganization(dto.managerId);
+    return this.getOrganization(dto.organizationId);
   }
 
-  private async getOrganization(managerId: string): Promise<IOrganizationDto> {
+  private async getOrganization(
+    organizationId: string,
+  ): Promise<IOrganizationDto> {
     const organization = await this.prisma.organization.findUnique({
-      where: { managerId },
+      where: { id: organizationId },
     });
 
     if (!organization) {

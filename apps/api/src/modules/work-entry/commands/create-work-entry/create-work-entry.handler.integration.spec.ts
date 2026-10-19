@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@packages/db';
 import { CreateWorkEntryHandler } from './create-work-entry.handler';
-import { CreateWorkEntryCommand } from './create-work-entry.command';
-import { CreateWorkEntryDto } from '../../dto/create-work-entry.dto';
+import {
+  CreateWorkEntryCommand,
+  CreateWorkEntryInput,
+} from './create-work-entry.command';
 
 describe('CreateWorkEntryHandler Integration Test', () => {
   let handler: CreateWorkEntryHandler;
@@ -48,7 +50,7 @@ describe('CreateWorkEntryHandler Integration Test', () => {
   });
 
   it('should successfully save a work entry to the seeded database', async () => {
-    const dto: CreateWorkEntryDto = {
+    const dto: CreateWorkEntryInput = {
       title: 'Test Work Entry',
       startedAt: new Date('2025-01-01T08:00:00Z'),
       endedAt: new Date('2025-01-01T12:00:00Z'),

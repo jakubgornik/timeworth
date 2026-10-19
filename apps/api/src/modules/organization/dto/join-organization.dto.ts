@@ -5,10 +5,6 @@ import { IsString } from 'class-validator';
 export class JoinOrganizationDto implements IJoinOrganizationDto {
   @ApiProperty()
   @IsString()
-  userId: string;
-
-  @ApiProperty()
-  @IsString()
   inviteCode: string;
 
   @ApiProperty()
