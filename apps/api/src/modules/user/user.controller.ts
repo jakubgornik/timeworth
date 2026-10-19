@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Post,
   Query,
   Req,
@@ -30,9 +29,10 @@ export class UserController {
     private readonly userService: UserService,
   ) {}
 
-  @Delete(':id')
-  async deleteUser(@Param('id') id: string) {
-    return this.authService.deleteUser(id);
+  @Delete('me')
+  @AuthEndpoint()
+  async deleteUser(@Req() req: RequestWithUser) {
+    return this.authService.deleteUser(req.user.userId);
   }
 
   @Post('register')
