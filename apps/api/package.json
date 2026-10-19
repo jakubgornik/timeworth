@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "npx nest build",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",
@@ -30,8 +30,8 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/serve-static": "^5.0.3",
     "@nestjs/swagger": "^11.1.4",
-    "@packages/db": "*",
-    "@packages/types": "*",
+    "@packages/db": "workspace:*",
+    "@packages/types": "workspace:*",
     "@prisma/client": "^6.5.0",
     "@sentry/nestjs": "^10.16.0",
     "@supabase/supabase-js": "^2.49.4",
@@ -75,7 +75,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3",
+    "typescript": "5.8.3",
     "typescript-eslint": "^8.20.0"
   },
   "jest": {

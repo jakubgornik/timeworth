@@ -29,12 +29,12 @@ export default defineConfig({
 
   webServer: [
     {
-      command: `CORS_ORIGIN=${E2E_BASE_URL} npm --prefix ../.. run dev -w api`,
+      command: `CORS_ORIGIN=${E2E_BASE_URL} pnpm --dir ../.. --filter api dev`,
       url: E2E_API_URL,
     },
     {
       command:
-        "npm --prefix ../.. run dev -w web -- --host localhost --port 5173",
+        "pnpm --dir ../.. --filter web dev --host localhost --port 5173",
       url: `${E2E_BASE_URL}/login`,
     },
   ],
