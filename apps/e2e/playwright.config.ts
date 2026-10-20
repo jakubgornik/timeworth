@@ -4,8 +4,7 @@ import { config } from "dotenv";
 import { defineConfig, devices } from "@playwright/test";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-config({ path: path.resolve(__dirname, "../web/.env") });
-config({ path: path.resolve(__dirname, ".env"), override: true });
+config({ path: path.resolve(__dirname, "../../.env") });
 
 const E2E_BASE_URL = process.env.E2E_BASE_URL || "http://localhost:5173";
 const E2E_API_URL = process.env.E2E_API_URL || "http://localhost:3000";

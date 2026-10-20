@@ -10,19 +10,21 @@
         "rxjs": "^7.8.1"
     },
     "scripts": {
-        "build": "prisma generate && tsc",
-        "db:generate": "prisma generate",
-        "db:migrate": "prisma migrate dev",
-        "db:deploy": "prisma migrate deploy",
-        "db:pull": "prisma db pull",
-        "db:push": "prisma db push",
-        "db:reset": "prisma migrate reset --force",
-        "db:seed": "ts-node prisma/seed.ts"
+        "with-env": "dotenv -e ../../.env --",
+        "build": "pnpm db:generate && tsc",
+        "db:generate": "pnpm with-env prisma generate",
+        "db:migrate": "pnpm with-env prisma migrate dev",
+        "db:deploy": "pnpm with-env prisma migrate deploy",
+        "db:pull": "pnpm with-env prisma db pull",
+        "db:push": "pnpm with-env prisma db push",
+        "db:reset": "pnpm with-env prisma migrate reset --force",
+        "db:seed": "pnpm with-env ts-node prisma/seed.ts"
     },
     "devDependencies": {
         "@faker-js/faker": "^9.9.0",
         "@supabase/supabase-js": "^2.49.4",
         "@types/node": "^22.14.0",
+        "dotenv-cli": "^11.0.0",
         "prisma": "^6.5.0",
         "ts-node": "^10.9.2",
         "typescript": "5.8.3"
