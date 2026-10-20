@@ -1,4 +1,4 @@
-import { Delete, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaService } from '@packages/db';
 import { StorageService } from '../storage.service';

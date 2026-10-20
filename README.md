@@ -95,6 +95,8 @@ shared database package's build; building does not run migrations.
 ```sh
 pnpm build:api                       # API and its shared packages
 pnpm build:web                       # frontend and its shared packages
+pnpm type-check                      # all workspaces, including tests and tooling
+pnpm lint                            # API and web ESLint checks
 pnpm --filter api dev
 pnpm --filter web dev
 pnpm --filter api test --runInBand    # unit tests, excluding integration tests
@@ -104,6 +106,18 @@ pnpm --filter @packages/db with-env prisma validate # extra commands with root .
 pnpm --filter web add <dependency>
 pnpm --filter api add -D <dependency>
 ```
+
+`pnpm type-check` checks API source and tests, the web app and Vite config, shared
+packages, and Playwright tests and config. Each workspace uses its existing
+TypeScript config; the database config excludes seed scripts. The command
+generates Prisma client types, without running migrations, tests, or a production
+build.
+All workspace checks run even when another reports type errors, and any failure
+makes the command exit with a nonzero status. To check one workspace, use
+`pnpm --filter web type-check` (replace `web` with the package name).
+
+Run `pnpm lint` alongside type-checking for ESLint checks. It reports issues
+without changing files. Use `pnpm --filter api lint:fix` to apply API auto-fixes.
 
 Commit `pnpm-lock.yaml` when changing dependencies. CI/deployments should use
 `pnpm install --frozen-lockfile --prod=false` so build tools are installed even
