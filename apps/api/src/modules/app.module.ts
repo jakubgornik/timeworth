@@ -22,7 +22,7 @@ import { TrustedOriginGuard } from '../shared/auth/trusted-origin.guard';
     UserModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: path.resolve(__dirname, '../../.env'),
+      envFilePath: path.resolve(__dirname, '../../../../.env'),
     }),
     SupabaseModule,
     AuthModule,

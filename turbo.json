@@ -1,11 +1,19 @@
 {
     "$schema": "https://turbo.build/schema.json",
+    "globalDependencies": [".env"],
+    "globalEnv": ["NODE_ENV", "VITE_*"],
+    "globalPassThroughEnv": [
+        "DATABASE_URL",
+        "DIRECT_URL",
+        "SUPABASE_*",
+        "JWT_SECRET",
+        "PORT",
+        "CORS_ORIGIN",
+        "SENTRY_DSN",
+        "E2E_*"
+    ],
     "tasks": {
         "build": {
-            "inputs": [
-                "$TURBO_DEFAULT$",
-                ".env*"
-            ],
             "dependsOn": [
                 "^build"
             ],
