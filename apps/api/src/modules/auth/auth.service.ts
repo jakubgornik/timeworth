@@ -76,13 +76,10 @@ export class AuthService {
   async login(dto: LoginUserDto, res: Response) {
     const { email, password } = dto;
 
-    const { data, error } =
-      await this.supabaseService.client.auth.signInWithPassword({
-        email,
-        password,
-      });
+    const { user: supabaseUser, error } =
+      await this.supabaseService.signInWithPassword(email, password);
 
-    if (error || !data.user) {
+    if (error || !supabaseUser) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -91,9 +88,9 @@ export class AuthService {
     const { user, accessToken } = await this.prisma.$transaction(async (tx) => {
       // Serialize token creation for one account without changing profile fields.
       // NO KEY UPDATE permits foreign-key checks while this lock is held.
-      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${data.user.id} FOR NO KEY UPDATE`;
+      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${supabaseUser.id} FOR NO KEY UPDATE`;
       const user = await tx.user.findUniqueOrThrow({
-        where: { id: data.user.id },
+        where: { id: supabaseUser.id },
       });
       await tx.refreshToken.updateMany({
         where: { userId: user.id, revoked: false },

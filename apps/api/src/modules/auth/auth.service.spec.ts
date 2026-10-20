@@ -22,6 +22,7 @@ describe('AuthService token rotation', () => {
     signOptions: { expiresIn: ACCESS_TOKEN_TTL_SECONDS },
   });
   let service: AuthService;
+  let supabase: { signInWithPassword: jest.Mock };
   let response: Response;
   let revoked: boolean;
   let expiresAt: Date;
@@ -69,14 +70,8 @@ describe('AuthService token rotation', () => {
       },
     };
     prisma.$transaction.mockImplementation((operation) => operation(prisma));
-    const supabase = {
-      client: {
-        auth: {
-          signInWithPassword: jest
-            .fn()
-            .mockResolvedValue({ data: { user }, error: null }),
-        },
-      },
+    supabase = {
+      signInWithPassword: jest.fn().mockResolvedValue({ user, error: null }),
     };
     service = new AuthService(
       supabase as unknown as SupabaseService,
@@ -93,6 +88,10 @@ describe('AuthService token rotation', () => {
     await service.login(
       { email: user.email, password: 'Password123!' },
       response,
+    );
+    expect(supabase.signInWithPassword).toHaveBeenCalledWith(
+      user.email,
+      'Password123!',
     );
     const cookies = response.cookie as jest.Mock;
     const access = cookies.mock.calls.find(
@@ -130,6 +129,18 @@ describe('AuthService token rotation', () => {
     )![1] as string;
     expect(next.token).toBe(hashToken(raw));
     expect(next.userId).toBe(user.id);
+  });
+
+  it('rejects invalid login credentials without issuing application tokens', async () => {
+    supabase.signInWithPassword.mockResolvedValue({
+      user: null,
+      error: new Error('Invalid login credentials'),
+    });
+    await expect(
+      service.login({ email: user.email, password: 'wrong' }, response),
+    ).rejects.toThrow(UnauthorizedException);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+    expect(response.cookie).not.toHaveBeenCalled();
   });
 
   it('honors conditional consumption so simultaneous calls create at most one successor', async () => {
