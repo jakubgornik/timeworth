@@ -12,6 +12,7 @@
     "scripts": {
         "with-env": "dotenv -e ../../.env --",
         "build": "pnpm db:generate && tsc",
+        "type-check": "pnpm db:generate && tsc --noEmit",
         "db:generate": "pnpm with-env prisma generate",
         "db:migrate": "pnpm with-env prisma migrate dev",
         "db:deploy": "pnpm with-env prisma migrate deploy",

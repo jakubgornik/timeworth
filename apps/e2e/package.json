@@ -4,11 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "type-check": "tsc --noEmit",
     "test": "playwright test",
     "test:ui-host": "playwright test --ui --ui-host 0.0.0.0 --ui-port 9323"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
-    "dotenv": "^16.6.1"
+    "@types/node": "22.14.0",
+    "dotenv": "^16.6.1",
+    "typescript": "5.8.3"
   }
 }

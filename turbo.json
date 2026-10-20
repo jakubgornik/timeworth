@@ -22,6 +22,13 @@
                 "prisma/client/**"
             ]
         },
+        "type-check": {
+            "dependsOn": [
+                "^type-check"
+            ],
+            "cache": false
+        },
+        "lint": {},
         "dev": {
             "cache": false,
             "persistent": true
