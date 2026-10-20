@@ -8,15 +8,15 @@ export const ManagerRouteGuard = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { data: user, isLoading, isError } = useCurrentUser();
+  const { data: user, isPending } = useCurrentUser();
   const isManager = useIsUserManager();
   const location = useLocation();
 
-  if (isLoading) {
+  if (isPending) {
     return;
   }
 
-  if (isError || !user || !user.organization || !isManager) {
+  if (!user || !user.organization || !isManager) {
     return (
       <Navigate to={ROUTES.DASHBOARD} state={{ from: location }} replace />
     );

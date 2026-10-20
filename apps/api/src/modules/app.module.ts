@@ -12,6 +12,8 @@ import { WorkEntryModule } from './work-entry/work-entry.module';
 import * as path from 'path';
 import { SentryModule, SentryGlobalFilter } from '@sentry/nestjs/setup';
 import { PersonalStorageModule } from './personal-storage/personal-storage.module';
+import { APP_GUARD } from '@nestjs/core';
+import { TrustedOriginGuard } from '../shared/auth/trusted-origin.guard';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { PersonalStorageModule } from './personal-storage/personal-storage.modul
   ],
   controllers: [AppController],
   providers: [
+    { provide: APP_GUARD, useClass: TrustedOriginGuard },
     {
       provide: 'APP_FILTER',
       useClass: SentryGlobalFilter,

@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { PrismaModule } from '@packages/db';
 import { SupabaseModule } from '../supabase/supabase.module';
 import { JwtStrategy } from './jwt.strategy';
+import { ACCESS_TOKEN_TTL_SECONDS } from '../../shared/utilities/tokens-options';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { JwtStrategy } from './jwt.strategy';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '2h' },
+        signOptions: { expiresIn: ACCESS_TOKEN_TTL_SECONDS },
       }),
     }),
   ],
