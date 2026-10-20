@@ -1,6 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@packages/db';
 import { JwtStrategy } from './jwt.strategy';
 
@@ -52,5 +53,26 @@ describe('JwtStrategy', () => {
     await expect(strategy.validate({ sub: 'deleted-user' })).rejects.toThrow(
       UnauthorizedException,
     );
+  });
+
+  it('accepts a signed access JWT using only its subject and current user data', async () => {
+    prisma.user.findUnique.mockResolvedValue({
+      id: 'user-1',
+      email: 'user@example.com',
+      role: 'EMPLOYEE',
+      organization: null,
+    });
+    const jwt = new JwtService({ secret: 'authorization-test-secret' });
+    const token = jwt.sign({ sub: 'user-1' }, { expiresIn: '2h' });
+    const payload = jwt.verify<{ sub: string }>(token);
+
+    // The mock exposes no refresh-token or session delegate. Authentication must
+    // not depend on a stored copy, session ID or revocation record for this JWT.
+    await expect(strategy.validate(payload)).resolves.toMatchObject({
+      userId: 'user-1',
+      role: 'EMPLOYEE',
+      organizationId: null,
+    });
+    expect(prisma.user.findUnique).toHaveBeenCalledTimes(1);
   });
 });

@@ -10,9 +10,13 @@ import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { randomBytes } from 'crypto';
-import { hashToken } from 'src/shared/utilities/hash-token';
+import { hashToken } from '../../shared/utilities/hash-token';
 import { Request } from 'express';
-import { COOKIE_OPTIONS } from 'src/shared/utilities/tokens-options';
+import {
+  COOKIE_CLEAR_OPTIONS,
+  COOKIE_OPTIONS,
+  REFRESH_TOKEN_TTL_MS,
+} from '../../shared/utilities/tokens-options';
 
 @Injectable()
 export class AuthService {
@@ -82,35 +86,35 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: data.user.id, email: data.user.email };
-    const accessToken = this.jwtService.sign(payload);
-
     const refreshToken = randomBytes(64).toString('hex');
     const hashedRefreshToken = hashToken(refreshToken);
-
-    const [user] = await this.prisma.$transaction([
-      this.prisma.user.findUniqueOrThrow({
+    const { user, accessToken } = await this.prisma.$transaction(async (tx) => {
+      // Serialize token creation for one account without changing profile fields.
+      // NO KEY UPDATE permits foreign-key checks while this lock is held.
+      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${data.user.id} FOR NO KEY UPDATE`;
+      const user = await tx.user.findUniqueOrThrow({
         where: { id: data.user.id },
-      }),
-      this.prisma.refreshToken.updateMany({
-        where: {
-          userId: data.user.id,
-          revoked: false,
-        },
+      });
+      await tx.refreshToken.updateMany({
+        where: { userId: user.id, revoked: false },
         data: { revoked: true },
-      }),
-      this.prisma.refreshToken.create({
+      });
+      const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_MS);
+      await tx.refreshToken.create({
         data: {
           token: hashedRefreshToken,
-          userId: data.user.id,
-          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+          userId: user.id,
+          expiresAt,
         },
-      }),
-    ]);
+      });
+      const accessToken = this.jwtService.sign({
+        sub: user.id,
+        email: user.email,
+      });
+      return { user, accessToken };
+    });
 
-    res.cookie('access_token', accessToken, COOKIE_OPTIONS.accessToken);
-
-    res.cookie('refresh_token', refreshToken, COOKIE_OPTIONS.refreshToken);
+    this.setTokenCookies(res, accessToken, refreshToken);
 
     return {
       id: user.id,
@@ -121,28 +125,27 @@ export class AuthService {
   }
 
   async logout(req: Request, res: Response) {
-    const refreshToken = req.cookies?.refresh_token;
-
-    if (refreshToken) {
-      const hashed = hashToken(refreshToken);
-
-      await this.prisma.refreshToken.update({
-        where: { token: hashed },
-        data: { revoked: true },
-      });
+    const refreshToken = this.readRefreshToken(req);
+    try {
+      if (refreshToken) {
+        await this.prisma.refreshToken.updateMany({
+          where: { token: hashToken(refreshToken), revoked: false },
+          data: { revoked: true },
+        });
+      }
+    } catch {
+      throw new InternalServerErrorException('Logout failed');
+    } finally {
+      for (const name of ['access_token', 'refresh_token']) {
+        res.clearCookie(name, COOKIE_CLEAR_OPTIONS);
+      }
     }
-    res.clearCookie('access_token', {
-      ...COOKIE_OPTIONS.accessToken,
-    });
-    res.clearCookie('refresh_token', {
-      ...COOKIE_OPTIONS.refreshToken,
-    });
 
     return { message: 'Logged out successfully' };
   }
 
   async refreshTokens(req: Request, res: Response) {
-    const refreshToken = req.cookies?.refresh_token;
+    const refreshToken = this.readRefreshToken(req);
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token missing');
@@ -150,56 +153,69 @@ export class AuthService {
 
     const hashedRefreshToken = hashToken(refreshToken);
 
-    const storedRefreshToken = await this.prisma.refreshToken.findUnique({
-      where: { token: hashedRefreshToken },
-      include: { user: true },
-    });
-
-    if (!storedRefreshToken || storedRefreshToken.revoked) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-
-    if (new Date() > new Date(storedRefreshToken.expiresAt)) {
-      await this.prisma.refreshToken.update({
-        where: { token: hashedRefreshToken },
-        data: { revoked: true },
-      });
-      throw new UnauthorizedException('Refresh token expired');
-    }
-
-    const user = storedRefreshToken.user;
-
     const newRefreshToken = randomBytes(64).toString('hex');
     const newHashedRefreshToken = hashToken(newRefreshToken);
-    const newAccessToken = this.jwtService.sign({
-      sub: user.id,
-      email: user.email,
-    });
 
     try {
-      await this.prisma.$transaction([
-        this.prisma.refreshToken.update({
+      const newAccessToken = await this.prisma.$transaction(async (tx) => {
+        const stored = await tx.refreshToken.findUnique({
           where: { token: hashedRefreshToken },
+          include: { user: true },
+        });
+        if (!stored) throw new UnauthorizedException('Invalid refresh token');
+
+        // Use the same account lock as login so a concurrent login cannot
+        // miss a successor created by an old refresh after revoking its predecessor.
+        await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${stored.userId} FOR NO KEY UPDATE`;
+
+        // PostgreSQL rechecks this predicate after waiting for a competing update.
+        const consumed = await tx.refreshToken.updateMany({
+          where: {
+            token: hashedRefreshToken,
+            revoked: false,
+            // Recheck expiration after waiting for the account lock.
+            expiresAt: { gt: new Date() },
+          },
           data: { revoked: true },
-        }),
-        this.prisma.refreshToken.create({
+        });
+        if (consumed.count !== 1)
+          throw new UnauthorizedException('Invalid refresh token');
+
+        await tx.refreshToken.create({
           data: {
             token: newHashedRefreshToken,
-            userId: user.id,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+            userId: stored.userId,
+            expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
           },
-        }),
-      ]);
+        });
+        return this.jwtService.sign({
+          sub: stored.user.id,
+          email: stored.user.email,
+        });
+      });
 
-      res.cookie('access_token', newAccessToken, COOKIE_OPTIONS.accessToken);
-      res.cookie('refresh_token', newRefreshToken, COOKIE_OPTIONS.refreshToken);
+      // Never clear cookies on a losing refresh: another tab may have rotated them.
+      this.setTokenCookies(res, newAccessToken, newRefreshToken);
 
       return { message: 'Tokens refreshed successfully' };
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Token refresh failed, error: ${error}`,
-      );
+      if (error instanceof UnauthorizedException) throw error;
+      throw new InternalServerErrorException('Token refresh failed');
     }
+  }
+
+  private readRefreshToken(req: Request): string | undefined {
+    const token: unknown = req.cookies?.refresh_token;
+    return typeof token === 'string' && token.length > 0 ? token : undefined;
+  }
+
+  private setTokenCookies(
+    res: Response,
+    accessToken: string,
+    refreshToken: string,
+  ) {
+    res.cookie('access_token', accessToken, COOKIE_OPTIONS.accessToken);
+    res.cookie('refresh_token', refreshToken, COOKIE_OPTIONS.refreshToken);
   }
 
   async deleteUser(userId: string) {

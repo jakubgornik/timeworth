@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import api from "@/lib/axios/axios";
+import api, { resetAuthRedirect, withAuthMutation } from "@/lib/axios/axios";
 import {
   IUserCredentialsDto as ILoginDto,
   IUserDto as ILoginResponseDto,
@@ -11,15 +11,18 @@ import { useNotification } from "@/hooks/use-notification";
 
 export function useLogin() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { showError } = useNotification();
 
   return useMutation<ILoginResponseDto, AxiosError, ILoginDto>({
     mutationFn: async (data: ILoginDto) => {
-      const res = await api.post("/auth/login", data);
+      const res = await withAuthMutation(() => api.post("/auth/login", data));
       return res.data;
     },
     onSuccess: () => {
+      resetAuthRedirect();
+      queryClient.clear();
       navigate(ROUTES.DASHBOARD, { replace: true });
     },
     onError: () => {

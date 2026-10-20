@@ -8,15 +8,15 @@ export const EmployeeRouteGuard = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { data: user, isLoading, isError } = useCurrentUser();
+  const { data: user, isPending } = useCurrentUser();
   const isEmployee = useIsUserEmployee();
   const location = useLocation();
 
-  if (isLoading) {
+  if (isPending) {
     return;
   }
 
-  if (isError || !user || !user.organization || !isEmployee) {
+  if (!user || !user.organization || !isEmployee) {
     return (
       <Navigate to={ROUTES.DASHBOARD} state={{ from: location }} replace />
     );
