@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { PrismaService } from '@packages/db';
-import { StorageService } from '../storage.service';
+import { PrismaModule } from '@packages/db';
+import { StorageModule } from '../storage.module';
 import { PersonalStorageController } from './personal-storage.controller';
 import { PersonalStorageService } from './personal-storage.service';
 import { ConfirmUploadHandler } from './command/confirm-upload/confirm-upload.handler';
@@ -10,7 +10,7 @@ import { GetEmployeeFilesHandler } from './query/get-employee-files/get-employee
 import { DeleteFileHandler } from './command/delete-file/delete-file.handler';
 import { GetFileDownloadUrlHandler } from './query/download-file/download-file.handler';
 
-const services = [PersonalStorageService, StorageService, PrismaService];
+const services = [PersonalStorageService];
 
 const commandHandlers = [
   ConfirmUploadHandler,
@@ -23,6 +23,6 @@ const queryHandlers = [GetEmployeeFilesHandler];
 @Module({
   controllers: [PersonalStorageController],
   providers: [...services, ...commandHandlers, ...queryHandlers],
-  imports: [CqrsModule],
+  imports: [CqrsModule, PrismaModule, StorageModule],
 })
 export class PersonalStorageModule {}

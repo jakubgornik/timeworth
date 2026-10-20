@@ -12,14 +12,9 @@ import { ExportService } from '../export.service';
 import { GetExportedWorkEntriesHandler } from './query/get-exported-work-entries/get-exported-work-entries.handler';
 import { ImportWorkEntriesService } from './import-work-entries.service';
 import { ImportWorkEntriesHandler } from './commands/import-work-entry/import-work-entry.handler';
-import { StorageService } from '../storage.service';
+import { StorageModule } from '../storage.module';
 
-const services = [
-  WorkEntryService,
-  ExportService,
-  ImportWorkEntriesService,
-  StorageService,
-];
+const services = [WorkEntryService, ExportService, ImportWorkEntriesService];
 const commandHandlers = [
   CreateWorkEntryHandler,
   DeleteWorkEntryHandler,
@@ -35,6 +30,6 @@ const queryHandlers = [
 @Module({
   controllers: [WorkEntryController],
   providers: [...services, ...commandHandlers, ...queryHandlers],
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, StorageModule],
 })
 export class WorkEntryModule {}
