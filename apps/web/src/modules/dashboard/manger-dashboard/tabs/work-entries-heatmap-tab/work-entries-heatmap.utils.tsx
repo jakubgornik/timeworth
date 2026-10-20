@@ -48,7 +48,28 @@ export const DAY_LABELS = [
   "Sat",
 ] as const;
 
-export const AVAILABLE_YEARS = [2025, 2024, 2023, 2022] as const;
+const FIRST_HEATMAP_YEAR = 2022;
+
+export const getAvailableYears = (
+  selectedYear: number,
+  workEntries: readonly Pick<IWorkEntryDto, "startedAt">[],
+  currentYear = new Date().getFullYear(),
+): number[] => {
+  let firstYear = Math.min(FIRST_HEATMAP_YEAR, currentYear, selectedYear);
+  let lastYear = Math.max(currentYear, selectedYear);
+
+  for (const entry of workEntries) {
+    const year = new Date(entry.startedAt).getFullYear();
+    if (!Number.isFinite(year)) continue;
+    firstYear = Math.min(firstYear, year);
+    lastYear = Math.max(lastYear, year);
+  }
+
+  return Array.from(
+    { length: lastYear - firstYear + 1 },
+    (_, index) => lastYear - index,
+  );
+};
 
 export const CELL_SIZE = 16;
 export const CALENDAR_HEIGHT = 168;
@@ -71,7 +92,7 @@ export const getHourRange = (level: number): string => {
 };
 
 const calculateStreaks = (
-  calendarData: DayData[]
+  calendarData: DayData[],
 ): Pick<Statistics, "longestStreak"> => {
   let maxStreak = 0;
   let currentStreak = 0;
@@ -93,7 +114,7 @@ const calculateStreaks = (
 export const useCalendarData = (
   workEntries: IWorkEntryDto[],
   selectedYear: number,
-  isLoading: boolean
+  isLoading: boolean,
 ): DayData[] => {
   return useMemo(() => {
     if (isLoading || !workEntries?.length) return [];
@@ -161,7 +182,7 @@ export const useCalendarData = (
 
 export const useStatistics = (
   calendarData: DayData[],
-  isLoading: boolean
+  isLoading: boolean,
 ): Statistics => {
   return useMemo(() => {
     if (isLoading || !calendarData.length) {
@@ -234,7 +255,7 @@ export const useWeeksLayout = (calendarData: DayData[], isLoading: boolean) => {
 export const useMonthPositions = (
   weeks: DayData[][],
   selectedYear: number,
-  isLoading: boolean
+  isLoading: boolean,
 ): MonthPosition[] => {
   return useMemo(() => {
     if (isLoading || !weeks.length) return [];

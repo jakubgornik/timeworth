@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 import { UserSelector } from "../user-selector";
 import { IWorkEntryDto } from "@packages/types";
 import {
-  AVAILABLE_YEARS,
+  getAvailableYears,
   useCalendarData,
   useMonthPositions,
   useStatistics,
@@ -21,7 +21,8 @@ import { WorkEntriesHeatmapSkeleton } from "./work-entries-heatmap-skeleton";
 import { YearSelector } from "../year-selector";
 
 export function WorkEntriesHeatmapTab() {
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined
   );
@@ -33,6 +34,10 @@ export function WorkEntriesHeatmapTab() {
     selectedUserId,
   });
   const heatmapData: IWorkEntryDto[] = useMemo(() => data || [], [data]);
+  const availableYears = useMemo(
+    () => getAvailableYears(selectedYear, heatmapData, currentYear),
+    [selectedYear, heatmapData, currentYear]
+  );
   const calendarData = useCalendarData(heatmapData, selectedYear, isLoading);
   const weeks = useWeeksLayout(calendarData, isLoading);
   const statisticsData = useStatistics(calendarData, isLoading);
@@ -71,7 +76,7 @@ export function WorkEntriesHeatmapTab() {
             <YearSelector
               selectedYear={selectedYear}
               onYearChange={setSelectedYear}
-              availableYears={AVAILABLE_YEARS}
+              availableYears={availableYears}
               disabled={isLoading}
             />
           </div>
