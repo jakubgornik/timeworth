@@ -50,7 +50,13 @@ export class ImportWorkEntriesService {
         } satisfies CreateWorkEntryInput;
       });
     } catch (error) {
-      throw new BadRequestException(`Failed to parse file: ${error.message}`);
+      if (error instanceof BadRequestException) throw error;
+      if (error instanceof ImportWorkEntriesEmptyFileException) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Invalid or unsupported spreadsheet file', {
+        cause: error,
+      });
     }
   }
 }
