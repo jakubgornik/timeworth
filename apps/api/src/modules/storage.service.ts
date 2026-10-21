@@ -102,7 +102,7 @@ export class StorageService {
     contentLength: number,
     expiresInSeconds = 900,
     bucket = this.bucket,
-  ): Promise<string> {
+  ): Promise<{ uploadUrl: string; expiresAt: Date }> {
     try {
       const command = new PutObjectCommand({
         Bucket: bucket,
@@ -111,10 +111,16 @@ export class StorageService {
         ContentLength: contentLength,
       });
 
-      return await getSignedUrl(this.s3Client, command, {
+      const signingDate = new Date();
+      const uploadUrl = await getSignedUrl(this.s3Client, command, {
         expiresIn: expiresInSeconds,
+        signingDate,
         signableHeaders: new Set(['content-type', 'content-length']),
       });
+      const expiresAt = new Date(
+        signingDate.getTime() + expiresInSeconds * 1000,
+      );
+      return { uploadUrl, expiresAt };
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to generate secure upload link',

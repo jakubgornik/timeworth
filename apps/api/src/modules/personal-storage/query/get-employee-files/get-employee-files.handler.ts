@@ -24,6 +24,7 @@ export class GetEmployeeFilesHandler
     const where: Prisma.StoredFileWhereInput = {
       userId,
       status: 'UPLOADED',
+      deletedAt: null,
     };
 
     const [storage, totalCount] = await Promise.all([

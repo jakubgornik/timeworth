@@ -16,7 +16,7 @@ export class ConfirmUploadHandler
 
   async execute({ userId, fileId }: ConfirmUploadCommand): Promise<StoredFile> {
     const file = await this.prisma.storedFile.findFirst({
-      where: { id: fileId, userId },
+      where: { id: fileId, userId, deletedAt: null },
     });
     if (!file) throw new NotFoundException();
     if (file.status === FileStatus.FAILED) {
@@ -43,7 +43,7 @@ export class ConfirmUploadHandler
       hasUnsupportedMimeType
     ) {
       await this.prisma.storedFile.updateMany({
-        where: { id: fileId, userId },
+        where: { id: fileId, userId, deletedAt: null },
         data: { status: FileStatus.FAILED },
       });
       throw new BadRequestException(
@@ -55,6 +55,7 @@ export class ConfirmUploadHandler
       where: {
         id: fileId,
         userId,
+        deletedAt: null,
         status: { in: [FileStatus.PENDING, FileStatus.UPLOADED] },
       },
       data: { status: FileStatus.UPLOADED },

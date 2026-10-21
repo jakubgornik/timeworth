@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@packages/db';
 import { DeleteFileCommand } from './delete-file.command';
-import { StorageService } from 'src/modules/storage.service';
+import { StorageService } from '../../../storage.service';
 
 @CommandHandler(DeleteFileCommand)
 export class DeleteFileHandler implements ICommandHandler<DeleteFileCommand> {
@@ -23,11 +23,10 @@ export class DeleteFileHandler implements ICommandHandler<DeleteFileCommand> {
       throw new NotFoundException();
     }
 
-    await this.storageService.removeFile(file.s3Path);
-    await this.prisma.storedFile.delete({
-      where: {
-        id,
-      },
+    await this.prisma.storedFile.updateMany({
+      where: { id, userId, deletedAt: null },
+      data: { deletedAt: new Date() },
     });
+    await this.storageService.removeFile(file.s3Path);
   }
 }

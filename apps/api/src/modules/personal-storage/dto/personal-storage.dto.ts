@@ -4,6 +4,7 @@ import {
   IsArray,
   IsIn,
   IsInt,
+  IsObject,
   IsString,
   IsNotEmpty,
   Max,
@@ -42,6 +43,7 @@ export class UploadFilesDto implements IUploadFilesDto {
   @IsArray()
   @ArrayMinSize(1)
   @ArrayMaxSize(STORAGE_LIMITS.maxFilesPerRequest)
+  @IsObject({ each: true })
   @ValidateNested({ each: true })
   @Type(() => FileMetadataDto)
   files: FileMetadataDto[];
