@@ -1,4 +1,6 @@
-import { defineConfig, env } from "prisma/config";
+/// <reference types="node" />
+
+import { defineConfig } from "prisma/config";
 
 // The with-env scripts load the root .env before invoking the Prisma CLI.
 export default defineConfig({
@@ -8,6 +10,6 @@ export default defineConfig({
     seed: "ts-node prisma/seed.ts",
   },
   datasource: {
-    url: env("DIRECT_URL"),
+    url: process.env.DIRECT_URL,
   },
 });
