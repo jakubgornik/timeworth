@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@packages/db';
 import { ImportWorkEntriesHandler } from './import-work-entry.handler';
-import { ImportWorkEntriesCommand } from './import-work-entry.command';
-import { CreateWorkEntryInput } from '../create-work-entry/create-work-entry.command';
+import {
+  ImportWorkEntriesCommand,
+  ImportWorkEntryInput,
+} from './import-work-entry.command';
 import { BadRequestException } from '@nestjs/common';
 
 describe('ImportWorkEntriesHandler Integration Test', () => {
@@ -42,14 +44,13 @@ describe('ImportWorkEntriesHandler Integration Test', () => {
   });
 
   it('should successfully bulk import work entries', async () => {
-    const dtos: CreateWorkEntryInput[] = [
+    const dtos: ImportWorkEntryInput[] = [
       {
         title: 'Bulk Import Entry 1',
         startedAt: new Date('2025-01-01T08:00:00Z'),
         endedAt: new Date('2025-01-01T12:00:00Z'),
         description: TEST_TAG,
         userId: testUserId,
-        organizationId: '',
       },
       {
         title: 'Bulk Import Entry 2',
@@ -57,7 +58,6 @@ describe('ImportWorkEntriesHandler Integration Test', () => {
         endedAt: new Date('2025-01-02T11:00:00Z'),
         description: TEST_TAG,
         userId: testUserId,
-        organizationId: '',
       },
     ];
 
@@ -79,14 +79,13 @@ describe('ImportWorkEntriesHandler Integration Test', () => {
   });
 
   it('should throw a BadRequestException if a user does not exist', async () => {
-    const dtos: CreateWorkEntryInput[] = [
+    const dtos: ImportWorkEntryInput[] = [
       {
         title: 'Bad Bulk Entry',
         startedAt: new Date('2025-01-01T08:00:00Z'),
         endedAt: new Date('2025-01-01T12:00:00Z'),
         description: TEST_TAG,
         userId: '123',
-        organizationId: '',
       },
     ];
 

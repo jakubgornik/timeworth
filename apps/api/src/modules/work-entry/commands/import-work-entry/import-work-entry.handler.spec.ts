@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@packages/db';
 import { ImportWorkEntriesHandler } from './import-work-entry.handler';
-import { ImportWorkEntriesCommand } from './import-work-entry.command';
-import { CreateWorkEntryInput } from '../create-work-entry/create-work-entry.command';
+import {
+  ImportWorkEntriesCommand,
+  ImportWorkEntryInput,
+} from './import-work-entry.command';
 import { BadRequestException } from '@nestjs/common';
 
 const calcHoursWorked = (startedAt: Date, endedAt: Date) =>
@@ -35,14 +37,13 @@ describe('ImportWorkEntriesHandler', () => {
   });
 
   it('should import multiple work entries with correct hoursWorked', async () => {
-    const dto: CreateWorkEntryInput[] = [
+    const dto: ImportWorkEntryInput[] = [
       {
         title: 'Entry 1',
         startedAt: new Date('2025-01-01T08:00:00Z'),
         endedAt: new Date('2025-01-01T12:00:00Z'),
         description: 'First entry',
         userId: 'user-1',
-        organizationId: '',
       },
       {
         title: 'Entry 2',
@@ -50,7 +51,6 @@ describe('ImportWorkEntriesHandler', () => {
         endedAt: new Date('2025-01-02T17:00:00Z'),
         description: 'Second entry',
         userId: 'user-2',
-        organizationId: '',
       },
     ];
 
@@ -83,17 +83,16 @@ describe('ImportWorkEntriesHandler', () => {
       where: { id: { in: ['user-1', 'user-2'] } },
       select: { id: true, organizationId: true },
     });
-    expect(dto.every((entry) => entry.organizationId === '')).toBe(true);
+    expect(dto.every((entry) => !('organizationId' in entry))).toBe(true);
   });
 
   it('should throw BadRequestException if user has no organization', async () => {
-    const dto: CreateWorkEntryInput[] = [
+    const dto: ImportWorkEntryInput[] = [
       {
         title: 'Invalid Entry',
         startedAt: new Date('2025-01-01T08:00:00Z'),
         endedAt: new Date('2025-01-01T12:00:00Z'),
         userId: 'user-99',
-        organizationId: '',
       },
     ];
 
@@ -148,7 +147,6 @@ describe('ImportWorkEntriesHandler', () => {
       title: 'Work',
       startedAt: new Date('2026-01-01T08:00:00Z'),
       endedAt: new Date('2026-01-01T09:00:00Z'),
-      organizationId: '',
     };
     prisma.user.findMany.mockResolvedValue([
       { id: 'user-1', organizationId: 'org-1' },
@@ -189,7 +187,6 @@ describe('ImportWorkEntriesHandler', () => {
           startedAt: new Date('2026-01-01T08:00:00Z'),
           endedAt: new Date('2026-01-01T09:00:00Z'),
           userId: 'user-1',
-          organizationId: '',
         },
       ]),
     );
