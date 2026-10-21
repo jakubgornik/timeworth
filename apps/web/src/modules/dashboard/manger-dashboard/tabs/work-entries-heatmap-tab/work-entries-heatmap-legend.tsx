@@ -1,5 +1,9 @@
 import { memo } from "react";
-import { getHourRange, getIntensityColor } from "./work-entries-heatmap.utils";
+import {
+  getHourRange,
+  getIntensityColor,
+  INTENSITY_COLORS,
+} from "./work-entries-heatmap.utils";
 import {
   Tooltip,
   TooltipContent,
@@ -10,7 +14,7 @@ export const WorkEntriesHeatmapLegend = memo(() => (
   <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
     <span>Less</span>
     <div className="flex gap-1">
-      {[0, 1, 2, 3, 4].map((level) => (
+      {INTENSITY_COLORS.map((_, level) => (
         <Tooltip key={level} delayDuration={0} disableHoverableContent>
           <TooltipTrigger asChild>
             <div

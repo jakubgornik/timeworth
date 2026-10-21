@@ -7,21 +7,22 @@ import {
 import { addDays, format, getDay, startOfYear, subDays } from "date-fns";
 import { IWorkEntryDto } from "@packages/types";
 
-export const INTENSITY_COLORS = [
-  "bg-card border-border",
-  "bg-chart-2/20 border-chart-2/40",
-  "bg-chart-2/40 border-chart-2/60",
-  "bg-chart-2/60 border-chart-2/80",
-  "bg-chart-2 border-chart-2",
+const INTENSITY_SCALE = [
+  { maxHours: 0, color: "bg-card border-border" },
+  { maxHours: 4, color: "bg-chart-2/20 border-chart-2/40" },
+  { maxHours: 6, color: "bg-chart-2/40 border-chart-2/60" },
+  { maxHours: 8, color: "bg-chart-2/60 border-chart-2/80" },
+  { maxHours: Infinity, color: "bg-chart-2 border-chart-2" },
 ] as const;
 
-export const HOUR_RANGES = [
-  "0 hours",
-  "1-3 hours",
-  "4-5 hours",
-  "6-7 hours",
-  "8+ hours",
-] as const;
+export const INTENSITY_COLORS = INTENSITY_SCALE.map(({ color }) => color);
+
+export const HOUR_RANGES = INTENSITY_SCALE.map(({ maxHours }, level) => {
+  if (level === 0) return "0 hours";
+  const minHours = INTENSITY_SCALE[level - 1].maxHours;
+  if (!Number.isFinite(maxHours)) return `${minHours}+ hours`;
+  return `${minHours === 0 ? ">0" : minHours} to <${maxHours} hours`;
+});
 
 export const MONTH_LABELS = [
   "Jan",
@@ -76,11 +77,9 @@ export const CALENDAR_HEIGHT = 168;
 export const WEEK_HEIGHT = 24;
 
 export const getIntensityLevel = (hours: number): number => {
-  if (hours === 0) return 0;
-  if (hours < 4) return 1;
-  if (hours < 6) return 2;
-  if (hours < 8) return 3;
-  return 4;
+  if (hours <= 0) return 0;
+  const level = INTENSITY_SCALE.findIndex(({ maxHours }) => hours < maxHours);
+  return level === -1 ? INTENSITY_SCALE.length - 1 : level;
 };
 
 export const getIntensityColor = (level: number): string => {
@@ -146,11 +145,7 @@ export const useCalendarData = (
       dayData.hours += entry.hoursWorked;
       dayData.entries.push(entry);
 
-      if (dayData.hours === 0) dayData.level = 0;
-      else if (dayData.hours <= 2) dayData.level = 1;
-      else if (dayData.hours <= 4) dayData.level = 2;
-      else if (dayData.hours <= 6) dayData.level = 3;
-      else dayData.level = 4;
+      dayData.level = getIntensityLevel(dayData.hours);
     });
 
     const allDays: DayData[] = [];
