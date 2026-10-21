@@ -88,10 +88,7 @@ export class WorkEntryService {
     user: AuthenticatedUser,
   ): Promise<Buffer> {
     const workEntries = await this.queryBus.execute(
-      new GetExportedWorkEntriesQuery(
-        filters,
-        requireManagerOrganization(user),
-      ),
+      new GetExportedWorkEntriesQuery(filters, user),
     );
 
     return this.exportService.exportToExcel(

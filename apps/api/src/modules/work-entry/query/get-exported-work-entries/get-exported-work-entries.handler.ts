@@ -3,7 +3,7 @@ import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { mapOrganizationWorkEntriesFiltersDtoToWhere } from '../../../../shared/mappers/map-organization-work-entries-filters-dto-to-where';
 import { GetExportedWorkEntriesQuery } from './get-exported-work-entries.query';
 import { IWorkEntryDto } from '@packages/types';
-import { ForbiddenException } from '@nestjs/common';
+import { requireManagerOrganization } from '../../../../shared/auth/authorization';
 
 @QueryHandler(GetExportedWorkEntriesQuery)
 export class GetExportedWorkEntriesHandler
@@ -13,11 +13,9 @@ export class GetExportedWorkEntriesHandler
 
   async execute({
     filtersDto,
-    organizationId,
+    user,
   }: GetExportedWorkEntriesQuery): Promise<IWorkEntryDto[]> {
-    if (!organizationId) {
-      throw new ForbiddenException('Organization membership required');
-    }
+    const organizationId = requireManagerOrganization(user);
     const where: Prisma.WorkEntryWhereInput = {
       organizationId,
       AND: mapOrganizationWorkEntriesFiltersDtoToWhere(filtersDto),

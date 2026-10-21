@@ -4,12 +4,20 @@ import { GetExportedWorkEntriesQuery } from './get-exported-work-entries.query';
 import { PrismaService } from '@packages/db';
 import { IWorkEntryDto } from '@packages/types';
 import { mapOrganizationWorkEntriesFiltersDtoToWhere } from '../../../../shared/mappers/map-organization-work-entries-filters-dto-to-where';
+import { AuthenticatedUser } from '../../../../shared/auth/authenticated-user';
 
 jest.mock(
   '../../../../shared/mappers/map-organization-work-entries-filters-dto-to-where',
 );
 
 describe('GetExportedWorkEntriesHandler', () => {
+  const user: AuthenticatedUser = {
+    userId: 'manager-1',
+    email: 'manager@example.com',
+    role: 'MANAGER',
+    organizationId: 'org-1',
+    organizationManagerId: 'manager-1',
+  };
   let handler: GetExportedWorkEntriesHandler;
   let prisma: { workEntry: { findMany: jest.Mock } };
 
@@ -56,7 +64,7 @@ describe('GetExportedWorkEntriesHandler', () => {
     );
     prisma.workEntry.findMany.mockResolvedValue(mockResults);
 
-    const query = new GetExportedWorkEntriesQuery(filtersDto, 'org-1');
+    const query = new GetExportedWorkEntriesQuery(filtersDto, user);
     const result = await handler.execute(query);
 
     expect(mapOrganizationWorkEntriesFiltersDtoToWhere).toHaveBeenCalledWith(
@@ -76,7 +84,7 @@ describe('GetExportedWorkEntriesHandler', () => {
     );
     prisma.workEntry.findMany.mockResolvedValue([]);
 
-    const query = new GetExportedWorkEntriesQuery(filtersDto, 'org-1');
+    const query = new GetExportedWorkEntriesQuery(filtersDto, user);
     const result = await handler.execute(query);
 
     expect(result).toEqual([]);
