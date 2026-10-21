@@ -58,13 +58,17 @@ export function WorkEntriesComposedChart({
           <Tooltip
             contentStyle={TOOLTIP_STYLES.content}
             labelStyle={TOOLTIP_STYLES.label}
-            formatter={(value: number, name: string) => [
-              <WorkEntriesChartTooltipContent
-                key={name}
-                value={value}
-                name={name}
-              />,
-            ]}
+            formatter={(value, name) =>
+              typeof value === "number" && typeof name === "string"
+                ? [
+                    <WorkEntriesChartTooltipContent
+                      key={name}
+                      value={value}
+                      name={name}
+                    />,
+                  ]
+                : null
+            }
           />
           <Bar
             name="Total Hours"

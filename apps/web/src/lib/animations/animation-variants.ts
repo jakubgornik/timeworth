@@ -73,7 +73,7 @@ const signInTextVariants: Variants = {
   },
 };
 
-const demoCardVariants = {
+const demoCardVariants: Variants = {
   hidden: {
     opacity: 0,
     y: -10,

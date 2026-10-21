@@ -12,9 +12,7 @@ import {
 } from '../../exceptions/organization.exception';
 
 @CommandHandler(CreateOrganizationCommand)
-export class CreateOrganizationHandler
-  implements ICommandHandler<CreateOrganizationCommand>
-{
+export class CreateOrganizationHandler implements ICommandHandler<CreateOrganizationCommand> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({

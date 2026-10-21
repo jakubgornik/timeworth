@@ -6,9 +6,10 @@ import { GetOrganizationQuery } from './get-organization.query';
 import { ManagerNotFoundException } from 'src/modules/work-entry/exceptions/work-entry.exceptions';
 
 @QueryHandler(GetOrganizationQuery)
-export class GetOrganizationHandler
-  implements IQueryHandler<GetOrganizationQuery, IOrganizationDto>
-{
+export class GetOrganizationHandler implements IQueryHandler<
+  GetOrganizationQuery,
+  IOrganizationDto
+> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(dto: GetOrganizationQuery): Promise<IOrganizationDto> {

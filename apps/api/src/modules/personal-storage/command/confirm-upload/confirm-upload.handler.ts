@@ -6,9 +6,7 @@ import { StorageService } from '../../../storage.service';
 import { STORAGE_LIMITS } from '@packages/types';
 
 @CommandHandler(ConfirmUploadCommand)
-export class ConfirmUploadHandler
-  implements ICommandHandler<ConfirmUploadCommand>
-{
+export class ConfirmUploadHandler implements ICommandHandler<ConfirmUploadCommand> {
   constructor(
     private readonly prisma: PrismaService,
     private readonly storageService: StorageService,

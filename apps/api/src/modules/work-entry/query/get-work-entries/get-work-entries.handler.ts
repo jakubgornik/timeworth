@@ -6,9 +6,10 @@ import { mapWorkEntryToEvent } from '../../utils/map-work-entry-to-event';
 import { UserNotFoundException } from '../../../user/exceptions/user.exception';
 
 @QueryHandler(GetWorkEntriesQuery)
-export class GetWorkEntriesHandler
-  implements IQueryHandler<GetWorkEntriesQuery, IWorkEntryToEventDto[]>
-{
+export class GetWorkEntriesHandler implements IQueryHandler<
+  GetWorkEntriesQuery,
+  IWorkEntryToEventDto[]
+> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(

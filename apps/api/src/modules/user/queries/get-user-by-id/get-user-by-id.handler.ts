@@ -5,9 +5,10 @@ import { UserNotFoundException } from '../../exceptions/user.exception';
 import { ICurrentUserDto } from '@packages/types';
 
 @QueryHandler(GetUserByIdQuery)
-export class GetUserByIdHandler
-  implements IQueryHandler<GetUserByIdQuery, ICurrentUserDto>
-{
+export class GetUserByIdHandler implements IQueryHandler<
+  GetUserByIdQuery,
+  ICurrentUserDto
+> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(userByIdQueryDto: GetUserByIdQuery) {

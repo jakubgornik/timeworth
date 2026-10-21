@@ -2,8 +2,9 @@ import { PrismaClient } from "../prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { faker } from "@faker-js/faker";
 import { randomUUID } from "crypto";
+import { createPrismaAdapter } from "../src/adapter";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ adapter: createPrismaAdapter() });
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

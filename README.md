@@ -54,8 +54,8 @@ pnpm workspace monorepo managed by Turborepo:
 
 ## Local development
 
-Use Node.js 22 or 24 with Corepack installed. The root `packageManager` field pins
-pnpm to `10.34.7`.
+Use Node.js 22.13+ or 24 with Corepack installed. The root `packageManager` field
+pins pnpm to `10.34.7`.
 
 ```sh
 corepack enable
@@ -97,6 +97,7 @@ pnpm build:api                       # API and its shared packages
 pnpm build:web                       # frontend and its shared packages
 pnpm type-check                      # all workspaces, including tests and tooling
 pnpm lint                            # API and web ESLint checks
+pnpm test                            # API unit tests, excluding integration tests
 pnpm --filter api dev
 pnpm --filter web dev
 pnpm --filter api test --runInBand    # unit tests, excluding integration tests

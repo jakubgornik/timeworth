@@ -10,9 +10,7 @@ import { StorageService } from '../../../storage.service';
 import { IPresignedUrlResponse, STORAGE_LIMITS } from '@packages/types';
 
 @CommandHandler(GenerateUploadPresignedUrlsCommand)
-export class GenerateUploadPresignedUrlsHandler
-  implements ICommandHandler<GenerateUploadPresignedUrlsCommand>
-{
+export class GenerateUploadPresignedUrlsHandler implements ICommandHandler<GenerateUploadPresignedUrlsCommand> {
   constructor(
     private readonly prisma: PrismaService,
     private readonly storageService: StorageService,

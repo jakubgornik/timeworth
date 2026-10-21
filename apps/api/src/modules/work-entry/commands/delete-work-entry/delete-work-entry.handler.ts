@@ -4,9 +4,7 @@ import { PrismaService } from '@packages/db';
 import { DeleteWorkEntryCommand } from './delete-work-entry.command';
 
 @CommandHandler(DeleteWorkEntryCommand)
-export class DeleteWorkEntryHandler
-  implements ICommandHandler<DeleteWorkEntryCommand>
-{
+export class DeleteWorkEntryHandler implements ICommandHandler<DeleteWorkEntryCommand> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({

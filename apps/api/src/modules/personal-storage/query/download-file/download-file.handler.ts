@@ -6,9 +6,7 @@ import { StorageService } from 'src/modules/storage.service';
 import { IGetFileDownloadUrlDto } from '@packages/types';
 
 @QueryHandler(GetFileDownloadUrlQuery)
-export class GetFileDownloadUrlHandler
-  implements IQueryHandler<GetFileDownloadUrlQuery>
-{
+export class GetFileDownloadUrlHandler implements IQueryHandler<GetFileDownloadUrlQuery> {
   constructor(
     private readonly prisma: PrismaService,
     private readonly storageService: StorageService,

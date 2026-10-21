@@ -5,9 +5,7 @@ import { Prisma } from '@packages/db';
 import { BadRequestException } from '@nestjs/common';
 
 @CommandHandler(ImportWorkEntriesCommand)
-export class ImportWorkEntriesHandler
-  implements ICommandHandler<ImportWorkEntriesCommand>
-{
+export class ImportWorkEntriesHandler implements ICommandHandler<ImportWorkEntriesCommand> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({ dto }: ImportWorkEntriesCommand) {

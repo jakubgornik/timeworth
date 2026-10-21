@@ -4,9 +4,7 @@ import { JoinOrganizationCommand } from './join-organization.command';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @CommandHandler(JoinOrganizationCommand)
-export class JoinOrganizationHandler
-  implements ICommandHandler<JoinOrganizationCommand>
-{
+export class JoinOrganizationHandler implements ICommandHandler<JoinOrganizationCommand> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({
