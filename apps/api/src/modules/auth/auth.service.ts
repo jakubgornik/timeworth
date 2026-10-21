@@ -65,11 +65,19 @@ export class AuthService {
         updatedAt: user.updatedAt,
       };
     } catch (error) {
-      await this.supabaseService.deleteUser(userId);
-
-      throw new InternalServerErrorException(
-        `User creation failed, error: ${error}`,
-      );
+      try {
+        await this.supabaseService.deleteUser(userId);
+      } catch (cleanupError) {
+        throw new InternalServerErrorException('User creation failed', {
+          cause: new AggregateError(
+            [error, cleanupError],
+            'Account cleanup failed',
+          ),
+        });
+      }
+      throw new InternalServerErrorException('User creation failed', {
+        cause: error,
+      });
     }
   }
 
@@ -130,8 +138,8 @@ export class AuthService {
           data: { revoked: true },
         });
       }
-    } catch {
-      throw new InternalServerErrorException('Logout failed');
+    } catch (error) {
+      throw new InternalServerErrorException('Logout failed', { cause: error });
     } finally {
       for (const name of ['access_token', 'refresh_token']) {
         res.clearCookie(name, COOKIE_CLEAR_OPTIONS);
@@ -197,7 +205,9 @@ export class AuthService {
       return { message: 'Tokens refreshed successfully' };
     } catch (error) {
       if (error instanceof UnauthorizedException) throw error;
-      throw new InternalServerErrorException('Token refresh failed');
+      throw new InternalServerErrorException('Token refresh failed', {
+        cause: error,
+      });
     }
   }
 
@@ -231,9 +241,9 @@ export class AuthService {
 
       return { message: 'User deleted successfully' };
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Failed to delete user: ${error.message}`,
-      );
+      throw new InternalServerErrorException('User deletion failed', {
+        cause: error,
+      });
     }
   }
 }

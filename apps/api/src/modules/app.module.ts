@@ -8,11 +8,15 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
 import { OrganizationModule } from './organization/organization.module';
 import { WorkEntryModule } from './work-entry/work-entry.module';
-import * as path from 'path';
-import { SentryModule, SentryGlobalFilter } from '@sentry/nestjs/setup';
+import { SentryModule } from '@sentry/nestjs/setup';
 import { PersonalStorageModule } from './personal-storage/personal-storage.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { TrustedOriginGuard } from '../shared/auth/trusted-origin.guard';
+import {
+  ROOT_ENV_PATH,
+  validateEnvironment,
+} from '../shared/config/environment';
+import { ApiExceptionFilter } from '../shared/diagnostics/api-exception.filter';
 
 @Module({
   imports: [
@@ -21,7 +25,8 @@ import { TrustedOriginGuard } from '../shared/auth/trusted-origin.guard';
     UserModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: path.resolve(__dirname, '../../../../.env'),
+      envFilePath: ROOT_ENV_PATH,
+      validate: validateEnvironment,
     }),
     SupabaseModule,
     AuthModule,
@@ -33,8 +38,8 @@ import { TrustedOriginGuard } from '../shared/auth/trusted-origin.guard';
   providers: [
     { provide: APP_GUARD, useClass: TrustedOriginGuard },
     {
-      provide: 'APP_FILTER',
-      useClass: SentryGlobalFilter,
+      provide: APP_FILTER,
+      useClass: ApiExceptionFilter,
     },
     AppService,
   ],

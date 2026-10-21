@@ -19,7 +19,7 @@ import { ACCESS_TOKEN_TTL_SECONDS } from '../../shared/utilities/tokens-options'
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: { expiresIn: ACCESS_TOKEN_TTL_SECONDS },
       }),
     }),

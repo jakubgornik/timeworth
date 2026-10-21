@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
@@ -15,7 +11,6 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 @Injectable()
 export class StorageService {
   private readonly s3Client: S3Client;
-  private readonly logger = new Logger(StorageService.name);
   private readonly bucket: string;
 
   constructor(private readonly configService: ConfigService) {
@@ -54,8 +49,9 @@ export class StorageService {
       await this.s3Client.send(command);
       return safeKey;
     } catch (error) {
-      this.logger.error(`Upload failed for ${safeKey}`, error.stack);
-      throw new InternalServerErrorException('Failed to upload file');
+      throw new InternalServerErrorException('Failed to upload file', {
+        cause: error,
+      });
     }
   }
 
@@ -67,8 +63,9 @@ export class StorageService {
       });
       await this.s3Client.send(command);
     } catch (error) {
-      this.logger.error(`Delete failed for ${key}`, error.stack);
-      throw new InternalServerErrorException('Failed to delete file');
+      throw new InternalServerErrorException('Failed to delete file', {
+        cause: error,
+      });
     }
   }
 
@@ -86,12 +83,9 @@ export class StorageService {
         expiresIn: expiresInSeconds,
       });
     } catch (error) {
-      this.logger.error(
-        `Failed to generate download URL for ${key}`,
-        error.stack,
-      );
       throw new InternalServerErrorException(
         'Failed to generate secure download link',
+        { cause: error },
       );
     }
   }
@@ -114,12 +108,9 @@ export class StorageService {
         signableHeaders: new Set(['content-type']),
       });
     } catch (error) {
-      this.logger.error(
-        `Failed to generate upload URL for ${key}`,
-        error.stack,
-      );
       throw new InternalServerErrorException(
         'Failed to generate secure upload link',
+        { cause: error },
       );
     }
   }
