@@ -3,9 +3,7 @@ import { IOrganizationWorkEntriesFiltersDto } from '@packages/types';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class OrganizationWorkEntriesFiltersDto
-  implements IOrganizationWorkEntriesFiltersDto
-{
+export class OrganizationWorkEntriesFiltersDto implements IOrganizationWorkEntriesFiltersDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()

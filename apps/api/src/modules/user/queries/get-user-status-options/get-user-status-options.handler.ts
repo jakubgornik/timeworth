@@ -4,9 +4,10 @@ import { GetUserStatusOptionsQuery } from './get-user-status-options.query';
 import { UserStatusOption } from '@packages/types';
 
 @QueryHandler(GetUserStatusOptionsQuery)
-export class GetUserStatusOptionsHandler
-  implements IQueryHandler<GetUserStatusOptionsQuery, UserStatusOption[]>
-{
+export class GetUserStatusOptionsHandler implements IQueryHandler<
+  GetUserStatusOptionsQuery,
+  UserStatusOption[]
+> {
   async execute(): Promise<UserStatusOption[]> {
     return Object.values(UserStatus).map((status) => ({
       label: this.formatStatusLabel(status),

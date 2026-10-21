@@ -4,9 +4,7 @@ import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 import { UserStatus } from '@packages/db';
 import { TransformArray } from 'src/shared/decorators/transform-array.decorator';
 
-export class OrganizationUsersFiltersDto
-  implements IOrganizationUsersFiltersDto
-{
+export class OrganizationUsersFiltersDto implements IOrganizationUsersFiltersDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()

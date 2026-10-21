@@ -7,13 +7,10 @@ import { mapOrganizationWorkEntriesFiltersDtoToWhere } from 'src/shared/mappers/
 import { ManagerNotFoundException } from '../../exceptions/work-entry.exceptions';
 
 @QueryHandler(GetOrganizationWorkEntriesQuery)
-export class GetOrganizationWorkEntriesHandler
-  implements
-    IQueryHandler<
-      GetOrganizationWorkEntriesQuery,
-      IPaginatedResponseDto<IWorkEntryDto>
-    >
-{
+export class GetOrganizationWorkEntriesHandler implements IQueryHandler<
+  GetOrganizationWorkEntriesQuery,
+  IPaginatedResponseDto<IWorkEntryDto>
+> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(

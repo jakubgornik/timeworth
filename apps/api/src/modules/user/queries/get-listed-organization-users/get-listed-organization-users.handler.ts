@@ -4,9 +4,10 @@ import { SelectedUser } from '@packages/types';
 import { GetListedOrganizationUsersQuery } from './get-listed-organization-users.query';
 
 @QueryHandler(GetListedOrganizationUsersQuery)
-export class GetListedOrganizationUsersHandler
-  implements IQueryHandler<GetListedOrganizationUsersQuery, SelectedUser[]>
-{
+export class GetListedOrganizationUsersHandler implements IQueryHandler<
+  GetListedOrganizationUsersQuery,
+  SelectedUser[]
+> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({

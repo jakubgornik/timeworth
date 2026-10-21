@@ -5,9 +5,7 @@ import { IPaginatedResponseDto, IStorageFileDto } from '@packages/types';
 import { mapStorageSortDtoToOrderBy } from 'src/shared/mappers/map-storage-sort-dto-to-order-by';
 
 @QueryHandler(GetEmployeeFilesQuery)
-export class GetEmployeeFilesHandler
-  implements IQueryHandler<GetEmployeeFilesQuery>
-{
+export class GetEmployeeFilesHandler implements IQueryHandler<GetEmployeeFilesQuery> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(

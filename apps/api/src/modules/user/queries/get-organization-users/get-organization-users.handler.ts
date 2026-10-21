@@ -10,10 +10,10 @@ import { mapOrganizationUsersFiltersDtoToWhere } from '../../../../shared/mapper
 import { ManagerNotFoundException } from '../../exceptions/user.exception';
 
 @QueryHandler(GetOrganizationUsersQuery)
-export class GetOrganizationUsersHandler
-  implements
-    IQueryHandler<GetOrganizationUsersQuery, IPaginatedResponseDto<IUserDto>>
-{
+export class GetOrganizationUsersHandler implements IQueryHandler<
+  GetOrganizationUsersQuery,
+  IPaginatedResponseDto<IUserDto>
+> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(organizationUsersQueryDto: GetOrganizationUsersQuery) {

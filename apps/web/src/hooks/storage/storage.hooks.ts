@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import api from "@/lib/axios/axios";
 import axios from "axios";
+import { useNotification } from "../use-notification";
 import {
   IFileMetadataDto,
   IConfirmUploadDto,
@@ -45,6 +46,7 @@ const useGetStorageFile = (query: IPaginatedStorageFileQueryDto) => {
 
 const useUploadStorageFile = () => {
   const queryClient = useQueryClient();
+  const { showSuccess, showError } = useNotification();
 
   return useMutation({
     mutationFn: async (files: File[]) => {
@@ -70,9 +72,17 @@ const useUploadStorageFile = () => {
         });
       });
 
-      await Promise.all(uploadPromises);
+      const results = await Promise.allSettled(uploadPromises);
+      const failure = results.find((result) => result.status === "rejected");
+      if (failure) throw failure.reason;
     },
     onSuccess: () => {
+      showSuccess("Files uploaded successfully");
+    },
+    onError: () => {
+      showError("Some files could not be uploaded. Please try again.");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["employee-files"] });
     },
   });

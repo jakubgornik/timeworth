@@ -6,9 +6,7 @@ import { IWorkEntryDto } from '@packages/types';
 import { requireManagerOrganization } from '../../../../shared/auth/authorization';
 
 @QueryHandler(GetExportedWorkEntriesQuery)
-export class GetExportedWorkEntriesHandler
-  implements IQueryHandler<GetExportedWorkEntriesQuery>
-{
+export class GetExportedWorkEntriesHandler implements IQueryHandler<GetExportedWorkEntriesQuery> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({

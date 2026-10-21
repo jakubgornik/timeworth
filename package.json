@@ -1,8 +1,8 @@
 {
   "devDependencies": {
-    "@nestjs/cli": "^11.0.0",
+    "@nestjs/cli": "^11.0.24",
     "supabase": "2.121.0",
-    "turbo": "^2.5.0"
+    "turbo": "^2.11.10"
   },
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
     "build:web": "turbo run build --filter=web",
     "type-check": "turbo run type-check",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "pnpm --filter api test"
   },
   "packageManager": "pnpm@10.34.7"
 }
