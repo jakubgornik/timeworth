@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@packages/db';
+import { FileStatus, PrismaService } from '@packages/db';
 import { GetFileDownloadUrlQuery } from './download-file.query';
 import { StorageService } from 'src/modules/storage.service';
 import { IGetFileDownloadUrlDto } from '@packages/types';
@@ -22,6 +22,7 @@ export class GetFileDownloadUrlHandler
       where: {
         id,
         userId: userId,
+        status: FileStatus.UPLOADED,
       },
     });
 

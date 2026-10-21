@@ -1,8 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import {
+  ForbiddenException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { PrismaService, FileStatus } from '@packages/db';
 import { GenerateUploadPresignedUrlsCommand } from './generate-upload-presigned-urls.command';
-import { StorageService } from 'src/modules/storage.service';
-import { IPresignedUrlResponse } from '@packages/types';
+import { StorageService } from '../../../storage.service';
+import { IPresignedUrlResponse, STORAGE_LIMITS } from '@packages/types';
 
 @CommandHandler(GenerateUploadPresignedUrlsCommand)
 export class GenerateUploadPresignedUrlsHandler
@@ -17,40 +22,59 @@ export class GenerateUploadPresignedUrlsHandler
     userId,
     files,
   }: GenerateUploadPresignedUrlsCommand): Promise<IPresignedUrlResponse[]> {
-    const s3Results = await Promise.all(
+    const reservations = await Promise.all(
       files.map(async (file) => {
-        const safeOriginalName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-        const fileName = `${Date.now()}-${safeOriginalName}`;
-        const s3Path = `users/${userId}/${fileName}`;
-        const contentType = file.type;
-
+        const id = randomUUID();
+        const s3Path = `users/${userId}/${id}`;
         const uploadUrl = await this.storageService.getPresignedUploadUrl(
           s3Path,
-          contentType,
+          file.type,
+          file.size,
         );
-
-        return { file, s3Path, contentType, uploadUrl };
+        return {
+          data: { ...file, id, s3Path, userId, status: FileStatus.PENDING },
+          uploadUrl,
+        };
       }),
     );
 
-    const storedFiles = await Promise.all(
-      s3Results.map(({ file, s3Path, contentType }) =>
-        this.prisma.storedFile.create({
-          data: {
-            s3Path,
-            type: contentType,
-            name: file.name,
-            size: file.size,
-            status: FileStatus.PENDING,
-            userId,
-          },
-        }),
-      ),
-    );
+    await this.prisma.$transaction(async (tx) => {
+      // Serialize reservations for this user across every API instance.
+      const users = await tx.$queryRaw<{ id: string }[]>`
+        SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE
+      `;
+      if (!users.length) throw new ForbiddenException();
 
-    return s3Results.map((result, index) => ({
-      id: storedFiles[index].id,
-      uploadUrl: result.uploadUrl,
+      // Keep PENDING and FAILED reservations charged until explicitly deleted.
+      const usage = await tx.storedFile.aggregate({
+        where: { userId, size: { gt: 0 } },
+        _sum: { size: true },
+      });
+      const currentFileCount = await tx.storedFile.count({ where: { userId } });
+      const requestedBytes = files.reduce(
+        (total, file) => total + file.size,
+        0,
+      );
+      const currentStorageBytes = usage._sum.size ?? 0;
+      const totalFileCount = currentFileCount + files.length;
+      const totalStorageBytes = currentStorageBytes + requestedBytes;
+      const exceedsFileLimit = totalFileCount > STORAGE_LIMITS.maxUserFiles;
+      const exceedsStorageLimit =
+        totalStorageBytes > STORAGE_LIMITS.maxUserBytes;
+
+      if (exceedsFileLimit || exceedsStorageLimit) {
+        throw new UnprocessableEntityException(
+          'Personal storage quota exceeded',
+        );
+      }
+      await tx.storedFile.createMany({
+        data: reservations.map((reservation) => reservation.data),
+      });
+    });
+
+    return reservations.map(({ data, uploadUrl }) => ({
+      id: data.id,
+      uploadUrl,
     }));
   }
 }

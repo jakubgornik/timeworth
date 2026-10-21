@@ -28,7 +28,7 @@ export const IMPORT_WORK_ENTRY_MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
 
 const IMPORT_WORK_ENTRY_ERROR_MESSAGES = {
   MULTIPLE_FILES: "Please select only one file at a time",
-  FILE_TOO_LARGE: "File size must be less than 10MB",
+  FILE_TOO_LARGE: "File size must be at most 1 MB",
   INVALID_TYPE: "Please select an Excel file (.xlsx only)",
   ALREADY_SELECTED: "Remove the current file before selecting a new one",
   GENERIC_ERROR: "Invalid file. Please try again.",

@@ -19,12 +19,13 @@ import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 import { OrganizationWorkEntriesFiltersDto } from './dto/organization-work-entries-filters.dto';
 import { GetFilteredOrganizationWorkEntriesDto } from '../user/dto/get-filtered-organization-work-entries.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthenticatedUser } from '../../shared/auth/authenticated-user';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { ImportWorkEntriesFileNotFoundException } from './exceptions/work-entry.exceptions';
 import { StorageService } from '../storage.service';
 import { WORK_ENTRY_TEMPLATE_PATH } from './utils/template.path';
+import { ImportFileInterceptor } from './interceptors/import-file.interceptor';
+import { RateLimitedUpload } from '../../shared/uploads/upload-rate-limit.guard';
 
 @Controller('work-entry')
 export class WorkEntryController {
@@ -112,8 +113,8 @@ export class WorkEntryController {
   }
 
   @Post('import')
-  @AuthEndpoint()
-  @UseInterceptors(FileInterceptor('file'))
+  @RateLimitedUpload(5)
+  @UseInterceptors(ImportFileInterceptor)
   async importWorkEntries(
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() user: AuthenticatedUser,

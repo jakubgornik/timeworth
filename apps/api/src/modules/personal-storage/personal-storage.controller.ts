@@ -11,7 +11,8 @@ import { PersonalStorageService } from './personal-storage.service';
 import { AuthEndpoint } from 'src/shared/decorators/auth.decorator';
 import { AuthenticatedUser } from '../../shared/auth/authenticated-user';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
-import { ConfirmUploadDto, FileMetadataDto } from './dto/personal-storage.dto';
+import { ConfirmUploadDto, UploadFilesDto } from './dto/personal-storage.dto';
+import { RateLimitedUpload } from '../../shared/uploads/upload-rate-limit.guard';
 import { PaginationDto } from 'src/shared/dto/pagination.dto';
 import { SortDto } from 'src/shared/dto/sort.dto';
 
@@ -36,19 +37,19 @@ export class PersonalStorageController {
   }
 
   @Post('presigned-urls')
-  @AuthEndpoint()
+  @RateLimitedUpload(10)
   async getUploadUrls(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() files: FileMetadataDto[],
+    @Body() body: UploadFilesDto,
   ) {
     return await this.personalStorageService.generateUploadPresignedUrls(
       user.userId,
-      files,
+      body.files,
     );
   }
 
   @Post('confirm-upload')
-  @AuthEndpoint()
+  @RateLimitedUpload(120)
   async confirmUpload(
     @CurrentUser() user: AuthenticatedUser,
     @Body() body: ConfirmUploadDto,
