@@ -1,5 +1,9 @@
-import { CreateWorkEntryInput } from '../create-work-entry/create-work-entry.command';
+import { CreateWorkEntryDto } from '../../dto/create-work-entry.dto';
+
+export type ImportWorkEntryInput = CreateWorkEntryDto & {
+  userId: string;
+};
 
 export class ImportWorkEntriesCommand {
-  constructor(public readonly dto: CreateWorkEntryInput[]) {}
+  constructor(public readonly dto: ImportWorkEntryInput[]) {}
 }

@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import * as XLSX from 'xlsx';
-import { CreateWorkEntryInput } from './commands/create-work-entry/create-work-entry.command';
+import { ImportWorkEntryInput } from './commands/import-work-entry/import-work-entry.command';
 import { ImportWorkEntryValidator } from './utils/import-work-entries.validator';
 import { fromZonedTime } from 'date-fns-tz';
 import { ImportWorkEntriesEmptyFileException } from './exceptions/work-entry.exceptions';
@@ -11,7 +11,7 @@ export class ImportWorkEntriesService {
     file: Express.Multer.File,
     userId: string,
     userTimezone: string,
-  ): Promise<CreateWorkEntryInput[]> {
+  ): Promise<ImportWorkEntryInput[]> {
     try {
       const workbook = XLSX.read(file.buffer, {
         type: 'buffer',
@@ -46,8 +46,7 @@ export class ImportWorkEntriesService {
           endedAt: endedAtUtc,
           description,
           userId,
-          organizationId: '', // temporary solution, organization id is added in handler
-        } satisfies CreateWorkEntryInput;
+        } satisfies ImportWorkEntryInput;
       });
     } catch (error) {
       if (error instanceof BadRequestException) throw error;
