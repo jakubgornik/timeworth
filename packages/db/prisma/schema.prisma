@@ -98,14 +98,16 @@ enum FileStatus {
 }
 
 model StoredFile {
-  id        String     @id @default(cuid())
-  s3Path    String     @unique
-  name      String
-  size      Int
-  type      String // MIME type 
-  status    FileStatus @default(PENDING)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id                 String     @id @default(cuid())
+  s3Path             String     @unique
+  name               String
+  size               Int
+  type               String // MIME type
+  status             FileStatus @default(PENDING)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  deletedAt          DateTime?
+  uploadUrlExpiresAt DateTime?
 
   userId String
   user   User   @relation(fields: [userId], references: [id])

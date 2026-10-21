@@ -23,6 +23,7 @@ export class GetFileDownloadUrlHandler
         id,
         userId: userId,
         status: FileStatus.UPLOADED,
+        deletedAt: null,
       },
     });
 
