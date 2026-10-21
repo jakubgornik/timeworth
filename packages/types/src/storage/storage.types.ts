@@ -6,6 +6,10 @@ export interface IFileMetadataDto {
   size: number;
 }
 
+export interface IUploadFilesDto {
+  files: IFileMetadataDto[];
+}
+
 export interface IStorageFileDto extends IFileMetadataDto {
   id: string;
   uploadDate: string;

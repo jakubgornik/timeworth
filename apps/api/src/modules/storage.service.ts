@@ -1,10 +1,16 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
+  S3ServiceException,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
@@ -93,6 +99,7 @@ export class StorageService {
   async getPresignedUploadUrl(
     key: string,
     contentType: string,
+    contentLength: number,
     expiresInSeconds = 900,
     bucket = this.bucket,
   ): Promise<string> {
@@ -101,17 +108,40 @@ export class StorageService {
         Bucket: bucket,
         Key: this.encodeKey(key),
         ContentType: contentType,
+        ContentLength: contentLength,
       });
 
       return await getSignedUrl(this.s3Client, command, {
         expiresIn: expiresInSeconds,
-        signableHeaders: new Set(['content-type']),
+        signableHeaders: new Set(['content-type', 'content-length']),
       });
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to generate secure upload link',
         { cause: error },
       );
+    }
+  }
+
+  async getFileMetadata(key: string, bucket = this.bucket) {
+    try {
+      const object = await this.s3Client.send(
+        new HeadObjectCommand({ Bucket: bucket, Key: this.encodeKey(key) }),
+      );
+      return {
+        size: object.ContentLength,
+        type: object.ContentType?.split(';', 1)[0].trim().toLowerCase(),
+      };
+    } catch (error) {
+      if (
+        error instanceof S3ServiceException &&
+        error.$metadata.httpStatusCode === 404
+      ) {
+        throw new BadRequestException('Upload not found in storage');
+      }
+      throw new InternalServerErrorException('Failed to verify uploaded file', {
+        cause: error,
+      });
     }
   }
 

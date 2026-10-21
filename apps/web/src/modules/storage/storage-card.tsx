@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { HardDrive } from "lucide-react";
 import { Dropzone } from "@/components/dropzone/dropzone";
+import { STORAGE_LIMITS } from "@packages/types";
 
 interface DropzoneCardProps {
   onFilesAdded: (files: File[]) => void;
@@ -24,7 +25,7 @@ export function StorageCard({ onFilesAdded }: DropzoneCardProps) {
       setErrorMessage(null);
       if (rejected.length > 0) {
         setErrorMessage(
-          "Some files were rejected. Only PDF, TXT, and XLSX files under 50 MB are allowed.",
+          "Upload up to 20 PDF, TXT, or XLSX files, at most 50 MB each.",
         );
         return;
       }
@@ -55,7 +56,8 @@ export function StorageCard({ onFilesAdded }: DropzoneCardProps) {
           onDrop={handleDrop}
           errorMessage={errorMessage ?? undefined}
           multiple={true}
-          maxFiles={20}
+          maxFiles={STORAGE_LIMITS.maxFilesPerRequest}
+          maxSizeOverride={STORAGE_LIMITS.maxFileBytes}
         />
       </CardContent>
     </Card>

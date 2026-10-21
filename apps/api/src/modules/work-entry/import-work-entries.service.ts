@@ -1,32 +1,21 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import * as XLSX from 'xlsx';
+import { Injectable, BadRequestException, HttpException } from '@nestjs/common';
 import { ImportWorkEntryInput } from './commands/import-work-entry/import-work-entry.command';
 import { ImportWorkEntryValidator } from './utils/import-work-entries.validator';
 import { fromZonedTime } from 'date-fns-tz';
 import { ImportWorkEntriesEmptyFileException } from './exceptions/work-entry.exceptions';
+import { ImportReader } from './import-reader.service';
 
 @Injectable()
 export class ImportWorkEntriesService {
+  constructor(private readonly reader: ImportReader) {}
+
   async parseWorkEntriesFile(
     file: Express.Multer.File,
     userId: string,
     userTimezone: string,
   ): Promise<ImportWorkEntryInput[]> {
     try {
-      const workbook = XLSX.read(file.buffer, {
-        type: 'buffer',
-        cellDates: true,
-      });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-
-      const rawData = XLSX.utils.sheet_to_json<Record<string, unknown>>(
-        worksheet,
-        {
-          raw: true,
-          defval: null,
-        },
-      );
+      const rawData = await this.reader.read(file.buffer);
 
       if (!rawData.length) {
         throw new ImportWorkEntriesEmptyFileException();
@@ -49,10 +38,10 @@ export class ImportWorkEntriesService {
         } satisfies ImportWorkEntryInput;
       });
     } catch (error) {
-      if (error instanceof BadRequestException) throw error;
       if (error instanceof ImportWorkEntriesEmptyFileException) {
         throw new BadRequestException(error.message);
       }
+      if (error instanceof HttpException) throw error;
       throw new BadRequestException('Invalid or unsupported spreadsheet file', {
         cause: error,
       });

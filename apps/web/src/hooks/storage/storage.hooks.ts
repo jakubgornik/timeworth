@@ -13,6 +13,8 @@ import {
   IStorageFileDto,
   IPaginatedStorageFileQueryDto,
   IGetFileDownloadUrlDto,
+  IPresignedUrlResponse,
+  IUploadFilesDto,
 } from "@packages/types";
 
 const mapFilesToMetadata = (files: File[]): IFileMetadataDto[] => {
@@ -48,9 +50,10 @@ const useUploadStorageFile = () => {
     mutationFn: async (files: File[]) => {
       const fileMetadata = mapFilesToMetadata(files);
 
-      const { data } = await api.post(
+      const body: IUploadFilesDto = { files: fileMetadata };
+      const { data } = await api.post<IPresignedUrlResponse[]>(
         "/personal-storage/presigned-urls",
-        fileMetadata,
+        body,
         { withCredentials: true },
       );
 
