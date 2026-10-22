@@ -33,11 +33,13 @@ model User {
   updatedAt      DateTime   @updatedAt()
   organizationId String?
 
-  role          UserRole       @default(EMPLOYEE)
-  workEntries   WorkEntry[]
-  organization  Organization?  @relation(fields: [organizationId], references: [id])
-  refreshTokens RefreshToken[]
-  storedFiles   StoredFile[]
+  role                UserRole                 @default(EMPLOYEE)
+  workEntries         WorkEntry[]
+  organization        Organization?            @relation("OrganizationMembers", fields: [organizationId], references: [id])
+  managedOrganization Organization?            @relation("OrganizationManager")
+  memberships         OrganizationMembership[]
+  refreshTokens       RefreshToken[]
+  storedFiles         StoredFile[]
 }
 
 model Organization {
@@ -51,8 +53,26 @@ model Organization {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt()
 
-  members     User[]
+  manager     User                     @relation("OrganizationManager", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  members     User[]                   @relation("OrganizationMembers")
+  memberships OrganizationMembership[]
   workEntries WorkEntry[]
+}
+
+model OrganizationMembership {
+  id             String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  userId         String
+  organizationId String
+  startedAt      DateTime  @default(now()) @db.Timestamptz(3)
+  endedAt        DateTime? @db.Timestamptz(3)
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  workEntries  WorkEntry[]
+
+  @@unique([id, userId, organizationId])
+  @@index([userId, startedAt])
+  @@index([organizationId])
 }
 
 model WorkEntry {
@@ -70,11 +90,14 @@ model WorkEntry {
 
   userId         String
   organizationId String
+  membershipId   String @default(dbgenerated())
 
-  user         User         @relation(fields: [userId], references: [id])
-  organization Organization @relation(fields: [organizationId], references: [id])
+  user         User                   @relation(fields: [userId], references: [id])
+  organization Organization           @relation(fields: [organizationId], references: [id])
+  membership   OrganizationMembership @relation(fields: [membershipId, userId, organizationId], references: [id, userId, organizationId], onDelete: Restrict, onUpdate: Restrict)
 
   @@index([userId, organizationId])
+  @@index([membershipId])
   @@index([startedAt, endedAt])
 }
 

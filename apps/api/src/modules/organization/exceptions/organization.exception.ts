@@ -2,7 +2,7 @@ import { CustomException } from '../../../shared/exceptions/custom-exception';
 
 export class SingleOrganizationLimitFoundException extends CustomException {
   static readonly BODY = 'You can only be a member of one organization.';
-  static readonly STATUS = 461;
+  static readonly STATUS = 409;
 
   constructor() {
     super(
@@ -14,7 +14,7 @@ export class SingleOrganizationLimitFoundException extends CustomException {
 
 export class OrganizationNameAlreadyExistsException extends CustomException {
   static readonly BODY = 'Organization with this name already exist.';
-  static readonly STATUS = 462;
+  static readonly STATUS = 409;
 
   constructor() {
     super(

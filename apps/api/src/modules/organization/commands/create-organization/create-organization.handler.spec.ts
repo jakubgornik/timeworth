@@ -6,7 +6,6 @@ import {
   SingleOrganizationLimitFoundException,
   OrganizationNameAlreadyExistsException,
 } from '../../exceptions/organization.exception';
-import { Prisma } from '@packages/db';
 
 const mockedDto1 = {
   organizationName: 'Test Organization',
@@ -53,7 +52,7 @@ describe('CreateOrganizationHandler', () => {
     const mockTx = {
       user: {
         findUnique: jest.fn().mockResolvedValue({ organizationId: null }),
-        update: jest.fn(),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
       organization: {
         findFirst: jest.fn().mockResolvedValue(null),
@@ -89,8 +88,8 @@ describe('CreateOrganizationHandler', () => {
       },
     });
 
-    expect(mockTx.user.update).toHaveBeenCalledWith({
-      where: { id: mockedDto1.managerId },
+    expect(mockTx.user.updateMany).toHaveBeenCalledWith({
+      where: { id: mockedDto1.managerId, organizationId: null },
       data: {
         organizationId: 'org-1',
         role: UserRole.MANAGER,
@@ -105,7 +104,7 @@ describe('CreateOrganizationHandler', () => {
         findUnique: jest
           .fn()
           .mockResolvedValue({ organizationId: 'org-existing' }),
-        update: jest.fn(),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
       organization: {
         findFirst: jest.fn(),
@@ -121,14 +120,14 @@ describe('CreateOrganizationHandler', () => {
 
     expect(mockTx.organization.findFirst).not.toHaveBeenCalled();
     expect(mockTx.organization.create).not.toHaveBeenCalled();
-    expect(mockTx.user.update).not.toHaveBeenCalled();
+    expect(mockTx.user.updateMany).not.toHaveBeenCalled();
   });
 
   it('should throw OrganizationNameAlreadyExistsException for duplicate names', async () => {
     const mockTx = {
       user: {
         findUnique: jest.fn().mockResolvedValue({ organizationId: null }),
-        update: jest.fn(),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
       organization: {
         findFirst: jest.fn().mockResolvedValue({ id: 'existing-org' }),
@@ -145,27 +144,35 @@ describe('CreateOrganizationHandler', () => {
     ).rejects.toThrow(OrganizationNameAlreadyExistsException);
 
     expect(mockTx.organization.create).not.toHaveBeenCalled();
-    expect(mockTx.user.update).not.toHaveBeenCalled();
+    expect(mockTx.user.updateMany).not.toHaveBeenCalled();
   });
 
-  it('should retry on inviteCode conflict (P2002)', async () => {
-    const p2002Error = new Prisma.PrismaClientKnownRequestError(
-      'Unique constraint failed',
-      {
-        code: 'P2002',
-        clientVersion: '4.0.0',
-        meta: { target: ['inviteCode'] },
+  it('should propagate a failed transaction without retrying', async () => {
+    const error = new Error('Database operation failed');
+    prisma.$transaction.mockRejectedValue(error);
+
+    await expect(
+      handler.execute(new CreateOrganizationCommand(mockedDto1)),
+    ).rejects.toBe(error);
+
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return a conflict when another request wins the conditional assignment', async () => {
+    const tx = {
+      user: {
+        findUnique: jest.fn().mockResolvedValue({ organizationId: null }),
+        updateMany: jest.fn().mockResolvedValue({ count: 0 }),
       },
-    );
+      organization: {
+        findFirst: jest.fn().mockResolvedValue(null),
+        create: jest.fn().mockResolvedValue({ id: 'losing-org' }),
+      },
+    };
+    prisma.$transaction.mockImplementation(async (write) => write(tx));
 
-    jest
-      .spyOn(handler as any, 'createOrganizationWithManager')
-      .mockRejectedValueOnce(p2002Error)
-      .mockResolvedValueOnce(undefined);
-
-    await handler.execute(new CreateOrganizationCommand(mockedDto1));
-
-    expect(handler['createOrganizationWithManager']).toHaveBeenCalledTimes(2);
-    expect(handler['generateInviteCode']).toHaveBeenCalledTimes(2);
+    await expect(
+      handler.execute(new CreateOrganizationCommand(mockedDto1)),
+    ).rejects.toMatchObject({ status: 409 });
   });
 });

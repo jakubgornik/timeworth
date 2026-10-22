@@ -8,7 +8,7 @@ const prisma = new PrismaClient({ adapter: createPrismaAdapter() });
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const demoAccount = {
@@ -45,7 +45,7 @@ async function main() {
   console.log("Creating test demo user...");
   const testUserId = await createUserWithSupabase(
     demoAccount.email,
-    demoAccount.password
+    demoAccount.password,
   );
 
   await prisma.user.upsert({
@@ -61,28 +61,38 @@ async function main() {
   console.log("Creating organization manager...");
   const managerId = await createUserWithSupabase(
     managerAccount.email,
-    managerAccount.password
+    managerAccount.password,
   );
-
-  const organization = await prisma.organization.create({
-    data: {
-      name: "DemoCorp Inc.",
-      inviteCode: faker.string.alphanumeric(8),
-      managerId,
-      industry: faker.company.buzzNoun(),
-      size: "51-200",
-      address: faker.location.streetAddress(),
-    },
-  });
 
   await prisma.user.create({
     data: {
       id: managerId,
       email: managerAccount.email,
       name: managerAccount.name,
-      role: "MANAGER",
-      organizationId: organization.id,
     },
+  });
+
+  const organization = await prisma.$transaction(async (tx) => {
+    const organization = await tx.organization.create({
+      data: {
+        name: "DemoCorp Inc.",
+        inviteCode: faker.string.alphanumeric(8),
+        managerId,
+        industry: faker.company.buzzNoun(),
+        size: "51-200",
+        address: faker.location.streetAddress(),
+      },
+    });
+
+    await tx.user.update({
+      where: { id: managerId },
+      data: {
+        name: managerAccount.name,
+        role: "MANAGER",
+        organizationId: organization.id,
+      },
+    });
+    return organization;
   });
 
   console.log("Creating 20 employee users...");
