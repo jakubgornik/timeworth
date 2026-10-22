@@ -3,25 +3,17 @@ import { ISortDto } from '@packages/types';
 
 export const mapStorageSortDtoToOrderBy = (
   sortDto: ISortDto,
-): Prisma.StoredFileOrderByWithRelationInput => {
+): Prisma.StoredFileOrderByWithRelationInput[] => {
   const sortOrder = sortDto.desc ? 'desc' : 'asc';
 
   switch (sortDto.id) {
     case 'name':
-      return {
-        name: sortOrder,
-      };
+      return [{ name: sortOrder }, { id: 'asc' }];
     case 'size':
-      return {
-        size: sortOrder,
-      };
+      return [{ size: sortOrder }, { id: 'asc' }];
     case 'uploadDate':
-      return {
-        createdAt: sortOrder,
-      };
+      return [{ createdAt: sortOrder }, { id: 'asc' }];
     default:
-      return {
-        name: sortOrder,
-      };
+      return [{ name: sortOrder }, { id: 'asc' }];
   }
 };

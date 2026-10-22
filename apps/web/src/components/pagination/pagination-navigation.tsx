@@ -1,28 +1,25 @@
-import { Table } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
 import PageNumbers from "./page-numbers";
 
-interface PaginationNavigationProps<TData> {
-  table: Table<TData>;
+interface PaginationNavigationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
   isLoading?: boolean;
 }
 
-export default function PaginationNavigation<TData>({
-  table,
+export default function PaginationNavigation({
   currentPage,
   totalPages,
   onPageChange,
   isLoading = false,
-}: PaginationNavigationProps<TData>) {
+}: PaginationNavigationProps) {
   return (
     <div className="flex items-center space-x-2">
       <Button
-        onClick={() => table.previousPage()}
-        disabled={!table.getCanPreviousPage() || isLoading}
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage <= 1 || isLoading}
         variant="secondary"
         size="sm"
       >
@@ -38,8 +35,8 @@ export default function PaginationNavigation<TData>({
       />
 
       <Button
-        onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage() || isLoading}
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage >= totalPages || isLoading}
         variant="secondary"
         size="sm"
         className="flex items-center"

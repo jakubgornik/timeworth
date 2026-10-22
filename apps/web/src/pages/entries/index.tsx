@@ -42,7 +42,12 @@ export default function EntriesPage() {
     [filters]
   );
 
-  const { data: workEntries } = useOrganizationWorkEntries({
+  const {
+    data: workEntries,
+    isFetching,
+    isPlaceholderData,
+    isError,
+  } = useOrganizationWorkEntries({
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     ...sortingQuery,
@@ -98,7 +103,9 @@ export default function EntriesPage() {
           <OrganizationWorkEntriesTable
             table={table}
             renderExpandedRow={renderExpandedRow}
-            totalCount={workEntries?.totalCount ?? 0}
+            totalCount={workEntries?.totalCount}
+            isLoading={isFetching || isPlaceholderData}
+            isError={isError}
             pageSizeOptions={[10, 15, 20]}
           />
         </Card>
