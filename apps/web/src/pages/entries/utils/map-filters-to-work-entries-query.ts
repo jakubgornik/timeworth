@@ -4,7 +4,7 @@ import { IOrganizationWorkEntriesFiltersDto } from "@packages/types";
 export const mapFiltersToOrganizationWorkEntriesQuery = (
   filters: FilterState
 ): IOrganizationWorkEntriesFiltersDto => {
-  const dto: IOrganizationWorkEntriesFiltersDto = {};
+  const dto: IOrganizationWorkEntriesFiltersDto = { search: filters.search };
 
   for (const filter of filters.filters) {
     switch (filter.column) {

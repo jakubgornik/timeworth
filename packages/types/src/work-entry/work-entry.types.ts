@@ -50,7 +50,7 @@ export interface IGetWorkEntriesQueryDto {
   currentWeek?: TimePeriod;
 }
 
-export interface IOrganizationWorkEntriesFiltersDto {
+export interface IOrganizationWorkEntriesFiltersDto extends ISearchDto {
   workEntryStartedAt?: string;
   workEntryEndedAt?: string;
   hoursWorked?: number;
@@ -58,7 +58,7 @@ export interface IOrganizationWorkEntriesFiltersDto {
 }
 
 export type IPaginatedOrganizationWorkEntriesQueryDto =
-  Partial<IOrganizationWorkEntriesFiltersDto> & ISearchDto & IPaginatedQueryDto;
+  Partial<IOrganizationWorkEntriesFiltersDto> & IPaginatedQueryDto;
 
 type WorkEntryFilterType =
   | { type: "dateRange"; from: Date; to: Date }
