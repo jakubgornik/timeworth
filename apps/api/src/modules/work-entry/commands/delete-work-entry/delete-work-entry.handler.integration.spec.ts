@@ -19,14 +19,19 @@ describe('DeleteWorkEntryHandler Integration Test', () => {
     handler = module.get<DeleteWorkEntryHandler>(DeleteWorkEntryHandler);
     prisma = module.get<PrismaService>(PrismaService);
 
-    const user = await prisma.user.findUnique({
-      where: { email: 'test@test.com' },
-    });
     const organization = await prisma.organization.findFirst({
       where: { name: 'DemoCorp Inc.' },
     });
 
-    if (!user || !organization) {
+    if (!organization) {
+      throw new Error('Seeded data missing! Please run your seed script.');
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { organizationId: organization.id, role: 'EMPLOYEE' },
+    });
+
+    if (!user) {
       throw new Error('Seeded data missing! Please run your seed script.');
     }
 

@@ -22,14 +22,21 @@ describe('CreateWorkEntryHandler Integration Test', () => {
     handler = module.get<CreateWorkEntryHandler>(CreateWorkEntryHandler);
     prisma = module.get<PrismaService>(PrismaService);
 
-    const user = await prisma.user.findUnique({
-      where: { email: 'test@test.com' },
-    });
     const organization = await prisma.organization.findFirst({
       where: { name: 'DemoCorp Inc.' },
     });
 
-    if (!user || !organization) {
+    if (!organization) {
+      throw new Error(
+        'Seeded data missing! Please run your seed script before testing.',
+      );
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { organizationId: organization.id, role: 'EMPLOYEE' },
+    });
+
+    if (!user) {
       throw new Error(
         'Seeded data missing! Please run your seed script before testing.',
       );

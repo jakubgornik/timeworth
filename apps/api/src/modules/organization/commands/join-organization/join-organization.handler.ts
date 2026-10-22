@@ -1,7 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PrismaService } from '@packages/db';
 import { JoinOrganizationCommand } from './join-organization.command';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
+import { SingleOrganizationLimitFoundException } from '../../exceptions/organization.exception';
 
 @CommandHandler(JoinOrganizationCommand)
 export class JoinOrganizationHandler implements ICommandHandler<JoinOrganizationCommand> {
@@ -12,44 +13,45 @@ export class JoinOrganizationHandler implements ICommandHandler<JoinOrganization
   }: JoinOrganizationCommand): Promise<void> {
     const { userId, inviteCode, name } = joinOrganizationDto;
 
-    const organization = await this.prisma.organization.findUnique({
-      where: {
-        inviteCode,
-      },
-    });
+    await this.prisma.$transaction(async (tx) => {
+      const organization = await tx.organization.findUnique({
+        where: {
+          inviteCode,
+        },
+      });
 
-    if (!organization) {
-      throw new NotFoundException('Invalid invite code');
-    }
+      if (!organization) {
+        throw new NotFoundException('Invalid invite code');
+      }
 
-    const existingUser = await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      include: {
-        organization: true,
-      },
-    });
+      const existingUser = await tx.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
 
-    if (!existingUser) {
-      throw new NotFoundException('User not found');
-    }
+      if (!existingUser) {
+        throw new NotFoundException('User not found');
+      }
 
-    if (existingUser.organizationId) {
-      throw new BadRequestException(
-        'User is already a member of an organization',
-      );
-    }
+      if (existingUser.organizationId) {
+        throw new SingleOrganizationLimitFoundException();
+      }
 
-    await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        organizationId: organization.id,
-        role: 'EMPLOYEE',
-        name,
-      },
+      const assigned = await tx.user.updateMany({
+        where: {
+          id: userId,
+          organizationId: null,
+        },
+        data: {
+          organizationId: organization.id,
+          role: 'EMPLOYEE',
+          name,
+        },
+      });
+      if (assigned.count !== 1) {
+        throw new SingleOrganizationLimitFoundException();
+      }
     });
   }
 }

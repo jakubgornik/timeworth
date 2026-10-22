@@ -1,58 +1,29 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PrismaService, UserRole } from '@packages/db';
-import {
-  CreateOrganizationCommand,
-  CreateOrganizationInput,
-} from './create-organization.command';
+import { CreateOrganizationCommand } from './create-organization.command';
 import { randomBytes } from 'crypto';
-import { Prisma } from '@packages/db';
 import {
   OrganizationNameAlreadyExistsException,
   SingleOrganizationLimitFoundException,
 } from '../../exceptions/organization.exception';
+import { NotFoundException } from '@nestjs/common';
 
 @CommandHandler(CreateOrganizationCommand)
 export class CreateOrganizationHandler implements ICommandHandler<CreateOrganizationCommand> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({
-    createOrganizationDto,
+    createOrganizationDto: dto,
   }: CreateOrganizationCommand): Promise<void> {
     const inviteCode = this.generateInviteCode();
 
-    try {
-      await this.createOrganizationWithManager(
-        createOrganizationDto,
-        inviteCode,
-      );
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002' &&
-        Array.isArray(error.meta?.target) &&
-        error.meta.target.includes('inviteCode')
-      ) {
-        const retryCode = this.generateInviteCode();
-        await this.createOrganizationWithManager(
-          createOrganizationDto,
-          retryCode,
-        );
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  private async createOrganizationWithManager(
-    dto: CreateOrganizationInput,
-    inviteCode: string,
-  ): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({
         where: { id: dto.managerId },
       });
 
-      if (user?.organizationId) {
+      if (!user) throw new NotFoundException('User not found');
+      if (user.organizationId) {
         throw new SingleOrganizationLimitFoundException();
       }
 
@@ -80,14 +51,17 @@ export class CreateOrganizationHandler implements ICommandHandler<CreateOrganiza
         },
       });
 
-      await tx.user.update({
-        where: { id: dto.managerId },
+      const assigned = await tx.user.updateMany({
+        where: { id: dto.managerId, organizationId: null },
         data: {
           organizationId: organization.id,
           role: UserRole.MANAGER,
           name: dto.managerName,
         },
       });
+      if (assigned.count !== 1) {
+        throw new SingleOrganizationLimitFoundException();
+      }
     });
   }
 

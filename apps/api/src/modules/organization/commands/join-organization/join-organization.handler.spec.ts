@@ -2,20 +2,25 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@packages/db';
 import { JoinOrganizationHandler } from './join-organization.handler';
 import { JoinOrganizationCommand } from './join-organization.command';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
+import { SingleOrganizationLimitFoundException } from '../../exceptions/organization.exception';
 
 describe('JoinOrganizationHandler', () => {
   let handler: JoinOrganizationHandler;
   let prisma: {
+    $transaction: jest.Mock;
     organization: { findUnique: jest.Mock };
-    user: { findUnique: jest.Mock; update: jest.Mock };
+    user: { findUnique: jest.Mock; updateMany: jest.Mock };
   };
 
   beforeEach(async () => {
     prisma = {
+      $transaction: jest.fn(),
       organization: { findUnique: jest.fn() },
-      user: { findUnique: jest.fn(), update: jest.fn() },
+      user: { findUnique: jest.fn(), updateMany: jest.fn() },
     };
+
+    prisma.$transaction.mockImplementation(async (write) => write(prisma));
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -65,11 +70,10 @@ describe('JoinOrganizationHandler', () => {
     });
     expect(prisma.user.findUnique).toHaveBeenCalledWith({
       where: { id: 'user-1' },
-      include: { organization: true },
     });
   });
 
-  it('should throw BadRequestException if user already belongs to an organization', async () => {
+  it('should throw a conflict if user already belongs to an organization', async () => {
     prisma.organization.findUnique.mockResolvedValue({ id: 'org-1' });
     prisma.user.findUnique.mockResolvedValue({
       id: 'user-1',
@@ -83,10 +87,10 @@ describe('JoinOrganizationHandler', () => {
     });
 
     await expect(handler.execute(command)).rejects.toThrow(
-      new BadRequestException('User is already a member of an organization'),
+      SingleOrganizationLimitFoundException,
     );
 
-    expect(prisma.user.update).not.toHaveBeenCalled();
+    expect(prisma.user.updateMany).not.toHaveBeenCalled();
   });
 
   it('should update user with organizationId, role, and name if valid', async () => {
@@ -95,7 +99,7 @@ describe('JoinOrganizationHandler', () => {
       id: 'user-1',
       organizationId: null,
     });
-    prisma.user.update.mockResolvedValue({ id: 'user-1' });
+    prisma.user.updateMany.mockResolvedValue({ count: 1 });
 
     const command = new JoinOrganizationCommand({
       userId: 'user-1',
@@ -105,13 +109,29 @@ describe('JoinOrganizationHandler', () => {
 
     await handler.execute(command);
 
-    expect(prisma.user.update).toHaveBeenCalledWith({
-      where: { id: 'user-1' },
+    expect(prisma.user.updateMany).toHaveBeenCalledWith({
+      where: { id: 'user-1', organizationId: null },
       data: {
         organizationId: 'org-1',
         role: 'EMPLOYEE',
         name: 'John Doe',
       },
     });
+  });
+
+  it('should return a conflict when another request wins the conditional assignment', async () => {
+    prisma.organization.findUnique.mockResolvedValue({ id: 'org-1' });
+    prisma.user.findUnique.mockResolvedValue({ organizationId: null });
+    prisma.user.updateMany.mockResolvedValue({ count: 0 });
+
+    await expect(
+      handler.execute(
+        new JoinOrganizationCommand({
+          userId: 'user-1',
+          inviteCode: 'INVITE123',
+          name: 'John Doe',
+        }),
+      ),
+    ).rejects.toMatchObject({ status: 409 });
   });
 });
