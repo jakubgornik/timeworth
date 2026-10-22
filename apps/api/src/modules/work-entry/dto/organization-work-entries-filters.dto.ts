@@ -7,6 +7,11 @@ export class OrganizationWorkEntriesFiltersDto implements IOrganizationWorkEntri
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
+  search?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
   title?: string;
 
   @ApiPropertyOptional()

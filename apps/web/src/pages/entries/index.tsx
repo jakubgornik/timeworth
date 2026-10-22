@@ -47,7 +47,6 @@ export default function EntriesPage() {
     pageSize: pagination.pageSize,
     ...sortingQuery,
     ...filtersQuery,
-    search: filters.search,
   });
 
   const data = useMemo(() => {
