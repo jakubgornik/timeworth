@@ -26,7 +26,10 @@ export default function PageSizeSelector<TData>({
       <Label>Items per page:</Label>
       <Select
         value={pageSize.toString()}
-        onValueChange={(value) => table.setPageSize(Number(value))}
+        onValueChange={(value) => {
+          table.setPageSize(Number(value));
+          table.setPageIndex(0);
+        }}
         disabled={isLoading}
       >
         <SelectTrigger className="w-[65px]">

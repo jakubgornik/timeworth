@@ -31,7 +31,12 @@ export default function StoragePage() {
   const { mutate: downloadFile } = useDownloadStorageFile();
 
   const sortingQuery = useMemo(() => convertSortingToQuery(sorting), [sorting]);
-  const { data: storageFiles } = useGetStorageFile({
+  const {
+    data: storageFiles,
+    isFetching,
+    isPlaceholderData,
+    isError,
+  } = useGetStorageFile({
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     ...sortingQuery,
@@ -77,7 +82,9 @@ export default function StoragePage() {
           <StorageCard onFilesAdded={handleFilesAdded} />
           <StorageTable
             table={table}
-            totalCount={storageFiles?.totalCount ?? 0}
+            totalCount={storageFiles?.totalCount}
+            isLoading={isFetching || isPlaceholderData}
+            isError={isError}
             pageSizeOptions={[10, 15, 20]}
           />
         </Card>

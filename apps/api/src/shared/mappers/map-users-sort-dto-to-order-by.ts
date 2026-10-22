@@ -3,25 +3,17 @@ import { ISortDto } from '@packages/types';
 
 export const mapUsersSortDtoToOrderBy = (
   sortDto: ISortDto,
-): Prisma.UserOrderByWithRelationInput => {
+): Prisma.UserOrderByWithRelationInput[] => {
   const sortOrder = sortDto.desc ? 'desc' : 'asc';
 
   switch (sortDto.id) {
     case 'name':
-      return {
-        name: sortOrder,
-      };
+      return [{ name: sortOrder }, { id: 'asc' }];
     case 'email':
-      return {
-        email: sortOrder,
-      };
+      return [{ email: sortOrder }, { id: 'asc' }];
     case 'status':
-      return {
-        status: sortOrder,
-      };
+      return [{ status: sortOrder }, { id: 'asc' }];
     default:
-      return {
-        id: sortOrder,
-      };
+      return [{ id: sortOrder }];
   }
 };

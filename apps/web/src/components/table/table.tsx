@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 interface DataTableProps<TData> {
   table: Table<TData>;
   isLoading?: boolean;
+  isError?: boolean;
   renderExpandedRow?: (row: TData) => React.ReactNode;
   onRowClick?: (row: TData) => void;
 }
@@ -12,10 +13,11 @@ interface DataTableProps<TData> {
 export default function DataTable<TData>({
   table,
   isLoading = false,
+  isError = false,
   renderExpandedRow,
   onRowClick,
 }: DataTableProps<TData>) {
-  if (isLoading) {
+  if (isLoading && table.getRowModel().rows.length === 0) {
     return (
       <div className="w-full bg-white rounded-lg border border-gray-200 p-8">
         <div className="animate-pulse">
@@ -75,6 +77,19 @@ export default function DataTable<TData>({
           </thead>
 
           <tbody className="bg-background divide-y">
+            {table.getRowModel().rows.length === 0 && (
+              <tr>
+                <td
+                  colSpan={table.getVisibleLeafColumns().length}
+                  className="px-4 py-8 text-center text-sm text-secondary"
+                  role={isError ? "alert" : undefined}
+                >
+                  {isError
+                    ? "Unable to load results. Please try again."
+                    : "No results found."}
+                </td>
+              </tr>
+            )}
             {table.getRowModel().rows.map((row) => (
               <React.Fragment key={row.id}>
                 <tr

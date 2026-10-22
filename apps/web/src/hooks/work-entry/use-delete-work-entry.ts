@@ -17,6 +17,7 @@ export const useDeleteWorkEntry = () => {
     onSuccess: () => {
       showSuccess("Successfully deleted work entry");
       queryClient.invalidateQueries({ queryKey: ["workEntries"] });
+      queryClient.invalidateQueries({ queryKey: ["organizationWorkEntries"] });
     },
   });
 };

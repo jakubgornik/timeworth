@@ -42,7 +42,12 @@ export default function DetailsPage() {
     [filters]
   );
 
-  const { data: organizationUsers } = useOrganizationUsers({
+  const {
+    data: organizationUsers,
+    isFetching,
+    isPlaceholderData,
+    isError,
+  } = useOrganizationUsers({
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     ...sortingQuery,
@@ -102,7 +107,9 @@ export default function DetailsPage() {
           <UserDetailsTable
             table={table}
             renderExpandedRow={renderExpandedRow}
-            totalCount={organizationUsers?.totalCount ?? 0}
+            totalCount={organizationUsers?.totalCount}
+            isLoading={isFetching || isPlaceholderData}
+            isError={isError}
             pageSizeOptions={[10, 15, 20]}
           />
         </Card>

@@ -3,21 +3,15 @@ import { ISortDto } from '@packages/types';
 
 export const mapOrganizationWorkEntriesSortDtoToOrderBy = (
   sortDto: ISortDto,
-): Prisma.WorkEntryOrderByWithRelationInput => {
+): Prisma.WorkEntryOrderByWithRelationInput[] => {
   const sortOrder = sortDto.desc ? 'desc' : 'asc';
 
   switch (sortDto.id) {
     case 'title':
-      return {
-        title: sortOrder,
-      };
+      return [{ title: sortOrder }, { id: 'asc' }];
     case 'hoursWorked':
-      return {
-        hoursWorked: sortOrder,
-      };
+      return [{ hoursWorked: sortOrder }, { id: 'asc' }];
     default:
-      return {
-        title: sortOrder,
-      };
+      return [{ title: sortOrder }, { id: 'asc' }];
   }
 };
