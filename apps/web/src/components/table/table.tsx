@@ -17,25 +17,10 @@ export default function DataTable<TData>({
   renderExpandedRow,
   onRowClick,
 }: DataTableProps<TData>) {
-  if (isLoading && table.getRowModel().rows.length === 0) {
-    return (
-      <div className="w-full bg-white rounded-lg border border-gray-200 p-8">
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded mb-4"></div>
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full">
-      <div className="min-h-[500px] max-h-[500px] 3xl:max-h-[1100px] bg-background border rounded-t-lg overflow-auto custom-scrollbar">
-        <table className="w-full border-separate ">
+      <div className="min-h-125 max-h-125 3xl:max-h-275 bg-background border rounded-t-lg overflow-auto custom-scrollbar">
+        <table className="w-full border-separate " aria-busy={isLoading}>
           <thead className="bg-accent sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -58,7 +43,7 @@ export default function DataTable<TData>({
                       <span>
                         {flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                       </span>
                       {header.column.getCanSort() && (
@@ -86,7 +71,9 @@ export default function DataTable<TData>({
                 >
                   {isError
                     ? "Unable to load results. Please try again."
-                    : "No results found."}
+                    : isLoading
+                      ? "Loading…"
+                      : "No results found."}
                 </td>
               </tr>
             )}
@@ -109,7 +96,7 @@ export default function DataTable<TData>({
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </td>
                   ))}
